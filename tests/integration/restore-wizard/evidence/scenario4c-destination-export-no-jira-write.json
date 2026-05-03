@@ -1,0 +1,27 @@
+{
+  "description": "Destination=export → 201 created, no targetProjectKey, RestoreWorker (skeleton) calls no Jira write API",
+  "scenario": "4c",
+  "request": {
+    "sourceBackupPointId": "bp-dest-export",
+    "scope": {
+      "type": "all"
+    },
+    "destination": {
+      "type": "export"
+    },
+    "conflictMode": "skip"
+  },
+  "response": {
+    "status": 201,
+    "destination": {
+      "type": "export"
+    }
+  },
+  "assertions": [
+    "destination.type=export persists",
+    "no targetProjectKey present on export destination",
+    "RestoreWorker skeleton does not call any Jira write API (Sprint 12 delivers writes)",
+    "GET /restore/jobs/:id returns 200 — job accessible"
+  ],
+  "timestamp": "2026-05-03T17:16:55.509Z"
+}

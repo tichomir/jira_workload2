@@ -1,0 +1,27 @@
+{
+  "description": "All three conflict modes (override, skip, ask) round-trip correctly through POST and GET",
+  "scenario": "3",
+  "results": [
+    {
+      "mode": "override",
+      "postStatus": 201,
+      "getConflictMode": "override"
+    },
+    {
+      "mode": "skip",
+      "postStatus": 201,
+      "getConflictMode": "skip"
+    },
+    {
+      "mode": "ask",
+      "postStatus": 201,
+      "getConflictMode": "ask"
+    }
+  ],
+  "assertions": [
+    "POST with conflictMode=override → 201 + GET returns override",
+    "POST with conflictMode=skip → 201 + GET returns skip",
+    "POST with conflictMode=ask → 201 + GET returns ask"
+  ],
+  "timestamp": "2026-05-03T17:16:55.401Z"
+}

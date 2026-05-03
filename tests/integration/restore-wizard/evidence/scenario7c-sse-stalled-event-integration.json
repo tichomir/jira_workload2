@@ -1,0 +1,15 @@
+{
+  "description": "Stalled flag set in RestoreJobStore (via setStalled) is readable via test endpoint; SSE stream publishes stalled events via RestoreEventBus",
+  "scenario": "7c",
+  "jobId": "restore-d82ae5ff-6eab-4cc9-84b9-7229d3c262ad",
+  "storeState": {
+    "stalled": true,
+    "status": "running"
+  },
+  "assertions": [
+    "store.stalled=true after setStalled(jobId, true)",
+    "test endpoint exposes raw stalled field for signal verification",
+    "SSE stream delivers stalled events published by RestoreWorker.checkStall()"
+  ],
+  "timestamp": "2026-05-03T17:16:55.823Z"
+}

@@ -1,0 +1,38 @@
+{
+  "description": "GET /restore/jobs/:id returns job with all wizard selections intact",
+  "scenario": "1b",
+  "jobId": "restore-7b3aa0a4-bb08-43b7-b66e-cbe2109581ee",
+  "response": {
+    "status": 200,
+    "body": {
+      "jobId": "restore-7b3aa0a4-bb08-43b7-b66e-cbe2109581ee",
+      "sourceBackupPointId": "bp-wizard-002",
+      "createdAt": "2026-05-03T17:16:55.153Z",
+      "scope": {
+        "type": "issues",
+        "issueKeys": [
+          "PROJ-1",
+          "PROJ-2"
+        ]
+      },
+      "destination": {
+        "type": "export"
+      },
+      "conflictMode": "override",
+      "status": "completed",
+      "currentPhase": null,
+      "phaseProgress": [],
+      "errorCount": 0,
+      "failureDiagnostic": null,
+      "adfMediaWarningEmitted": false,
+      "trashWindowBlocked": false
+    }
+  },
+  "assertions": [
+    "GET returns same jobId as POST response",
+    "scope (issues + issueKeys) persisted correctly",
+    "destination (export) persisted correctly",
+    "conflictMode (override) persisted correctly"
+  ],
+  "timestamp": "2026-05-03T17:16:55.158Z"
+}

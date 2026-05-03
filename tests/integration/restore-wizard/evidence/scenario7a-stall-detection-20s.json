@@ -1,0 +1,19 @@
+{
+  "description": "RestoreWorker checkStall() marks job stalled when heartbeat gap >20s; stalled event emitted on bus and [jira-restore] log line captured",
+  "scenario": "7a",
+  "jobId": "restore-stall-playwright",
+  "fakeNowMs": 25000,
+  "lastHeartbeatAt": 0,
+  "heartbeatGapMs": 25000,
+  "staleThresholdMs": 20000,
+  "stalledEventsEmitted": 1,
+  "stalledJobStoreValue": true,
+  "capturedStalledLog": "[jira-restore] job.stalled jobId=restore-stall-playwright lastHeartbeatAgeMs=25000",
+  "uiBehaviour": "StepExecute component shows data-testid=\"stalled-banner\" when no poll update for >20s",
+  "assertions": [
+    "stalledEvents.length === 1 (event emitted on bus)",
+    "store.stalled === true",
+    "[jira-restore] job.stalled log line emitted with correct jobId and lastHeartbeatAgeMs"
+  ],
+  "timestamp": "2026-05-03T17:16:55.802Z"
+}

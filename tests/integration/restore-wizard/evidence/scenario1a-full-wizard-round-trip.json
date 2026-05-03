@@ -1,0 +1,59 @@
+{
+  "description": "Full wizard round-trip: all six selections persist in POST /restore/jobs 201 response",
+  "scenario": "1a",
+  "request": {
+    "sourceBackupPointId": "bp-wizard-001",
+    "scope": {
+      "type": "projects",
+      "projectKeys": [
+        "PROJ",
+        "OPS"
+      ]
+    },
+    "destination": {
+      "type": "alternate",
+      "targetProjectKey": "RESTORE-TARGET"
+    },
+    "conflictMode": "skip"
+  },
+  "response": {
+    "status": 201,
+    "body": {
+      "jobId": "restore-e38c61eb-3238-4f02-a12e-8cde123b16c3",
+      "sourceBackupPointId": "bp-wizard-001",
+      "createdAt": "2026-05-03T17:16:55.115Z",
+      "scope": {
+        "type": "projects",
+        "projectKeys": [
+          "PROJ",
+          "OPS"
+        ]
+      },
+      "destination": {
+        "type": "alternate",
+        "targetProjectKey": "RESTORE-TARGET"
+      },
+      "conflictMode": "skip",
+      "status": "pending",
+      "currentPhase": null,
+      "phaseProgress": [],
+      "errorCount": 0,
+      "failureDiagnostic": null,
+      "adfMediaWarningEmitted": false,
+      "trashWindowBlocked": false
+    }
+  },
+  "assertions": [
+    "jobId starts with \"restore-\"",
+    "sourceBackupPointId round-trips unchanged",
+    "scope (type=projects, projectKeys) round-trips",
+    "destination (type=alternate, targetProjectKey) round-trips",
+    "conflictMode=skip round-trips",
+    "status=pending on creation",
+    "currentPhase=null on creation",
+    "phaseProgress=[] on creation",
+    "errorCount=0 on creation",
+    "trashWindowBlocked=false on creation"
+  ],
+  "timestamp": "2026-05-03T17:16:55.125Z"
+}

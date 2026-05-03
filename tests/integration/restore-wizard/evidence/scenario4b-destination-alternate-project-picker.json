@@ -1,0 +1,27 @@
+{
+  "description": "Destination=alternate → targetProjectKey present in response (drives UI project picker)",
+  "scenario": "4b",
+  "request": {
+    "sourceBackupPointId": "bp-dest-alternate",
+    "scope": {
+      "type": "all"
+    },
+    "destination": {
+      "type": "alternate",
+      "targetProjectKey": "OPS"
+    },
+    "conflictMode": "skip"
+  },
+  "response": {
+    "status": 201,
+    "destination": {
+      "type": "alternate",
+      "targetProjectKey": "OPS"
+    }
+  },
+  "assertions": [
+    "destination.type=alternate persists",
+    "destination.targetProjectKey=OPS persists (drives the Alternate project picker in UI)"
+  ],
+  "timestamp": "2026-05-03T17:16:55.492Z"
+}

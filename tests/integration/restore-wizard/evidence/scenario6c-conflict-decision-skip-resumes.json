@@ -1,0 +1,15 @@
+{
+  "description": "POST /decisions with skip also transitions job from awaiting_decision → running",
+  "scenario": "6c",
+  "jobId": "restore-04d991e1-32fa-473b-b17a-4e0b2c586ee8",
+  "conflictId": "conflict-ask-003",
+  "decisionSent": "skip",
+  "response": {
+    "status": "running",
+    "decision": "skip"
+  },
+  "assertions": [
+    "decision=skip → status=running"
+  ],
+  "timestamp": "2026-05-03T17:16:55.728Z"
+}

@@ -1,0 +1,254 @@
+{
+  "sprint": "Sprint 11 — Restore Wizard UI & Conflict-Mode Foundation",
+  "generatedAt": "2026-05-03T17:16:55.864Z",
+  "totalArtefacts": 20,
+  "dodCoverage": [
+    "Full wizard round-trip: all selections (backupPointId, scope, destination, conflictMode) persist in POST response",
+    "GET /restore/jobs/:id returns the same selections after creation",
+    "Skip is the default conflict mode when conflictMode is omitted",
+    "Default confirmed via GET as well as POST response",
+    "conflictMode=override round-trips in POST and GET",
+    "conflictMode=skip round-trips in POST and GET",
+    "conflictMode=ask round-trips in POST and GET",
+    "destination=original (scope=all skips trash check) → 201",
+    "destination=alternate with targetProjectKey → 201, targetProjectKey in response (drives UI project picker)",
+    "destination=export → 201, no targetProjectKey, no Jira write calls (skeleton worker)",
+    "destination=alternate without targetProjectKey → 400 INVALID_DESTINATION",
+    "Trash-window block: 409 TRASH_WINDOW_BLOCK with alternate-location guidance copy",
+    "Trash-window block: affectedProjectKeys present",
+    "Original stays blocked on repeated attempts",
+    "Alternate destination is NOT blocked for trashed project",
+    "Export destination is NOT blocked for trashed project",
+    "Ask-mode job transitions to awaiting_decision when conflict seeded",
+    "POST /decisions with override → status=running",
+    "POST /decisions with skip → status=running",
+    "POST /decisions when not awaiting_decision → 409 INVALID_STATE",
+    "checkStall() marks stalled=true after >20s gap + emits bus event + log",
+    "Heartbeat recovery clears stalled flag + emits recovery log",
+    "store.stalled readable via test endpoint for signal verification"
+  ],
+  "artefacts": [
+    {
+      "file": "scenario1a-full-wizard-round-trip.json",
+      "scenario": "1a",
+      "description": "Full wizard round-trip: all six selections persist in POST /restore/jobs 201 response",
+      "assertions": [
+        "jobId starts with \"restore-\"",
+        "sourceBackupPointId round-trips unchanged",
+        "scope (type=projects, projectKeys) round-trips",
+        "destination (type=alternate, targetProjectKey) round-trips",
+        "conflictMode=skip round-trips",
+        "status=pending on creation",
+        "currentPhase=null on creation",
+        "phaseProgress=[] on creation",
+        "errorCount=0 on creation",
+        "trashWindowBlocked=false on creation"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.125Z"
+    },
+    {
+      "file": "scenario1b-get-job-after-create.json",
+      "scenario": "1b",
+      "description": "GET /restore/jobs/:id returns job with all wizard selections intact",
+      "assertions": [
+        "GET returns same jobId as POST response",
+        "scope (issues + issueKeys) persisted correctly",
+        "destination (export) persisted correctly",
+        "conflictMode (override) persisted correctly"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.158Z"
+    },
+    {
+      "file": "scenario2a-skip-default-conflict-mode.json",
+      "scenario": "2a",
+      "description": "Skip is the default conflict mode when conflictMode is omitted from POST /restore/jobs",
+      "assertions": [
+        "conflictMode=skip when not supplied in request body",
+        "This mirrors the RestoreWizard UI where Skip is pre-selected as the default"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.205Z"
+    },
+    {
+      "file": "scenario2b-skip-default-persisted.json",
+      "scenario": "2b",
+      "description": "GET /restore/jobs/:id confirms skip default persists in store",
+      "assertions": [
+        "GET returns conflictMode=skip after omitting conflictMode on POST"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.227Z"
+    },
+    {
+      "file": "scenario3-all-conflict-modes-round-trip.json",
+      "scenario": "3",
+      "description": "All three conflict modes (override, skip, ask) round-trip correctly through POST and GET",
+      "assertions": [
+        "POST with conflictMode=override → 201 + GET returns override",
+        "POST with conflictMode=skip → 201 + GET returns skip",
+        "POST with conflictMode=ask → 201 + GET returns ask"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.401Z"
+    },
+    {
+      "file": "scenario4a-destination-original.json",
+      "scenario": "4a",
+      "description": "Destination=original with scope=all (no trash check) → 201 job created",
+      "assertions": [
+        "destination.type=original persists in response",
+        "scope=all skips the trash-window check (no Jira API call)"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.477Z"
+    },
+    {
+      "file": "scenario4b-destination-alternate-project-picker.json",
+      "scenario": "4b",
+      "description": "Destination=alternate → targetProjectKey present in response (drives UI project picker)",
+      "assertions": [
+        "destination.type=alternate persists",
+        "destination.targetProjectKey=OPS persists (drives the Alternate project picker in UI)"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.492Z"
+    },
+    {
+      "file": "scenario4c-destination-export-no-jira-write.json",
+      "scenario": "4c",
+      "description": "Destination=export → 201 created, no targetProjectKey, RestoreWorker (skeleton) calls no Jira write API",
+      "assertions": [
+        "destination.type=export persists",
+        "no targetProjectKey present on export destination",
+        "RestoreWorker skeleton does not call any Jira write API (Sprint 12 delivers writes)",
+        "GET /restore/jobs/:id returns 200 — job accessible"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.509Z"
+    },
+    {
+      "file": "scenario4d-alternate-missing-target-key.json",
+      "scenario": "4d",
+      "description": "Alternate destination without targetProjectKey → 400 INVALID_DESTINATION",
+      "assertions": [
+        "status === 400",
+        "error === INVALID_DESTINATION",
+        "message references targetProjectKey"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.530Z"
+    },
+    {
+      "file": "scenario5a-trash-window-block-409.json",
+      "scenario": "5a",
+      "description": "POST /restore/jobs with trashed project + original destination → 409 TRASH_WINDOW_BLOCK with alternate-location guidance",
+      "assertions": [
+        "status === 409",
+        "error === TRASH_WINDOW_BLOCK",
+        "message contains \"Atlassian's 60-day trash window\"",
+        "message contains \"'alternate' destination\" (alternate-location guidance)",
+        "affectedProjectKeys contains TRASHED-PROJ"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.554Z"
+    },
+    {
+      "file": "scenario5b-original-stays-blocked.json",
+      "scenario": "5b",
+      "description": "Original destination stays blocked for trashed project — both repeated POSTs return 409",
+      "assertions": [
+        "First POST returns 409",
+        "Repeated POST returns 409 (block persists)"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.569Z"
+    },
+    {
+      "file": "scenario5c-alternate-not-blocked.json",
+      "scenario": "5c",
+      "description": "Alternate destination succeeds even when project is in trash window — user can restore to a different location",
+      "assertions": [
+        "POST with destination=alternate → 201 (no trash check for alternate)",
+        "User can proceed with restore after switching from Original to Alternate"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.595Z"
+    },
+    {
+      "file": "scenario5d-export-not-blocked.json",
+      "scenario": "5d",
+      "description": "Export destination succeeds for trashed project — no Jira in-place write, no trash check",
+      "assertions": [
+        "POST with destination=export → 201 regardless of project trash status"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.607Z"
+    },
+    {
+      "file": "scenario6a-ask-mode-awaiting-decision.json",
+      "scenario": "6a",
+      "description": "Ask-mode job seeds to awaiting_decision — UI surfaces conflict decision prompt",
+      "assertions": [
+        "conflictMode=ask round-trips from POST",
+        "After seeding awaiting_decision + conflict, GET returns status=awaiting_decision",
+        "UI shows data-testid=\"conflict-prompt\" when status=awaiting_decision"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.635Z"
+    },
+    {
+      "file": "scenario6b-conflict-decision-override-resumes.json",
+      "scenario": "6b",
+      "description": "POST /decisions with override transitions job from awaiting_decision → running",
+      "assertions": [
+        "POST /decisions returns 200",
+        "response.decision=override",
+        "response.status=running",
+        "GET /restore/jobs/:id confirms status=running after decision"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.679Z"
+    },
+    {
+      "file": "scenario6c-conflict-decision-skip-resumes.json",
+      "scenario": "6c",
+      "description": "POST /decisions with skip also transitions job from awaiting_decision → running",
+      "assertions": [
+        "decision=skip → status=running"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.728Z"
+    },
+    {
+      "file": "scenario6d-conflict-decision-invalid-state.json",
+      "scenario": "6d",
+      "description": "POST /decisions when job is not awaiting_decision → 409 INVALID_STATE",
+      "assertions": [
+        "status === 409",
+        "error === INVALID_STATE",
+        "message contains \"Current status:\" (references the current non-awaiting status)"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.764Z"
+    },
+    {
+      "file": "scenario7a-stall-detection-20s.json",
+      "scenario": "7a",
+      "description": "RestoreWorker checkStall() marks job stalled when heartbeat gap >20s; stalled event emitted on bus and [jira-restore] log line captured",
+      "assertions": [
+        "stalledEvents.length === 1 (event emitted on bus)",
+        "store.stalled === true",
+        "[jira-restore] job.stalled log line emitted with correct jobId and lastHeartbeatAgeMs"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.802Z"
+    },
+    {
+      "file": "scenario7b-stall-recovery-on-heartbeat.json",
+      "scenario": "7b",
+      "description": "After stall, next heartbeat clears stalled flag and emits [jira-restore] job.recovered log",
+      "assertions": [
+        "stall event emitted at t=25s",
+        "heartbeat event emitted at t=30s",
+        "stalled flag cleared after recovery",
+        "[jira-restore] job.recovered log emitted"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.814Z"
+    },
+    {
+      "file": "scenario7c-sse-stalled-event-integration.json",
+      "scenario": "7c",
+      "description": "Stalled flag set in RestoreJobStore (via setStalled) is readable via test endpoint; SSE stream publishes stalled events via RestoreEventBus",
+      "assertions": [
+        "store.stalled=true after setStalled(jobId, true)",
+        "test endpoint exposes raw stalled field for signal verification",
+        "SSE stream delivers stalled events published by RestoreWorker.checkStall()"
+      ],
+      "capturedAt": "2026-05-03T17:16:55.823Z"
+    }
+  ]
+}

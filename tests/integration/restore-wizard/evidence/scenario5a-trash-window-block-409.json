@@ -1,0 +1,36 @@
+{
+  "description": "POST /restore/jobs with trashed project + original destination → 409 TRASH_WINDOW_BLOCK with alternate-location guidance",
+  "scenario": "5a",
+  "trashedProject": "TRASHED-PROJ",
+  "request": {
+    "sourceBackupPointId": "bp-trash-001",
+    "scope": {
+      "type": "projects",
+      "projectKeys": [
+        "TRASHED-PROJ"
+      ]
+    },
+    "destination": {
+      "type": "original"
+    },
+    "conflictMode": "skip"
+  },
+  "response": {
+    "status": 409,
+    "body": {
+      "error": "TRASH_WINDOW_BLOCK",
+      "message": "Project 'TRASHED-PROJ' is currently in Atlassian's 60-day trash window and cannot be restored in place. Use 'alternate' destination or wait for an admin to restore the project from Atlassian trash.",
+      "affectedProjectKeys": [
+        "TRASHED-PROJ"
+      ]
+    }
+  },
+  "assertions": [
+    "status === 409",
+    "error === TRASH_WINDOW_BLOCK",
+    "message contains \"Atlassian's 60-day trash window\"",
+    "message contains \"'alternate' destination\" (alternate-location guidance)",
+    "affectedProjectKeys contains TRASHED-PROJ"
+  ],
+  "timestamp": "2026-05-03T17:16:55.554Z"
+}

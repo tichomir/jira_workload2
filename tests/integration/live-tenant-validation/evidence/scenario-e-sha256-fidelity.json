@@ -1,6 +1,6 @@
 {
   "scenario": "Scenario E: Attachment Byte-Fidelity (SHA-256)",
-  "generatedAt": "2026-05-03T16:57:38.480Z",
+  "generatedAt": "2026-05-03T17:10:49.481Z",
   "attachment": {
     "attachmentId": "att-001",
     "filename": "screenshot.png",

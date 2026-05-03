@@ -1,0 +1,31 @@
+{
+  "description": "Alternate destination succeeds even when project is in trash window — user can restore to a different location",
+  "scenario": "5c",
+  "trashedProject": "TRASHED-PROJ",
+  "request": {
+    "sourceBackupPointId": "bp-trash-003",
+    "scope": {
+      "type": "projects",
+      "projectKeys": [
+        "TRASHED-PROJ"
+      ]
+    },
+    "destination": {
+      "type": "alternate",
+      "targetProjectKey": "RESTORE-TARGET"
+    },
+    "conflictMode": "skip"
+  },
+  "response": {
+    "status": 201,
+    "destination": {
+      "type": "alternate",
+      "targetProjectKey": "RESTORE-TARGET"
+    }
+  },
+  "assertions": [
+    "POST with destination=alternate → 201 (no trash check for alternate)",
+    "User can proceed with restore after switching from Original to Alternate"
+  ],
+  "timestamp": "2026-05-03T17:16:55.595Z"
+}

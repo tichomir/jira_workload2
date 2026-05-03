@@ -1,0 +1,25 @@
+{
+  "description": "Destination=original with scope=all (no trash check) → 201 job created",
+  "scenario": "4a",
+  "request": {
+    "sourceBackupPointId": "bp-dest-original",
+    "scope": {
+      "type": "all"
+    },
+    "destination": {
+      "type": "original"
+    },
+    "conflictMode": "skip"
+  },
+  "response": {
+    "status": 201,
+    "destination": {
+      "type": "original"
+    }
+  },
+  "assertions": [
+    "destination.type=original persists in response",
+    "scope=all skips the trash-window check (no Jira API call)"
+  ],
+  "timestamp": "2026-05-03T17:16:55.477Z"
+}

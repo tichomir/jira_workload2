@@ -1,0 +1,23 @@
+{
+  "description": "Skip is the default conflict mode when conflictMode is omitted from POST /restore/jobs",
+  "scenario": "2a",
+  "request": {
+    "sourceBackupPointId": "bp-default-mode",
+    "scope": {
+      "type": "all"
+    },
+    "destination": {
+      "type": "export"
+    }
+  },
+  "response": {
+    "status": 201,
+    "conflictMode": "skip",
+    "jobId": "restore-afcc8899-1801-4a51-920c-cf23bfa44a7d"
+  },
+  "assertions": [
+    "conflictMode=skip when not supplied in request body",
+    "This mirrors the RestoreWizard UI where Skip is pre-selected as the default"
+  ],
+  "timestamp": "2026-05-03T17:16:55.205Z"
+}

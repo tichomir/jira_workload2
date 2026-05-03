@@ -1,0 +1,27 @@
+{
+  "description": "After stall, next heartbeat clears stalled flag and emits [jira-restore] job.recovered log",
+  "scenario": "7b",
+  "jobId": "restore-stall-recovery",
+  "timeline": [
+    {
+      "action": "checkStall at t=25000ms",
+      "result": "stalled=true"
+    },
+    {
+      "action": "emitHeartbeat at t=30000ms",
+      "result": "stalled=false"
+    }
+  ],
+  "eventSequence": [
+    "stalled",
+    "heartbeat"
+  ],
+  "recoveryLog": "[jira-restore] job.recovered jobId=restore-stall-recovery",
+  "assertions": [
+    "stall event emitted at t=25s",
+    "heartbeat event emitted at t=30s",
+    "stalled flag cleared after recovery",
+    "[jira-restore] job.recovered log emitted"
+  ],
+  "timestamp": "2026-05-03T17:16:55.814Z"
+}

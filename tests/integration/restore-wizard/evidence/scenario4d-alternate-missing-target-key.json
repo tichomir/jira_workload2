@@ -1,0 +1,17 @@
+{
+  "description": "Alternate destination without targetProjectKey → 400 INVALID_DESTINATION",
+  "scenario": "4d",
+  "response": {
+    "status": 400,
+    "body": {
+      "error": "INVALID_DESTINATION",
+      "message": "targetProjectKey is required when destination.type is 'alternate'."
+    }
+  },
+  "assertions": [
+    "status === 400",
+    "error === INVALID_DESTINATION",
+    "message references targetProjectKey"
+  ],
+  "timestamp": "2026-05-03T17:16:55.530Z"
+}

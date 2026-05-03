@@ -1,0 +1,13 @@
+{
+  "description": "Original destination stays blocked for trashed project — both repeated POSTs return 409",
+  "scenario": "5b",
+  "trashedProject": "TRASHED-PROJ",
+  "attempt1Status": 409,
+  "attempt2Status": 409,
+  "uiImplication": "UI disables Original radio button when TRASH_WINDOW_BLOCK received (data-testid=\"dest-original\" disabled)",
+  "assertions": [
+    "First POST returns 409",
+    "Repeated POST returns 409 (block persists)"
+  ],
+  "timestamp": "2026-05-03T17:16:55.569Z"
+}

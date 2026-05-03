@@ -339,6 +339,154 @@ export async function fetchProjectIssues(
   return res.json() as Promise<IssuesResponse>;
 }
 
+// ── Restore ───────────────────────────────────────────────────────────────────
+
+export type RestoreScope =
+  | { type: 'all' }
+  | { type: 'projects'; projectKeys: string[] }
+  | { type: 'issues'; issueKeys: string[] };
+
+export type RestoreDestination =
+  | { type: 'original' }
+  | { type: 'alternate'; targetProjectKey: string }
+  | { type: 'export' };
+
+export type ConflictMode = 'override' | 'skip' | 'ask';
+
+export type RestoreJobStatus =
+  | 'pending'
+  | 'running'
+  | 'awaiting_decision'
+  | 'completed'
+  | 'completed_with_errors'
+  | 'failed';
+
+export type RestorePhase =
+  | 'project'
+  | 'workflow'
+  | 'custom_field'
+  | 'board'
+  | 'sprint'
+  | 'issue_body'
+  | 'post_issue';
+
+export interface PhaseProgress {
+  phase: RestorePhase;
+  status: 'pending' | 'running' | 'completed' | 'completed_with_errors' | 'failed';
+  total: number;
+  processed: number;
+  errorCount: number;
+  startedAt: string | null;
+  completedAt: string | null;
+}
+
+export interface RestoreJob {
+  jobId: string;
+  sourceBackupPointId: string;
+  createdAt: string;
+  scope: RestoreScope;
+  destination: RestoreDestination;
+  conflictMode: ConflictMode;
+  status: RestoreJobStatus;
+  currentPhase: RestorePhase | null;
+  phaseProgress: PhaseProgress[];
+  errorCount: number;
+  failureDiagnostic: string | null;
+  adfMediaWarningEmitted: boolean;
+  trashWindowBlocked: boolean;
+}
+
+export interface CreateRestoreJobPayload {
+  sourceBackupPointId: string;
+  scope: RestoreScope;
+  destination: RestoreDestination;
+  conflictMode: ConflictMode;
+}
+
+export interface TrashWindowBlockError {
+  error: 'TRASH_WINDOW_BLOCK';
+  message: string;
+  affectedProjectKeys: string[];
+}
+
+export class RestoreApiError extends Error {
+  constructor(
+    public readonly status: number,
+    public readonly code: string,
+    message: string,
+    public readonly affectedProjectKeys?: string[],
+  ) {
+    super(message);
+    this.name = 'RestoreApiError';
+  }
+}
+
+/**
+ * Creates a new restore job.
+ * Throws RestoreApiError with code='TRASH_WINDOW_BLOCK' when the destination
+ * project is in Atlassian's 60-day trash window.
+ */
+export async function createRestoreJob(
+  payload: CreateRestoreJobPayload,
+): Promise<RestoreJob> {
+  const res = await fetch('/restore/jobs', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({})) as { error?: string; message?: string; affectedProjectKeys?: string[] };
+    throw new RestoreApiError(
+      res.status,
+      body.error ?? 'UNKNOWN',
+      body.message ?? `createRestoreJob failed: ${res.status}`,
+      body.affectedProjectKeys,
+    );
+  }
+
+  return res.json() as Promise<RestoreJob>;
+}
+
+/**
+ * Polls the current state of a restore job.
+ */
+export async function fetchRestoreJob(jobId: string): Promise<RestoreJob> {
+  const res = await fetch(`/restore/jobs/${encodeURIComponent(jobId)}`);
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({})) as { error?: string; message?: string };
+    throw new RestoreApiError(
+      res.status,
+      body.error ?? 'UNKNOWN',
+      body.message ?? `fetchRestoreJob failed: ${res.status}`,
+    );
+  }
+  return res.json() as Promise<RestoreJob>;
+}
+
+/**
+ * Resolves an Ask-mode conflict decision.
+ */
+export async function resolveConflict(
+  jobId: string,
+  conflictId: string,
+  decision: 'override' | 'skip',
+): Promise<void> {
+  const res = await fetch(`/restore/jobs/${encodeURIComponent(jobId)}/decisions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ conflictId, decision }),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({})) as { error?: string; message?: string };
+    throw new RestoreApiError(
+      res.status,
+      body.error ?? 'UNKNOWN',
+      body.message ?? `resolveConflict failed: ${res.status}`,
+    );
+  }
+}
+
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
 /** Strips oauth_* query params from the URL without triggering a page reload. */

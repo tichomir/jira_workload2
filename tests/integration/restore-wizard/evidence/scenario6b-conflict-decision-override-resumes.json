@@ -1,0 +1,24 @@
+{
+  "description": "POST /decisions with override transitions job from awaiting_decision → running",
+  "scenario": "6b",
+  "jobId": "restore-1299f450-71eb-47fa-8ec6-89a86e79d009",
+  "conflictId": "conflict-ask-002",
+  "decisionSent": "override",
+  "response": {
+    "status": 200,
+    "body": {
+      "jobId": "restore-1299f450-71eb-47fa-8ec6-89a86e79d009",
+      "conflictId": "conflict-ask-002",
+      "decision": "override",
+      "status": "running"
+    }
+  },
+  "postDecisionStatus": "running",
+  "assertions": [
+    "POST /decisions returns 200",
+    "response.decision=override",
+    "response.status=running",
+    "GET /restore/jobs/:id confirms status=running after decision"
+  ],
+  "timestamp": "2026-05-03T17:16:55.679Z"
+}

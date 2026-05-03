@@ -1,0 +1,10 @@
+{
+  "description": "GET /restore/jobs/:id confirms skip default persists in store",
+  "scenario": "2b",
+  "jobId": "restore-09424ba5-c0c5-4019-9d3a-1cc3e076f180",
+  "conflictMode": "skip",
+  "assertions": [
+    "GET returns conflictMode=skip after omitting conflictMode on POST"
+  ],
+  "timestamp": "2026-05-03T17:16:55.227Z"
+}

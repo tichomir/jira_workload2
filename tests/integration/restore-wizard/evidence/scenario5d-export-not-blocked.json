@@ -1,0 +1,24 @@
+{
+  "description": "Export destination succeeds for trashed project — no Jira in-place write, no trash check",
+  "scenario": "5d",
+  "request": {
+    "sourceBackupPointId": "bp-trash-004",
+    "scope": {
+      "type": "projects",
+      "projectKeys": [
+        "TRASHED-PROJ"
+      ]
+    },
+    "destination": {
+      "type": "export"
+    },
+    "conflictMode": "skip"
+  },
+  "response": {
+    "status": 201
+  },
+  "assertions": [
+    "POST with destination=export → 201 regardless of project trash status"
+  ],
+  "timestamp": "2026-05-03T17:16:55.607Z"
+}

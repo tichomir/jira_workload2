@@ -1,0 +1,13 @@
+{
+  "description": "Ask-mode job seeds to awaiting_decision — UI surfaces conflict decision prompt",
+  "scenario": "6a",
+  "jobId": "restore-0d99a44a-37db-4a36-b3d2-25804836fc3c",
+  "conflictId": "conflict-ask-001",
+  "jobStatus": "awaiting_decision",
+  "assertions": [
+    "conflictMode=ask round-trips from POST",
+    "After seeding awaiting_decision + conflict, GET returns status=awaiting_decision",
+    "UI shows data-testid=\"conflict-prompt\" when status=awaiting_decision"
+  ],
+  "timestamp": "2026-05-03T17:16:55.635Z"
+}

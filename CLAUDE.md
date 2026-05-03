@@ -942,3 +942,311 @@ Deliverables:
 - ✅ Phase 2 backlog grooming + Tihomir sprint kickoff handoff brief — Software Architect (⚡ Quick, 2 SP)
 
 ---
+### Sprint 15 - Documentation Canonicalisation | 2026-05-03 | ⏳ in progress | 16 SP est.
+**Goal:** [Phase: Documentation Canonicalisation — Retroactive]
+
+Bring jira_workload_2's documentation up to the canonical five-doc
+standard. Every canonical doc must be present at the project root,
+reflect the as-shipped state of the codebase across all 14 sprints
+of the MVP, and be operator-ready (not draft / placeholder).
+
+INPUT MATERIAL TO CONSULT (read first, then write):
+- /Users/t.hadzhiev/coding/jira_workload_2/README.md (current
+  17-line stub — replace, do not extend)
+- /Users/t.hadzhiev/coding/jira_workload_2/docs/runbook.md
+  (existing operator-runbook content — fold relevant parts into
+  INSTALL.md / OPERATIONS.md as appropriate)
+- /Users/t.hadzhiev/coding/jira_workload_2/docs/handoff-tihomir.md
+  (Sprint-15 handoff brief — primary source of truth for
+  CHANGELOG.md and ARCHITECTURE.md current-state content)
+- /Users/t.hadzhiev/coding/jira_workload_2/docs/phase2-backlog.md
+  (Phase-2 backlog — informs CHANGELOG "What's Next" + the
+  explicit Phase-1 limitations section)
+- The team's project memory.md (cumulative sprint summaries —
+  source of truth for CHANGELOG entries and breaking-change
+  markers across the 14 sprints)
+- The codebase itself: package.json, podman-compose.yml,
+  Dockerfile, src/ structure, OAuth flow, restore engine, Object
+  Explorer (verify what was actually shipped vs what the docs
+  claim)
+
+DELIVERABLES (each as its own task):
+
+1. README.md (devops_engineer, 2 SP quick) —
+   30-second pitch + quick-start. What jira_workload_2 is
+   (Atlassian JIRA Cloud backup tool), who it's for (operators
+   running Phase-1 MVP), and how to get it running in 5 minutes
+   (point at INSTALL.md). Include a 1-screen feature matrix:
+   what's IN Phase 1 (Object types, restore modes, OAuth scopes,
+   storage destinations) and what's deferred to Phase 2 (JSM,
+   Audit Log, cross-site restore). REPLACE the existing stub
+   entirely — don't append.
+
+2. INSTALL.md (devops_engineer, 3 SP standard) —
+   Router for runtime variants. Sections:
+   - Prerequisites (Node 20+, Podman 4+, mkcert)
+   - Local development (HTTPS callback via mkcert, OAuth app
+     setup steps in Atlassian Developer Console with the EXACT
+     scope list, env-var reference, podman-compose flow)
+   - Container deployment (production-parity runtime topology,
+     env-var reference, Caddy/HTTPS termination, persistent
+     volumes for credentials + manifests)
+   - Operations (where logs go, how to rotate OAuth credentials,
+     how to read the Object Explorer manifest, how to inspect
+     a backup-point ID — fold in the relevant content from
+     existing docs/runbook.md, then DELETE docs/runbook.md and
+     redirect via a stub note in INSTALL.md if needed)
+   No INSTALL-V2.md, no separate OPERATIONS.md — single
+   canonical file per the doc canon.
+
+3. DEMO.md (frontend_developer, 3 SP standard) —
+   Canonical end-to-end walkthrough with screenshots / curl
+   commands at every step:
+   - Connect (OAuth flow, what consent screens look like, what
+     to do if a scope is rejected)
+   - Browse the Object Explorer
+   - Trigger a backup (which scopes get exercised, how to read
+     the progress heartbeat, how to read the per-item status)
+   - Inspect a backup-point ID (where to find it in the GUI)
+   - Trigger a restore (Skip / Override / Ask conflict modes,
+     trash-window-block behaviour, dependency ordering)
+   - Verify integrity (round-trip checks)
+   Aim for 8-12 screenshots, each with 1-2 sentences of context.
+
+4. ARCHITECTURE.md (software_architect, 5 SP deep) —
+   Component map + data flow + key invariants. Sections:
+   - Component map (frontend / backend services, OAuth client,
+     storage tier, queue, scheduler) with arrows
+   - Data flow: backup path (discovery → context-node capture →
+     issue+attachment fetch → manifest write); restore path
+     (validation → dependency-ordered writer → conflict
+     resolution → trash-window block check)
+   - Object model (every Object Type from the JIRA Cloud spec
+     with its fields, dependencies, restore order)
+   - Key invariants (the 7-8 contracts the codebase enforces:
+     manifest persisted ⇔ job complete; GUI status equals log
+     status; one canonical authenticated HTTP client; refresh-
+     interceptor-on-401 centralised; coverage completeness =
+     every configured custom-field value captured; etc.)
+   - Integration boundaries (Atlassian API endpoints used,
+     deprecated endpoints we explicitly migrated off, scope
+     namespaces requested + their pairing)
+   Source the invariants from team memory.md across the 14
+   sprints.
+
+5. CHANGELOG.md (devops_engineer, 2 SP quick) —
+   Consolidated history of the MVP build, organised by Phase
+   (1.0.0-phase-1 through 1.0.0-phase-6, or whatever the
+   sprint numbering implies). For each phase: a section
+   header with date, a list of "Added / Changed / Fixed /
+   Removed" bullets. Mark every breaking semantic with a
+   **BREAKING** prefix and include migration notes. Also list
+   the Phase-1 limitations explicitly (what is intentionally
+   not in this release — sourced from docs/phase2-backlog.md
+   and handoff-tihomir.md). Single canonical file.
+
+6. Inline docs sweep (qa_engineer, 1 SP quick) —
+   Walk the src/ tree. For every public function, class, or
+   exported endpoint: ensure a docstring or JSDoc exists that
+   names what it does, what it returns, non-obvious
+   preconditions, and documented failure modes. Do not write
+   net-new prose — just fill in the bare-minimum docstring
+   stubs. Flag any function or endpoint that has been written
+   without a docstring as a P1 carry-forward to its owner role
+   for proper documentation in the next sprint.
+
+NON-GOALS for this sprint:
+- New code features (this is a documentation sprint only).
+- Re-architecting existing components.
+- Writing Phase-2 design docs.
+
+ACCEPTANCE CRITERIA (Definition of Done — execution evidence):
+- Each canonical doc exists at the project root with the
+  expected sections.
+- README.md is no longer the 17-line stub — minimum 60 lines
+  of useful content.
+- INSTALL.md walks through all three runtime variants (local,
+  container, prod) without referring out to other files.
+- CHANGELOG.md has at least one entry per Phase, with at least
+  one explicit **BREAKING** marker (auth scope expansions across
+  sprints qualify).
+- ARCHITECTURE.md includes the component-map ASCII diagram +
+  the 7-8 invariants list.
+- docs/runbook.md is either deleted (content folded into
+  INSTALL.md) or reduced to a redirect stub.
+- The qa_engineer's docstring sweep produces a list (in the
+  carry-forward block) of every undocumented public function
+  found, organised by file.
+
+The doc canon's "single canonical file, no proliferation" rule
+applies — do not create README-V2.md, INSTALL-NEW.md, or any
+other parallel file. Replace, don't append.
+
+_Sprint started. Role checkpoints below will update as work completes._
+
+---
+### Sprint 15 - Documentation Canonicalisation | 2026-05-03 | ✅ Frontend Developer checkpoint (1/1 done)
+
+- ✅ Author DEMO.md end-to-end walkthrough with screenshots (◈ Standard, 3 SP)
+
+---
+### Sprint 15 - Documentation Canonicalisation | 2026-05-03 | ✅ Software Architect checkpoint (1/1 done)
+
+- ✅ Author ARCHITECTURE.md with component map, data flows, and invariants (◉ Deep, 5 SP)
+
+---
+### Sprint 15 - Documentation Canonicalisation | 2026-05-03 | ✅ Devops Engineer checkpoint (3/3 done)
+
+- ✅ Replace README.md stub with canonical pitch + quick-start + feature matrix (⚡ Quick, 2 SP)
+- ✅ Author INSTALL.md (local + container + prod + ops) and retire docs/runbook.md (◈ Standard, 3 SP)
+- ✅ Author CHANGELOG.md and run inline-docstring sweep with carry-forward list (◈ Standard, 3 SP)
+
+---
+### Sprint 15 - Documentation Canonicalisation | 2026-05-03 | ✅ done | 16 SP
+**Goal:** [Phase: Documentation Canonicalisation — Retroactive]
+
+Bring jira_workload_2's documentation up to the canonical five-doc
+standard. Every canonical doc must be present at the project root,
+reflect the as-shipped state of the codebase across all 14 sprints
+of the MVP, and be operator-ready (not draft / placeholder).
+
+INPUT MATERIAL TO CONSULT (read first, then write):
+- /Users/t.hadzhiev/coding/jira_workload_2/README.md (current
+  17-line stub — replace, do not extend)
+- /Users/t.hadzhiev/coding/jira_workload_2/docs/runbook.md
+  (existing operator-runbook content — fold relevant parts into
+  INSTALL.md / OPERATIONS.md as appropriate)
+- /Users/t.hadzhiev/coding/jira_workload_2/docs/handoff-tihomir.md
+  (Sprint-15 handoff brief — primary source of truth for
+  CHANGELOG.md and ARCHITECTURE.md current-state content)
+- /Users/t.hadzhiev/coding/jira_workload_2/docs/phase2-backlog.md
+  (Phase-2 backlog — informs CHANGELOG "What's Next" + the
+  explicit Phase-1 limitations section)
+- The team's project memory.md (cumulative sprint summaries —
+  source of truth for CHANGELOG entries and breaking-change
+  markers across the 14 sprints)
+- The codebase itself: package.json, podman-compose.yml,
+  Dockerfile, src/ structure, OAuth flow, restore engine, Object
+  Explorer (verify what was actually shipped vs what the docs
+  claim)
+
+DELIVERABLES (each as its own task):
+
+1. README.md (devops_engineer, 2 SP quick) —
+   30-second pitch + quick-start. What jira_workload_2 is
+   (Atlassian JIRA Cloud backup tool), who it's for (operators
+   running Phase-1 MVP), and how to get it running in 5 minutes
+   (point at INSTALL.md). Include a 1-screen feature matrix:
+   what's IN Phase 1 (Object types, restore modes, OAuth scopes,
+   storage destinations) and what's deferred to Phase 2 (JSM,
+   Audit Log, cross-site restore). REPLACE the existing stub
+   entirely — don't append.
+
+2. INSTALL.md (devops_engineer, 3 SP standard) —
+   Router for runtime variants. Sections:
+   - Prerequisites (Node 20+, Podman 4+, mkcert)
+   - Local development (HTTPS callback via mkcert, OAuth app
+     setup steps in Atlassian Developer Console with the EXACT
+     scope list, env-var reference, podman-compose flow)
+   - Container deployment (production-parity runtime topology,
+     env-var reference, Caddy/HTTPS termination, persistent
+     volumes for credentials + manifests)
+   - Operations (where logs go, how to rotate OAuth credentials,
+     how to read the Object Explorer manifest, how to inspect
+     a backup-point ID — fold in the relevant content from
+     existing docs/runbook.md, then DELETE docs/runbook.md and
+     redirect via a stub note in INSTALL.md if needed)
+   No INSTALL-V2.md, no separate OPERATIONS.md — single
+   canonical file per the doc canon.
+
+3. DEMO.md (frontend_developer, 3 SP standard) —
+   Canonical end-to-end walkthrough with screenshots / curl
+   commands at every step:
+   - Connect (OAuth flow, what consent screens look like, what
+     to do if a scope is rejected)
+   - Browse the Object Explorer
+   - Trigger a backup (which scopes get exercised, how to read
+     the progress heartbeat, how to read the per-item status)
+   - Inspect a backup-point ID (where to find it in the GUI)
+   - Trigger a restore (Skip / Override / Ask conflict modes,
+     trash-window-block behaviour, dependency ordering)
+   - Verify integrity (round-trip checks)
+   Aim for 8-12 screenshots, each with 1-2 sentences of context.
+
+4. ARCHITECTURE.md (software_architect, 5 SP deep) —
+   Component map + data flow + key invariants. Sections:
+   - Component map (frontend / backend services, OAuth client,
+     storage tier, queue, scheduler) with arrows
+   - Data flow: backup path (discovery → context-node capture →
+     issue+attachment fetch → manifest write); restore path
+     (validation → dependency-ordered writer → conflict
+     resolution → trash-window block check)
+   - Object model (every Object Type from the JIRA Cloud spec
+     with its fields, dependencies, restore order)
+   - Key invariants (the 7-8 contracts the codebase enforces:
+     manifest persisted ⇔ job complete; GUI status equals log
+     status; one canonical authenticated HTTP client; refresh-
+     interceptor-on-401 centralised; coverage completeness =
+     every configured custom-field value captured; etc.)
+   - Integration boundaries (Atlassian API endpoints used,
+     deprecated endpoints we explicitly migrated off, scope
+     namespaces requested + their pairing)
+   Source the invariants from team memory.md across the 14
+   sprints.
+
+5. CHANGELOG.md (devops_engineer, 2 SP quick) —
+   Consolidated history of the MVP build, organised by Phase
+   (1.0.0-phase-1 through 1.0.0-phase-6, or whatever the
+   sprint numbering implies). For each phase: a section
+   header with date, a list of "Added / Changed / Fixed /
+   Removed" bullets. Mark every breaking semantic with a
+   **BREAKING** prefix and include migration notes. Also list
+   the Phase-1 limitations explicitly (what is intentionally
+   not in this release — sourced from docs/phase2-backlog.md
+   and handoff-tihomir.md). Single canonical file.
+
+6. Inline docs sweep (qa_engineer, 1 SP quick) —
+   Walk the src/ tree. For every public function, class, or
+   exported endpoint: ensure a docstring or JSDoc exists that
+   names what it does, what it returns, non-obvious
+   preconditions, and documented failure modes. Do not write
+   net-new prose — just fill in the bare-minimum docstring
+   stubs. Flag any function or endpoint that has been written
+   without a docstring as a P1 carry-forward to its owner role
+   for proper documentation in the next sprint.
+
+NON-GOALS for this sprint:
+- New code features (this is a documentation sprint only).
+- Re-architecting existing components.
+- Writing Phase-2 design docs.
+
+ACCEPTANCE CRITERIA (Definition of Done — execution evidence):
+- Each canonical doc exists at the project root with the
+  expected sections.
+- README.md is no longer the 17-line stub — minimum 60 lines
+  of useful content.
+- INSTALL.md walks through all three runtime variants (local,
+  container, prod) without referring out to other files.
+- CHANGELOG.md has at least one entry per Phase, with at least
+  one explicit **BREAKING** marker (auth scope expansions across
+  sprints qualify).
+- ARCHITECTURE.md includes the component-map ASCII diagram +
+  the 7-8 invariants list.
+- docs/runbook.md is either deleted (content folded into
+  INSTALL.md) or reduced to a redirect stub.
+- The qa_engineer's docstring sweep produces a list (in the
+  carry-forward block) of every undocumented public function
+  found, organised by file.
+
+The doc canon's "single canonical file, no proliferation" rule
+applies — do not create README-V2.md, INSTALL-NEW.md, or any
+other parallel file. Replace, don't append.
+
+**Delivered:**
+- ✅ Author ARCHITECTURE.md with component map, data flows, and invariants — Software Architect (◉ Deep, 5 SP)
+- ✅ Replace README.md stub with canonical pitch + quick-start + feature matrix — Devops Engineer (⚡ Quick, 2 SP)
+- ✅ Author INSTALL.md (local + container + prod + ops) and retire docs/runbook.md — Devops Engineer (◈ Standard, 3 SP)
+- ✅ Author DEMO.md end-to-end walkthrough with screenshots — Frontend Developer (◈ Standard, 3 SP)
+- ✅ Author CHANGELOG.md and run inline-docstring sweep with carry-forward list — Devops Engineer (◈ Standard, 3 SP)
+
+---

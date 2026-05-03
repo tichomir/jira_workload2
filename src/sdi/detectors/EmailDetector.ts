@@ -1,3 +1,11 @@
+/**
+ * EmailDetector — detects email addresses using RFC-5322-pragmatic pattern.
+ *
+ * Activation: Finding triggers GDPR regulation tag (email = personal data under GDPR Art. 4).
+ * Redaction: matched email addresses are redacted as ****@domain.tld in finding context.
+ * Precondition: input TextChunk must be non-empty plain text (handler responsibility).
+ * Failure modes: none thrown; returns empty array on no match.
+ */
 import { Detector, DetectorId, Finding, RegulationTag, ScanContext } from './types';
 
 // RFC-5322-pragmatic: local-part@domain.tld

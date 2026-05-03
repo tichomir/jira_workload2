@@ -1,3 +1,18 @@
+/**
+ * JiraCredentialRepository — SQLite-backed storage for OAuth and API Token credentials.
+ *
+ * Tables (migrations 001, 002):
+ *   jira_credentials       — OAuth 2.0 (3LO) credentials: cloudId, accessToken, refreshToken
+ *   jira_api_token_creds   — HTTP Basic (API Token) credentials: cloudId, email, apiToken
+ *
+ * Key invariant: rotateTokens() writes both access_token and refresh_token in a single
+ * BEGIN IMMEDIATE transaction before returning — no partial writes (T2 §6 Constraint 4).
+ *
+ * Failure modes:
+ *   - getByCloudId() returns null when no OAuth credential exists for the cloudId.
+ *   - getApiTokenByCloudId() returns null when no API token credential exists.
+ *   - rotateTokens() throws if the cloudId row is not found.
+ */
 import Database from 'better-sqlite3';
 import * as fs from 'fs';
 import * as path from 'path';

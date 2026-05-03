@@ -162,3 +162,52 @@ This is sprint 2 of 2 for the phase. Plan a slice of the deliverables appropriat
 - ✅ Fix: Implement manual API Token connection path with HTTP Basic auth and backend validation — Backend Developer (◈ Standard, 3 SP)
 
 ---
+### Sprint 3 - Project Discovery & JSM Detection | 2026-05-03 | ⏳ in progress | 15 SP est.
+**Goal:** [Phase: Discovery & Context Node Capture — Sprint 1 of 2]
+Implement Project discovery and the full context-node capture pipeline (IssueType, CustomField + FieldConfiguration, Workflow + WorkflowScheme, Board, Sprint) in the strict order required by the restore dependency contract. Custom field context discovery is gated on the custom:true flag.
+
+Deliverables (across all sprints in this phase):
+- Paginated Project discovery via GET /rest/api/3/project/search with All / Selected scope filter
+- JSM project-type detection emitting out-of-scope notice in onboarding
+- Context-node capture pipeline ordered: IssueType → CustomField + FieldConfiguration → Workflow + WorkflowScheme → Project → Board → Sprint
+- Custom field context discovery limited to custom:true fields (system fields skipped)
+- Backup point manifest schema with zero-silent-omission guarantee
+- Pagination termination logic for all list endpoints
+
+This is sprint 1 of 2 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+_Sprint started. Role checkpoints below will update as work completes._
+
+---
+### Sprint 3 - Project Discovery & JSM Detection | 2026-05-03 | ✅ Software Architect checkpoint (1/1 done)
+
+- ✅ Define context-node capture pipeline architecture and manifest schema (⚡ Quick, 2 SP)
+
+---
+### Sprint 3 - Project Discovery & JSM Detection | 2026-05-03 | ✅ Backend Developer checkpoint (1/1 done)
+
+- ✅ JSM project-type detection and out-of-scope manifest annotation (⚡ Quick, 2 SP)
+
+---
+### Sprint 3 - Project Discovery & JSM Detection | 2026-05-03 | ✅ done | 15 SP
+**Goal:** [Phase: Discovery & Context Node Capture — Sprint 1 of 2]
+Implement Project discovery and the full context-node capture pipeline (IssueType, CustomField + FieldConfiguration, Workflow + WorkflowScheme, Board, Sprint) in the strict order required by the restore dependency contract. Custom field context discovery is gated on the custom:true flag.
+
+Deliverables (across all sprints in this phase):
+- Paginated Project discovery via GET /rest/api/3/project/search with All / Selected scope filter
+- JSM project-type detection emitting out-of-scope notice in onboarding
+- Context-node capture pipeline ordered: IssueType → CustomField + FieldConfiguration → Workflow + WorkflowScheme → Project → Board → Sprint
+- Custom field context discovery limited to custom:true fields (system fields skipped)
+- Backup point manifest schema with zero-silent-omission guarantee
+- Pagination termination logic for all list endpoints
+
+This is sprint 1 of 2 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+**Delivered:**
+- ✅ Define context-node capture pipeline architecture and manifest schema — Software Architect (⚡ Quick, 2 SP)
+- ✅ Implement paginated Project discovery via /rest/api/3/project/search — Backend Developer (◉ Deep, 5 SP)
+- ✅ JSM project-type detection and out-of-scope manifest annotation — Backend Developer (⚡ Quick, 2 SP)
+- ✅ Onboarding UI: Project scope selector and JSM out-of-scope notice — Frontend Developer (◈ Standard, 3 SP)
+- ✅ QA: Project discovery integration tests with zero-silent-omission proof — Qa Engineer (◈ Standard, 3 SP)
+
+---

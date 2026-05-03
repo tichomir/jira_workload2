@@ -6,6 +6,7 @@ import { SitePicker } from './SitePicker';
 import { ErrorBanner } from './ErrorBanner';
 import { WorkloadCard } from './WorkloadCard';
 import { ManualConnectForm } from './ManualConnectForm';
+import { ProjectScopeSelector } from './ProjectScopeSelector';
 
 /**
  * JiraConnectFlow — top-level orchestrator for the Jira OAuth connection UI.
@@ -67,8 +68,13 @@ export function JiraConnectFlow() {
   }
 
   function handleConnected(site: JiraSite, authMode: AuthMode = 'oauth') {
-    setState({ phase: 'connected', site, authMode });
+    // Route through onboarding to configure project scope before showing WorkloadCard.
+    setState({ phase: 'onboarding', site, authMode });
     showAutoConnectedBanner(site.name);
+  }
+
+  function handleOnboardingComplete(site: JiraSite, authMode: AuthMode) {
+    setState({ phase: 'connected', site, authMode });
   }
 
   function handleError(code: 401 | 403 | 'network' | 'unknown', message: string) {
@@ -164,6 +170,14 @@ export function JiraConnectFlow() {
         <ManualConnectForm
           onConnected={(site) => handleConnected(site, 'api_token')}
           onCancel={() => setState({ phase: 'idle' })}
+        />
+      )}
+
+      {/* Onboarding: Project scope selector wizard step */}
+      {state.phase === 'onboarding' && (
+        <ProjectScopeSelector
+          site={state.site}
+          onComplete={() => handleOnboardingComplete(state.site, state.authMode)}
         />
       )}
 

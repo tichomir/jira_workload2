@@ -1,0 +1,10 @@
+{
+  "description": "Discovery preview — server log lines captured via /api/test/logs",
+  "logCount": 2,
+  "logs": [
+    "[jira-http] request method=GET path=/rest/api/3/project/search?maxResults=100",
+    "[jira-http] response method=GET path=/rest/api/3/project/search?maxResults=100 status=200"
+  ],
+  "note": "[jira-discovery] events come from ProjectDiscoveryService (full backup pipeline). DiscoveryPreviewRouter uses httpClient.get() directly. Full [jira-discovery] log evidence is in sprint3-discovery.test.ts.",
+  "timestamp": "2026-05-03T14:00:18.379Z"
+}

@@ -1,0 +1,33 @@
+{
+  "description": "Discovery preview — no JSM projects",
+  "request": {
+    "method": "GET",
+    "path": "/api/discovery/preview?cloudId=test-cloud-sprint3"
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "projects": [
+        {
+          "id": "1",
+          "key": "PROJ1",
+          "name": "Test Project PROJ1"
+        },
+        {
+          "id": "2",
+          "key": "PROJ2",
+          "name": "Test Project PROJ2"
+        },
+        {
+          "id": "3",
+          "key": "PROJ3",
+          "name": "Test Project PROJ3"
+        }
+      ],
+      "jsmProjectsDetected": 0
+    }
+  },
+  "assertion": "jsmProjectsDetected=0, all 3 in-scope projects returned",
+  "jsmBannerExpected": false,
+  "timestamp": "2026-05-03T14:00:18.057Z"
+}

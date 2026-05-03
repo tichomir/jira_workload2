@@ -1,0 +1,15 @@
+{
+  "description": "Discovery preview — upstream network error path",
+  "request": {
+    "path": "/api/discovery/preview?cloudId=test-cloud-sprint3"
+  },
+  "response": {
+    "status": 502,
+    "body": {
+      "error": "upstream_error",
+      "message": "ECONNREFUSED"
+    }
+  },
+  "assertion": "error=upstream_error on ECONNREFUSED from Jira API",
+  "timestamp": "2026-05-03T14:00:18.342Z"
+}

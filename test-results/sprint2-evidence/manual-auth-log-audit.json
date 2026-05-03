@@ -1,6 +1,0 @@
-{
-  "description": "Manual Auth — log line audit",
-  "logLine": "[jira-manual-auth] account_verified accountId=account-e2e-pw-001 cloudId=11111111-2222-3333-4444-555555555555",
-  "assertion": "[jira-manual-auth] account_verified present with accountId",
-  "timestamp": "2026-05-03T13:43:59.056Z"
-}

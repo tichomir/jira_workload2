@@ -128,6 +128,65 @@ export async function submitManualConnection(
   return res.json() as Promise<ManualConnectionSuccess>;
 }
 
+// ── Discovery preview & workload config ──────────────────────────────────────
+
+export interface DiscoveryPreviewProject {
+  id: string;
+  key: string;
+  name: string;
+}
+
+export interface DiscoveryPreview {
+  projects: DiscoveryPreviewProject[];
+  jsmProjectsDetected: number;
+}
+
+export interface WorkloadConfigPayload {
+  cloudId: string;
+  scope: 'all' | 'selected';
+  selectedKeys: string[];
+}
+
+/**
+ * Fetches a discovery preview for the onboarding scope selector.
+ * Returns the first batch of in-scope projects plus a JSM detection count.
+ */
+export async function fetchDiscoveryPreview(cloudId: string): Promise<DiscoveryPreview> {
+  const res = await fetch(`/api/jira/discovery/preview?cloudId=${encodeURIComponent(cloudId)}`);
+  if (!res.ok) {
+    throw new ApiError(res.status, `fetchDiscoveryPreview failed: ${res.status}`);
+  }
+  return res.json() as Promise<DiscoveryPreview>;
+}
+
+/**
+ * Fetches the persisted workload config for a connected site.
+ * Returns default { scope: 'all', selectedKeys: [] } when not yet configured.
+ */
+export async function fetchWorkloadConfig(
+  cloudId: string,
+): Promise<{ scope: 'all' | 'selected'; selectedKeys: string[] }> {
+  const res = await fetch(`/api/jira/workload-config?cloudId=${encodeURIComponent(cloudId)}`);
+  if (!res.ok) {
+    throw new ApiError(res.status, `fetchWorkloadConfig failed: ${res.status}`);
+  }
+  return res.json() as Promise<{ scope: 'all' | 'selected'; selectedKeys: string[] }>;
+}
+
+/**
+ * Persists workload configuration (scope + selected project keys) for a site.
+ */
+export async function saveWorkloadConfig(payload: WorkloadConfigPayload): Promise<void> {
+  const res = await fetch('/api/jira/workload-config', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    throw new ApiError(res.status, `saveWorkloadConfig failed: ${res.status}`);
+  }
+}
+
 /** Strips oauth_* query params from the URL without triggering a page reload. */
 export function clearOAuthParams(): void {
   const url = new URL(window.location.href);

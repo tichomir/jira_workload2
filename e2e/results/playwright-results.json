@@ -1,0 +1,442 @@
+{
+  "config": {
+    "configFile": "/home/runner/coding/jira_workload_2/playwright.config.ts",
+    "rootDir": "/home/runner/coding/jira_workload_2/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/runner/coding/jira_workload_2/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "api",
+        "name": "api",
+        "testDir": "/home/runner/coding/jira_workload_2/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "e2e/results/playwright-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.1",
+    "workers": 3,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "sprint1-oauth.spec.ts",
+      "file": "sprint1-oauth.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "E2E Happy Path — OAuth flow and credential assertion",
+          "file": "sprint1-oauth.spec.ts",
+          "line": 147,
+          "column": 6,
+          "specs": [
+            {
+              "title": "GET /start redirects to Atlassian authorize URL",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 39,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T13:19:45.984Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9d4504e4bf2962017687-fa4c42102fe6449668df",
+              "file": "sprint1-oauth.spec.ts",
+              "line": 167,
+              "column": 7
+            },
+            {
+              "title": "GET /callback: single-site auto-select, oauth_result payload, credential persisted",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 48,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[jira-oauth] account verified accountId=account-pw-e2e-999 cloudId=cloud-pw-e2e-001\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T13:19:46.050Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9d4504e4bf2962017687-1c6c594765ff9e95a396",
+              "file": "sprint1-oauth.spec.ts",
+              "line": 181,
+              "column": 7
+            },
+            {
+              "title": "POST /connections/select returns site info for stored cloudId",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 24,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T13:19:46.104Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9d4504e4bf2962017687-1877db9268f5f8d1be26",
+              "file": "sprint1-oauth.spec.ts",
+              "line": 214,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "HTTPS-Only Enforcement",
+          "file": "sprint1-oauth.spec.ts",
+          "line": 241,
+          "column": 6,
+          "specs": [
+            {
+              "title": "GET /start returns 400 with redirect_uri_must_be_https",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 21,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[jira-oauth] OAUTH_REDIRECT_URI must use HTTPS, rejecting: http://insecure.example.com/api/jira/oauth/callback\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-05-03T13:19:46.137Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9d4504e4bf2962017687-88f8b0317ef1e9e744c9",
+              "file": "sprint1-oauth.spec.ts",
+              "line": 259,
+              "column": 7
+            },
+            {
+              "title": "fetchFn is never called when http:// guard rejects",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[jira-oauth] OAUTH_REDIRECT_URI must use HTTPS, rejecting: http://insecure.example.com/api/jira/oauth/callback\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-05-03T13:19:46.168Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9d4504e4bf2962017687-be0b9292f2f011433915",
+              "file": "sprint1-oauth.spec.ts",
+              "line": 266,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Atomicity — no mixed-token state after rotation",
+          "file": "sprint1-oauth.spec.ts",
+          "line": 280,
+          "column": 6,
+          "specs": [
+            {
+              "title": "after successful upsert→re-seed, credential is consistent (both tokens updated)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 48,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T13:19:46.189Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9d4504e4bf2962017687-eec311c2e51c0a8b7372",
+              "file": "sprint1-oauth.spec.ts",
+              "line": 298,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "401 Error — Backend error codes for Reconnect banner",
+          "file": "sprint1-oauth.spec.ts",
+          "line": 340,
+          "column": 6,
+          "specs": [
+            {
+              "title": "accessible-resources 401 → 500 accessible_resources_failed; no credential stored",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 26,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[jira-oauth] accessible-resources failed: 401 {\"error\":\"Unauthorized\"}\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-05-03T13:19:46.251Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9d4504e4bf2962017687-bb4c4ed1803212e12370",
+              "file": "sprint1-oauth.spec.ts",
+              "line": 370,
+              "column": 7
+            },
+            {
+              "title": "/me 401 → 500 me_verification_failed; no credential stored",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 24,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[jira-oauth] /me verification failed: 401 {\"error\":\"Unauthorized\"}\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-05-03T13:19:46.287Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9d4504e4bf2962017687-cb08f24316e4e905cd85",
+              "file": "sprint1-oauth.spec.ts",
+              "line": 393,
+              "column": 7
+            },
+            {
+              "title": "oauth_error=access_denied param → frontend renders error banner (HTTP contract)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[jira-oauth] authorization error from Atlassian: access_denied\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-05-03T13:19:46.315Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9d4504e4bf2962017687-12761380dad53cbb2566",
+              "file": "sprint1-oauth.spec.ts",
+              "line": 413,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-05-03T13:19:45.229Z",
+    "duration": 1133.488,
+    "expected": 9,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

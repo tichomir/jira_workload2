@@ -1,0 +1,116 @@
+# JIRA_WORKLOAD_2 — Project Intelligence
+
+_Auto-maintained by PersonaForge. Updated at sprint start, after every role checkpoint, and at sprint end._
+_Read this file BEFORE `.persona-snapshot.md` and BEFORE any exploration._
+_It tells you what has been built, in what order, and key decisions made._
+
+## Project Context
+
+Executive Summary
+Jira Cloud is Atlassian's multi-tenant SaaS issue-tracking platform, hosted on AWS, serving software delivery, IT, and business project teams. Atlassian's Shared Responsibility Model explicitly excludes customer-initiated destructive changes from infrastructure backup recovery — deleted Issues are permanently destroyed with no native undo, and deleted Projects enter a 60-day trash window after which all contained data is irrecoverable (T1 §2). This workload delivers automated daily backup and granular point-in-time restore for the Phase 1 object set — Issues, Projects, Boards, Sprints, Workflows, Custom Fields, and Attachments — via Atlassian's OAuth 2.0 (3LO) surface, reusing the auth architecture established in the Confluence Cloud pilot. The Phase 1 contract is: every Issue's system and custom field values round-trip completely (the coverage invariant), restore dependency ordering is enforced automatically (Project → Workflow + WorkflowScheme → CustomField + FieldConfiguration → Board → Sprint → Issue), and Sensitive Data Intelligence scanning surfaces GDPR and PCI DSS exposure without operator intervention.
+
+2. Goals
+Goal: The DCC connector authenticates to a Jira Cloud site via OAuth 2.0 (3LO) using the scope set defined in T2 §4.2.2. The authorizing account holds Site Admin or Atlassian Organization Admin role. On completion, GET https://api.atlassian.com/me returns HTTP 200 with a valid accountId and the connection credential store contains a non-null accessToken and refreshToken. Source: T2 §4.2, §4.5.
+
+Goal: The backup connector discovers all Projects on the connected Jira Cloud site via paginated GET /rest/api/3/project/search, scoped by the "Project scope" configuration field (All projects / Selected projects). Discovery completes with zero silent omissions — every project returned by the API is represented in the backup point manifest. Source: T3 §4.3, T4 §6.
+
+Goal: Every Issue backed up captures all properties defined in T3 §3.3 for the Issue object type: system fields, all custom field values (customFieldValues map, no field skipped), all comments (ADF body + author + timestamps), all issue links (all link types, both directions), subtask references, sprint membership, attachment references, watchers, and worklogs. This is the primary coverage invariant. Source: T3 §3.5.
+
+Goal: Attachments are stored binary-faithful — byte-for-byte, original MIME type, original filename, no transcoding or recompression — via GET /rest/api/3/attachment/content/{id} through the canonical authenticated HTTP client. Source: T3 §3.2, §4.4.
+
+Goal: The backup engine enforces the restore dependency capture order: IssueType → CustomField + FieldConfiguration → Workflow + WorkflowScheme → Project → Board → Sprint → Issue. Context node capture is always performed before Protected Object capture in every backup job. Source: T1 §1, T3 §3.4.
+
+Goal: The restore engine enforces the write dependency order: Project → Workflow + WorkflowScheme → CustomField + FieldConfiguration → Board → Sprint → Issue body → issue links + comments + attachments (post-issue-creation pass). A failure in any phase halts execution and surfaces a named diagnostic before the next phase begins. Source: T1 §1, T2 §6 Constraint 8, T5 §5.2.
+
+Goal: The canonical authenticated HTTP client handles rotating refresh tokens atomically: on every POST https://auth.atlassian.com/oauth/token refresh, both the new access_token and new refresh_token are written to the credential store before the mutex is released. Concurrent refresh requests queue behind a single in-flight refresh. Source: T2 §4.5, §6 Constraint 4.
+
+Goal: The search endpoint used for all Issue discovery and backup is POST /rest/api/3/search/jql. The deprecated GET /rest/api/3/search endpoint is not used anywhere in the codebase. Pagination terminates on issues.length === 0 or issues.length < maxResults. Source: T2 §4.5, §6 Constraint 6.
+
+Goal: Custom field context discovery calls GET /rest/api/3/field/{id}/context only for fields where custom: true. System fields (custom: false) are never passed to the context endpoint. Source: T2 §6 Constraint 7, T3 §4.2.
+
+Goal: The SDI teaser scanner detects email addresses, API keys / secret tokens, credit card numbers, and phone numbers across entities.xml, tabular exports (.csv, .xlsx, .tsv), developer configuration attachments (.env, .yaml, .yml, .json, .toml, .properties, .config), and text/log attachments (.txt, .log, .md). On detection of email or phone data, the GDPR regulation tag activates. On detection of credit card data, the PCI DSS regulation tag activates. Source: T7 §2, §3, §4.
+
+Goal: The Protected Object Inventory view sidebar renders four object types — Issues (JiraIssue), Projects (JiraProject), Boards (JiraBoard), Sprints (JiraSprint) — with Issues as the default selection. Each sidebar row shows a count of discovered objects from the most recent backup point manifest. Source: T8 §2, §3.
+
+Goal: The restore wizard supports three conflict modes (Override, Skip, Ask per conflict) with Skip as the default. Destination options are Original location, Alternate location (same Jira site), and Export/Browser Download. Cross-site and Cross-tenant restore are not supported in Phase 1. Source: T5 §5.1, §5.2.
+
+Goal: Backup and restore jobs each emit a progress event every ≤10 seconds. A job with no heartbeat for >20 seconds surfaces a "stalled" alert in the UI. A backup that completes with per-item errors displays "Completed with N errors" — not "Completed successfully." Each backed-up item is traceable to a backup-point ID and timestamp via a single UI click. Source: T5 §6.2, §6.2b.
+
+3. Non-Goals
+The following are explicitly deferred to Phase 2 or out of scope for engineering entirely.
+
+Deferred to Phase 2:
+
+Jira Service Management (JSM) objects — JSMTicket, JSMQueue, JSMRequestType, JSMSLAM. Not in scope even for sites whose project type is service_desk; JSM-specific metadata is excluded from Phase 1 backup and restore. The onboarding wizard surfaces an out-of-scope notice when service_desk project type is detected. (T1 §1, T2 §6 Constraint 11, T3 §3.2)
+Audit Log backup — AuditLog node type; requires read:audit-log:jira or coverage under manage:jira-configuration, pending Engineering confirmation (T6 OQ-2). (T1 §1, T3 §3.2, T6 §2)
+Cross-site restore — restoring a backup from Site A (cloudId A) to Site B (cloudId B). Atlassian accountIds and custom field IDs are site-scoped and not portable without remapping tables. (T2 OQ-3, T5 §5.2)
+Incremental backup — the Phase 1 model is a full-snapshot daily backup. Incremental via updated >= {lastBackupTimestamp} is a Phase 2 performance optimisation. (T3 §4.3)
+Custom backup window — backup timing is platform-managed. No per-workload schedule exposure in Phase 1. (T4 §3)
+GFS (Grandfather-Father-Son) retention — flat RPO+Retention (Configuration A) is the Phase 1 model. GFS re-evaluation is gated on a named JSM-compliance customer requirement. (T4 §2)
+Blob storage export destination — export destination in Phase 1 is Browser Download only. S3 / Azure Blob / GCS export is Phase 2. (T5 §5.2)
+ADF media link rewriting post-attachment-restore — restored attachments receive new attachmentId values; ADF media node references in Issue descriptions and comments may break. Best-effort warning in restore report; full rewrite pass is Phase 2. (T5 OQ-5, §7 Constraint 10)
+Merge conflict mode — no read-compare-write cycle; deferred given rate-limit constraints. (T5 §5.1)
+Full JSM teaser profile — a separate T7 for JSM is Phase 2. (T7 OQ-3)
+Restore from Atlassian's native project trash — Projects in the 60-day Atlassian-managed trash window are blocked for in-place restore and must use alternate-location restore; native trash integration is not in scope. (T5 §4.2)
+SMB GTM motion — sub-50-seat customers are a Phase 2 target. (T1 §2)
+Out of scope (not a Phase 2 item, not engineering scope):
+
+Marketing copy, competitive matrices, BoM collateral, and sales enablement materials — covered by the PMM brief (out-pmm). Do not implement.
+BYOS (Bring Your Own Storage) and attestation — out of scope per global agent rules.
+DCC region selection — platform-level concern, not workload-specific. (T2 §5.1)
+Compliance reset as a workload capability. (Global agent rules)
+
+---
+
+## Sprint History
+### Sprint 1 - OAuth 3LO Foundation & Credential Store | 2026-05-03 | ⏳ in progress | 17 SP est.
+**Goal:** [Phase: OAuth Authentication & Connector Foundation — Sprint 1 of 2]
+Establish the OAuth 2.0 (3LO) connection flow to Jira Cloud, the canonical authenticated HTTP client with atomic rotating-refresh-token handling, and the manual API Token fallback path. This phase reuses Confluence pilot auth architecture and lays the groundwork all later phases depend on.
+
+Deliverables (across all sprints in this phase):
+- OAuth 2.0 (3LO) redirect flow with full scope set from T2 §4.2.2 and HTTPS-only callback enforcement
+- Site picker UI driven by GET /oauth/token/accessible-resources with single-site auto-select
+- Credential store schema persisting cloudId, accessToken, refreshToken, oauthClientId atomically
+- Canonical authenticated HTTP client with mutex-guarded rotating refresh-token handler queuing concurrent refreshes
+- Manual connection path with API Token (HTTP Basic) and form validation (Site URL, Cloud ID, email, token)
+- Workload Card rendering protected object types and explicit JSM exclusion notice
+- Error banner mappings for HTTP 401/403 with reconnect affordance
+
+This is sprint 1 of 2 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+_Sprint started. Role checkpoints below will update as work completes._
+
+---
+### Sprint 1 - OAuth 3LO Foundation & Credential Store | 2026-05-03 | ✅ Software Architect checkpoint (1/1 done)
+
+- ✅ Define OAuth flow architecture and credential store schema (◈ Standard, 3 SP)
+
+---
+### Sprint 1 - OAuth 3LO Foundation & Credential Store | 2026-05-03 | ✅ Backend Developer checkpoint (1/1 done)
+
+- ✅ Implement OAuth 3LO redirect flow and accessible-resources callback handler (◉ Deep, 5 SP)
+
+---
+### Sprint 1 - OAuth 3LO Foundation & Credential Store | 2026-05-03 | ✅ done | 17 SP
+**Goal:** [Phase: OAuth Authentication & Connector Foundation — Sprint 1 of 2]
+Establish the OAuth 2.0 (3LO) connection flow to Jira Cloud, the canonical authenticated HTTP client with atomic rotating-refresh-token handling, and the manual API Token fallback path. This phase reuses Confluence pilot auth architecture and lays the groundwork all later phases depend on.
+
+Deliverables (across all sprints in this phase):
+- OAuth 2.0 (3LO) redirect flow with full scope set from T2 §4.2.2 and HTTPS-only callback enforcement
+- Site picker UI driven by GET /oauth/token/accessible-resources with single-site auto-select
+- Credential store schema persisting cloudId, accessToken, refreshToken, oauthClientId atomically
+- Canonical authenticated HTTP client with mutex-guarded rotating refresh-token handler queuing concurrent refreshes
+- Manual connection path with API Token (HTTP Basic) and form validation (Site URL, Cloud ID, email, token)
+- Workload Card rendering protected object types and explicit JSM exclusion notice
+- Error banner mappings for HTTP 401/403 with reconnect affordance
+
+This is sprint 1 of 2 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+**Delivered:**
+- ✅ Define OAuth flow architecture and credential store schema — Software Architect (◈ Standard, 3 SP)
+- ✅ Implement credential store with atomic token rotation — Backend Developer (◈ Standard, 3 SP)
+- ✅ Implement OAuth 3LO redirect flow and accessible-resources callback handler — Backend Developer (◉ Deep, 5 SP)
+- ✅ Build Site Picker UI with single-site auto-select — Frontend Developer (◈ Standard, 3 SP)
+- ✅ QA: end-to-end OAuth happy-path + atomic-refresh fault-injection tests — Qa Engineer (◈ Standard, 3 SP)
+
+---

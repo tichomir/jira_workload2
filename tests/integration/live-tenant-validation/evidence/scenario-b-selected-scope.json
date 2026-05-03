@@ -1,6 +1,6 @@
 {
   "scenario": "Scenario B: Selected-Scope Filter",
-  "generatedAt": "2026-05-03T17:28:15.344Z",
+  "generatedAt": "2026-05-03T17:56:25.069Z",
   "assertions": {
     "selectedKeys": [
       "LIVE"

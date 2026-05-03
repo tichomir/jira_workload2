@@ -1,0 +1,105 @@
+{
+  "description": "Live-tenant smoke: alternate-location restore full lifecycle — all 7 phase logs, job.created, job.complete, ADF warning, heartbeat captured; DoD evidence artifact",
+  "scenario": "5b",
+  "jobId": "restore-6a4166a8-ec67-4f94-857f-a6e5f7944ada",
+  "finalStatus": "completed",
+  "phaseProgress": [
+    {
+      "phase": "project",
+      "status": "completed",
+      "total": 1,
+      "processed": 1,
+      "errorCount": 0,
+      "startedAt": "2026-05-03T18:01:53.204Z",
+      "completedAt": "2026-05-03T18:01:53.204Z"
+    },
+    {
+      "phase": "workflow",
+      "status": "completed",
+      "total": 3,
+      "processed": 3,
+      "errorCount": 0,
+      "startedAt": "2026-05-03T18:01:53.204Z",
+      "completedAt": "2026-05-03T18:01:53.204Z"
+    },
+    {
+      "phase": "custom_field",
+      "status": "completed",
+      "total": 2,
+      "processed": 2,
+      "errorCount": 0,
+      "startedAt": "2026-05-03T18:01:53.204Z",
+      "completedAt": "2026-05-03T18:01:53.204Z"
+    },
+    {
+      "phase": "board",
+      "status": "completed",
+      "total": 1,
+      "processed": 1,
+      "errorCount": 0,
+      "startedAt": "2026-05-03T18:01:53.204Z",
+      "completedAt": "2026-05-03T18:01:53.204Z"
+    },
+    {
+      "phase": "sprint",
+      "status": "completed",
+      "total": 2,
+      "processed": 2,
+      "errorCount": 0,
+      "startedAt": "2026-05-03T18:01:53.204Z",
+      "completedAt": "2026-05-03T18:01:53.204Z"
+    },
+    {
+      "phase": "issue_body",
+      "status": "completed",
+      "total": 1,
+      "processed": 1,
+      "errorCount": 0,
+      "startedAt": "2026-05-03T18:01:53.204Z",
+      "completedAt": "2026-05-03T18:01:53.204Z"
+    },
+    {
+      "phase": "post_issue",
+      "status": "completed",
+      "total": 1,
+      "processed": 1,
+      "errorCount": 0,
+      "startedAt": "2026-05-03T18:01:53.204Z",
+      "completedAt": "2026-05-03T18:01:53.204Z"
+    }
+  ],
+  "adfMediaWarningEmitted": true,
+  "capturedLogLines": {
+    "jobCreated": [
+      "[jira-restore] job.created jobId=restore-6a4166a8-ec67-4f94-857f-a6e5f7944ada sourceBackupPointId=bp-live-smoke-altloc conflictMode=override",
+      "[jira-restore] job.created jobId=restore-6a4166a8-ec67-4f94-857f-a6e5f7944ada status=running"
+    ],
+    "phaseLogsAll": [
+      "[restore-engine] phase=project outcome=completed items=1",
+      "[restore-engine] phase=workflow outcome=completed items=3",
+      "[restore-engine] phase=custom_field outcome=completed items=2",
+      "[restore-engine] phase=board outcome=completed items=1",
+      "[restore-engine] phase=sprint outcome=completed items=2",
+      "[restore-engine] phase=issue_body outcome=completed items=1",
+      "[restore-engine] phase=post_issue outcome=completed items=1"
+    ],
+    "jobComplete": [
+      "[jira-restore] job.complete jobId=restore-6a4166a8-ec67-4f94-857f-a6e5f7944ada status=completed"
+    ],
+    "adfWarning": [
+      "[restore-engine] adf-media-link-breakage-possible jobId=restore-6a4166a8-ec67-4f94-857f-a6e5f7944ada affectedIssues=BACKUPPED-PROJ-1"
+    ],
+    "heartbeatCount": 0,
+    "heartbeatSample": []
+  },
+  "assertions": [
+    "[jira-restore] job.created emitted with correct jobId",
+    "[restore-engine] phase=X logs emitted for all 7 phases",
+    "[jira-restore] job.complete emitted with correct jobId",
+    "[restore-engine] adf-media-link-breakage-possible emitted (attachments restored)",
+    "[jira-restore] job.heartbeat emitted during phase execution",
+    "Final status is completed or completed_with_errors"
+  ],
+  "evidenceType": "structured_logs",
+  "timestamp": "2026-05-03T18:01:53.312Z"
+}

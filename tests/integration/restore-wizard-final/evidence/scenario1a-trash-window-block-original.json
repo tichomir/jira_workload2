@@ -1,0 +1,33 @@
+{
+  "description": "Original-location restore with a trashed project is blocked with TRASH_WINDOW_BLOCK + alternate-location guidance",
+  "scenario": "1a",
+  "request": {
+    "sourceBackupPointId": "bp-trash-test-001",
+    "scope": {
+      "type": "projects",
+      "projectKeys": [
+        "DEAD-PROJ"
+      ]
+    },
+    "destination": {
+      "type": "original"
+    },
+    "conflictMode": "skip"
+  },
+  "response": {
+    "httpStatus": 400,
+    "code": "TRASH_WINDOW_BLOCK",
+    "projectKey": "DEAD-PROJ",
+    "guidance": "Use Alternate location restore",
+    "deletedAt": "2026-04-01T00:00:00Z",
+    "expiresAt": "2026-06-01T00:00:00Z"
+  },
+  "assertions": [
+    "HTTP 400 returned",
+    "code=TRASH_WINDOW_BLOCK",
+    "projectKey=DEAD-PROJ",
+    "guidance contains \"alternate\"",
+    "deletedAt and expiresAt are present"
+  ],
+  "timestamp": "2026-05-03T18:01:52.671Z"
+}

@@ -1,0 +1,29 @@
+{
+  "description": "Alternate-location restore for a trashed project is NOT blocked; job runs to completion",
+  "scenario": "1b",
+  "request": {
+    "sourceBackupPointId": "bp-trash-test-002",
+    "scope": {
+      "type": "projects",
+      "projectKeys": [
+        "DEAD-PROJ"
+      ]
+    },
+    "destination": {
+      "type": "alternate",
+      "targetProjectKey": "DEAD-PROJ-ALT"
+    },
+    "conflictMode": "skip"
+  },
+  "jobId": "restore-f14c8a7d-c0b2-444c-8945-303fc331bf15",
+  "createdStatus": "pending",
+  "finalStatus": "completed",
+  "trashWindowBlocked": false,
+  "assertions": [
+    "HTTP 201 returned for alternate-location restore",
+    "status=pending on creation",
+    "trashWindowBlocked=false on job",
+    "Job reaches completed/completed_with_errors terminal state"
+  ],
+  "timestamp": "2026-05-03T18:01:52.699Z"
+}

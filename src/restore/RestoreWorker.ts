@@ -22,6 +22,8 @@ import { RestoreJobStore } from './RestoreJobStore';
 import { RestoreEventBus, RestoreProgressEvent, restoreEventBus } from './RestoreEventBus';
 import { RestoreEngine, JiraWriteClient, NullJiraWriteClient } from './RestoreEngine';
 import { buildDefaultHandlers } from './RestorePhaseHandlers';
+import { BrowserDownloadAssembler } from './BrowserDownloadAssembler';
+import { TrashWindowChecker } from './TrashWindowChecker';
 import { RestoreJobStatus } from './types';
 
 export const DEFAULT_RESTORE_HEARTBEAT_INTERVAL_MS = 9_000;  // ≤10s
@@ -37,6 +39,12 @@ export interface RestoreWorkerConfig {
   nowMs?: () => number;
   /** Polling interval for ask-mode conflict decisions. Default: 100ms. */
   decisionPollIntervalMs?: number;
+  /**
+   * Optional trash-window checker injected for mid-flight detection.
+   * When provided, the worker checks project trash state before phase 1 begins.
+   * Inject a mock in tests; leave undefined to skip the mid-flight check.
+   */
+  trashChecker?: Pick<TrashWindowChecker, 'checkProjects'>;
 }
 
 export class RestoreWorker {
@@ -92,6 +100,47 @@ export class RestoreWorker {
     }, this.checkIntervalMs);
 
     try {
+      // ── Mid-flight trash-window check (safety net before phase 1) ────────────
+      if (this.config.trashChecker) {
+        const job = this.store.getJob(jobId);
+        if (
+          job &&
+          job.destination.type === 'original' &&
+          job.scope.type === 'projects'
+        ) {
+          const results = await this.config.trashChecker.checkProjects(
+            job.scope.projectKeys,
+          );
+          const blocked = results.filter((r) => r.inTrash);
+          if (blocked.length > 0) {
+            const projectKey = blocked[0].projectKey;
+            console.log(
+              `[jira-restore] trash-window-block project=${projectKey} action=blocked`,
+            );
+            this.store.setTrashWindowBlocked(jobId);
+            this.stop();
+            const event: RestoreProgressEvent = {
+              type: 'complete',
+              jobId,
+              status: 'failed',
+              timestamp: new Date(this.now()).toISOString(),
+            };
+            this.bus.publish(event);
+            console.log(
+              `[jira-restore] job.complete jobId=${jobId} status=failed`,
+            );
+            return;
+          }
+        }
+      }
+
+      // ── Browser Download (export) path — no Jira writes, serialize only ─────
+      const job = this.store.getJob(jobId);
+      if (job?.destination.type === 'export') {
+        await this.runBrowserDownload(jobId);
+        return;
+      }
+
       const engine = new RestoreEngine(
         buildDefaultHandlers(),
         this.store,
@@ -155,6 +204,44 @@ export class RestoreWorker {
   }
 
   // ── Private helpers ──────────────────────────────────────────────────────────
+
+  // ── Browser Download helper ────────────────────────────────────────────────
+
+  private async runBrowserDownload(jobId: string): Promise<void> {
+    const assembler = new BrowserDownloadAssembler();
+
+    try {
+      const result = await assembler.assemble({
+        jobId,
+        sourceBackupPointId: this.store.getJob(jobId)?.sourceBackupPointId ?? jobId,
+        onHeartbeat: () => this.emitHeartbeat(),
+      });
+
+      this.store.setDownloadPath(jobId, result.zipPath);
+      this.store.complete(jobId, 'completed', this.now());
+      this.stop();
+
+      const event: RestoreProgressEvent = {
+        type: 'complete',
+        jobId,
+        status: 'completed',
+        timestamp: new Date(this.now()).toISOString(),
+      };
+      this.bus.publish(event);
+      console.log(`[jira-restore] job.complete jobId=${jobId} status=completed`);
+    } catch (err) {
+      this.store.setFailed(jobId, `BROWSER_DOWNLOAD_FAILED: ${String(err)}`);
+      this.stop();
+      const event: RestoreProgressEvent = {
+        type: 'complete',
+        jobId,
+        status: 'failed',
+        timestamp: new Date(this.now()).toISOString(),
+      };
+      this.bus.publish(event);
+      console.log(`[jira-restore] job.complete jobId=${jobId} status=failed`);
+    }
+  }
 
   private emitHeartbeat(): void {
     const { jobId } = this.config;

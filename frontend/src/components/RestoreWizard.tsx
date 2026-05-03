@@ -485,6 +485,7 @@ function StepReview({
   onStart,
   starting,
   startError,
+  onGoToDestination,
 }: {
   state: WizardState;
   backupPoints: BackupPointOption[];
@@ -492,6 +493,7 @@ function StepReview({
   onStart: () => void;
   starting: boolean;
   startError: string | null;
+  onGoToDestination: () => void;
 }) {
   const bp = backupPoints.find(b => b.backupPointId === state.selectedBackupPointId);
   const hasAttachments = state.scope.type !== 'issues'; // conservative: warn unless issue-only scope
@@ -511,7 +513,16 @@ function StepReview({
         {state.trashWindowBlocked && (
           <div data-testid="review-trash-banner">
             <InlineBanner variant="error">
-              <strong>Trash window block detected.</strong> Original location restore is unavailable. Go back to Step 3 and choose Alternate location or Browser Download.
+              <strong>Trash window block detected.</strong> One or more projects are in Atlassian&apos;s 60-day trash window; original location restore is unavailable.{' '}
+              <button
+                type="button"
+                onClick={onGoToDestination}
+                data-testid="trash-go-to-destination"
+                className="underline font-semibold hover:no-underline"
+              >
+                Choose Alternate location or Browser Download
+              </button>
+              .
             </InlineBanner>
           </div>
         )}
@@ -535,6 +546,105 @@ function StepReview({
         nextLabel={starting ? 'Starting…' : 'Start Restore'}
         nextDisabled={starting || state.trashWindowBlocked}
       />
+    </div>
+  );
+}
+
+// ── Restore Completion Report ─────────────────────────────────────────────────
+
+function RestoreCompletionReport({
+  job,
+  destination,
+}: {
+  job: RestoreJob;
+  destination: RestoreDestination;
+}) {
+  const [adfExpanded, setAdfExpanded] = React.useState(true);
+  const hasWarnings = job.adfMediaWarnings.length > 0;
+  const isExportComplete = destination.type === 'export' && job.status === 'completed';
+
+  const exportCsv = () => {
+    const header = 'Issue Key\n';
+    const rows = job.adfMediaWarnings.join('\n');
+    const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `adf-media-warnings-${job.jobId}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div className="mt-6 space-y-4" data-testid="restore-completion-report">
+      {/* ADF media warnings panel */}
+      {hasWarnings && (
+        <div
+          className="rounded border border-yellow-300 bg-yellow-50"
+          data-testid="adf-media-warning-panel"
+        >
+          <button
+            type="button"
+            className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold text-yellow-800 hover:bg-yellow-100"
+            onClick={() => setAdfExpanded((e) => !e)}
+            aria-expanded={adfExpanded}
+            data-testid="adf-warning-toggle"
+          >
+            <span>
+              ADF media references may be broken ({job.adfMediaWarnings.length} issue
+              {job.adfMediaWarnings.length !== 1 ? 's' : ''} affected)
+            </span>
+            <span aria-hidden="true">{adfExpanded ? '▲' : '▼'}</span>
+          </button>
+
+          {adfExpanded && (
+            <div className="border-t border-yellow-200 px-4 py-3 text-sm text-yellow-800">
+              <p className="mb-2">
+                Restored attachments receive new attachment IDs. ADF media node references
+                in the descriptions and comments of the following issues may point to
+                pre-restore attachment IDs and no longer render correctly. Operators may
+                need to re-attach files manually.{' '}
+                <strong>Full ADF media link rewriting is deferred to Phase 2.</strong>
+              </p>
+              <ul
+                className="mb-3 max-h-40 overflow-y-auto space-y-0.5 rounded border border-yellow-200 bg-white p-2 font-mono text-xs"
+                data-testid="adf-warning-issue-list"
+              >
+                {job.adfMediaWarnings.map((issueKey) => (
+                  <li key={issueKey}>{issueKey}</li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                onClick={exportCsv}
+                data-testid="adf-warning-csv-export"
+                className="rounded border border-yellow-400 bg-white px-3 py-1.5 text-xs font-medium text-yellow-800 hover:bg-yellow-50"
+              >
+                Export warning list as CSV
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Browser Download CTA */}
+      {isExportComplete && (
+        <div
+          className="rounded border border-blue-300 bg-blue-50 px-4 py-3"
+          data-testid="download-archive-section"
+        >
+          <p className="mb-2 text-sm font-medium text-blue-800">
+            Your restore archive is ready.
+          </p>
+          <a
+            href={`/restore/jobs/${encodeURIComponent(job.jobId)}/download`}
+            data-testid="download-archive-cta"
+            className="inline-block rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            Download archive
+          </a>
+        </div>
+      )}
     </div>
   );
 }
@@ -622,9 +732,11 @@ interface ConflictPrompt {
 
 function StepExecute({
   jobId,
+  destination,
   onClose,
 }: {
   jobId: string;
+  destination: RestoreDestination;
   onClose?: () => void;
 }) {
   const [job, setJob] = useState<RestoreJob | null>(null);
@@ -841,16 +953,19 @@ function StepExecute({
         </div>
       )}
 
-      {isTerminal && (
-        <div className="mt-8 flex justify-end">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded bg-gray-800 px-5 py-2 text-sm font-medium text-white hover:bg-gray-900"
-          >
-            Close
-          </button>
-        </div>
+      {isTerminal && job && (
+        <>
+          <RestoreCompletionReport job={job} destination={destination} />
+          <div className="mt-6 flex justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded bg-gray-800 px-5 py-2 text-sm font-medium text-white hover:bg-gray-900"
+            >
+              Close
+            </button>
+          </div>
+        </>
       )}
     </div>
   );
@@ -973,11 +1088,12 @@ export function RestoreWizard({ backupPoints, cloudId: _cloudId, onClose }: Rest
           onStart={handleStart}
           starting={starting}
           startError={startError}
+          onGoToDestination={() => goTo(3)}
         />
       )}
 
       {state.step === 6 && jobId && (
-        <StepExecute jobId={jobId} onClose={onClose} />
+        <StepExecute jobId={jobId} destination={state.destination} onClose={onClose} />
       )}
     </div>
   );

@@ -1,0 +1,26 @@
+{
+  "description": "BrowserDownloadAssembler fires onHeartbeat once per entity file (6) and once per attachment (3); all gaps ≤10s",
+  "scenario": "4a",
+  "jobId": "slow-assembly-heartbeat-test",
+  "totalHeartbeats": 9,
+  "expectedHeartbeats": 9,
+  "gaps": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "maxGapMs": 0,
+  "allGapsWithin10s": true,
+  "assertions": [
+    "9 heartbeat events fired (6 entity files + 3 attachments)",
+    "All consecutive gaps between heartbeats are ≤10 000ms",
+    "onHeartbeat fires after each entity file and after each attachment",
+    "Heartbeat cadence contract satisfied during browser-download assembly"
+  ],
+  "timestamp": "2026-05-03T18:01:53.053Z"
+}

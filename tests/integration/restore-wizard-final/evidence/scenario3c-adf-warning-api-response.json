@@ -1,0 +1,21 @@
+{
+  "description": "API-level: GET /restore/jobs/:id returns adfMediaWarningEmitted=true with populated adfMediaWarnings array containing scope issue keys",
+  "scenario": "3c",
+  "jobId": "restore-bb5ca4d3-ee07-46a8-af00-b3f15525edce",
+  "finalStatus": "completed",
+  "adfMediaWarningEmitted": true,
+  "adfMediaWarnings": [
+    "PROJ-10",
+    "PROJ-11",
+    "PROJ-12"
+  ],
+  "failureDiagnostic": null,
+  "assertions": [
+    "status is completed or completed_with_errors",
+    "adfMediaWarningEmitted=true",
+    "adfMediaWarnings is a non-empty array",
+    "All scope issue keys present in adfMediaWarnings",
+    "failureDiagnostic=null (ADF warning does NOT halt the restore)"
+  ],
+  "timestamp": "2026-05-03T18:01:53.022Z"
+}

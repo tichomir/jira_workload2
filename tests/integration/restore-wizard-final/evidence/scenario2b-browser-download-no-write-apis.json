@@ -1,0 +1,13 @@
+{
+  "description": "Browser Download (export) path calls zero Jira write API methods; job completes without writing to Jira",
+  "scenario": "2b",
+  "jobId": "export-no-write-test",
+  "finalStatus": "completed",
+  "writeApiCallCounts": {},
+  "assertions": [
+    "All 9 write API methods have 0 calls during export path",
+    "Job completes with status=completed",
+    "No Jira site is modified during browser download restore"
+  ],
+  "timestamp": "2026-05-03T18:01:52.948Z"
+}

@@ -1,0 +1,28 @@
+{
+  "description": "ADF media warning event contains correct issue keys from the seeded scope; store reflects warning with full issue ID list",
+  "scenario": "3a",
+  "jobId": "adf-warning-issue-keys-1777831312978",
+  "seededIssueKeys": [
+    "WEB-1",
+    "WEB-2",
+    "WEB-3"
+  ],
+  "warningAffectedIssueIds": [
+    "WEB-1",
+    "WEB-2",
+    "WEB-3"
+  ],
+  "storeAdfMediaWarnings": [
+    "WEB-1",
+    "WEB-2",
+    "WEB-3"
+  ],
+  "storeAdfMediaWarningEmitted": true,
+  "assertions": [
+    "adfMediaWarning event emitted exactly once",
+    "affectedIssueIds contains all 3 seeded issue keys: WEB-1, WEB-2, WEB-3",
+    "store.adfMediaWarningEmitted=true",
+    "store.adfMediaWarnings contains all seeded issue keys"
+  ],
+  "timestamp": "2026-05-03T18:01:52.981Z"
+}

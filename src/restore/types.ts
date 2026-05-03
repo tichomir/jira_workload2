@@ -55,6 +55,8 @@ export interface RestoreJob {
   errorCount: number;
   failureDiagnostic: string | null;
   adfMediaWarningEmitted: boolean;
+  /** Issue IDs whose ADF descriptions/comments may have broken media links post-restore. */
+  adfMediaWarnings: string[];
   trashWindowBlocked: boolean;
   lastHeartbeatAt: number | null;
   stalled: boolean;

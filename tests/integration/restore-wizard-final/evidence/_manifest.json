@@ -1,0 +1,190 @@
+{
+  "sprint": "Sprint 13 — Restore Wizard Final Slice: Trash-Window Block, ADF Warning & Browser Download Export",
+  "generatedAt": "2026-05-03T18:01:53.381Z",
+  "totalArtefacts": 13,
+  "dodCoverage": [
+    "Trash-window block: Original-location restore with trashed project returns 400 TRASH_WINDOW_BLOCK",
+    "Trash-window block: code=TRASH_WINDOW_BLOCK, projectKey, guidance=\"Use Alternate location restore\"",
+    "Trash-window block: deletedAt and expiresAt timestamps present in response",
+    "Alternate-location restore: trashed project bypasses trash check, job reaches completed state",
+    "Alternate-location: trashWindowBlocked=false on job record",
+    "Browser Download: archive contains all 6 entity JSON files (projects, workflows, custom-fields, boards, sprints, issues)",
+    "Browser Download: no Jira write API methods called during export path",
+    "Browser Download: archive entity contents match manifest input (round-trip fidelity)",
+    "Browser Download: GET /restore/jobs/:id/download returns application/zip with Content-Disposition attachment",
+    "ADF warning: correct issue keys from scope appear in adfMediaWarnings array",
+    "ADF warning: store.adfMediaWarningEmitted=true and adfMediaWarnings populated",
+    "ADF warning: CSV export produces header \"issue_key\" + one row per affected issue",
+    "ADF warning: does NOT halt the restore (failureDiagnostic=null)",
+    "Heartbeat: onHeartbeat fires once per entity file (6) + once per attachment during assembly",
+    "Heartbeat: all consecutive gaps between heartbeat events ≤10 000ms",
+    "Heartbeat: RestoreWorker relays assembler onHeartbeat callbacks to event bus",
+    "Live-tenant smoke: [jira-restore] trash-window-block action=blocked log captured",
+    "Live-tenant smoke: Alternate-location restore full lifecycle with all 7 phase logs",
+    "Live-tenant smoke: [restore-engine] adf-media-link-breakage-possible log captured"
+  ],
+  "artefacts": [
+    {
+      "file": "scenario1a-trash-window-block-original.json",
+      "scenario": "1a",
+      "description": "Original-location restore with a trashed project is blocked with TRASH_WINDOW_BLOCK + alternate-location guidance",
+      "assertions": [
+        "HTTP 400 returned",
+        "code=TRASH_WINDOW_BLOCK",
+        "projectKey=DEAD-PROJ",
+        "guidance contains \"alternate\"",
+        "deletedAt and expiresAt are present"
+      ],
+      "capturedAt": "2026-05-03T18:01:52.671Z"
+    },
+    {
+      "file": "scenario1b-alternate-location-succeeds.json",
+      "scenario": "1b",
+      "description": "Alternate-location restore for a trashed project is NOT blocked; job runs to completion",
+      "assertions": [
+        "HTTP 201 returned for alternate-location restore",
+        "status=pending on creation",
+        "trashWindowBlocked=false on job",
+        "Job reaches completed/completed_with_errors terminal state"
+      ],
+      "capturedAt": "2026-05-03T18:01:52.699Z"
+    },
+    {
+      "file": "scenario1c-multi-project-trash-first-blocked.json",
+      "scenario": "1c",
+      "description": "When multiple trashed projects exist, the first blocked project is reported in the TRASH_WINDOW_BLOCK response",
+      "assertions": [
+        "HTTP 400 returned",
+        "code=TRASH_WINDOW_BLOCK",
+        "projectKey is one of the trashed projects"
+      ],
+      "capturedAt": "2026-05-03T18:01:52.732Z"
+    },
+    {
+      "file": "scenario2a-browser-download-archive-contents.json",
+      "scenario": "2a",
+      "description": "Browser Download export job completes; archive contains all 6 entity JSON files with parseable content",
+      "assertions": [
+        "POST /restore/jobs returns 201",
+        "Job reaches status=completed",
+        "GET /restore/jobs/:id/download returns 200 with application/zip",
+        "Content-Disposition header contains \"attachment\"",
+        "All 6 entity JSON files present in archive",
+        "All entity JSON files are parseable arrays"
+      ],
+      "capturedAt": "2026-05-03T18:01:52.895Z"
+    },
+    {
+      "file": "scenario2b-browser-download-no-write-apis.json",
+      "scenario": "2b",
+      "description": "Browser Download (export) path calls zero Jira write API methods; job completes without writing to Jira",
+      "assertions": [
+        "All 9 write API methods have 0 calls during export path",
+        "Job completes with status=completed",
+        "No Jira site is modified during browser download restore"
+      ],
+      "capturedAt": "2026-05-03T18:01:52.948Z"
+    },
+    {
+      "file": "scenario2c-archive-manifest-round-trip.json",
+      "scenario": "2c",
+      "description": "Archive entity contents match manifest input exactly; JSON round-trip fidelity verified for all 6 entity types",
+      "assertions": [
+        "projects.json round-trips 2 project records with correct keys",
+        "issues.json round-trips 2 issue records with correct keys",
+        "custom-fields.json round-trips 1 custom field with correct name",
+        "All entity data survives ZIP compression and decompression"
+      ],
+      "capturedAt": "2026-05-03T18:01:52.961Z"
+    },
+    {
+      "file": "scenario3a-adf-warning-correct-issue-keys.json",
+      "scenario": "3a",
+      "description": "ADF media warning event contains correct issue keys from the seeded scope; store reflects warning with full issue ID list",
+      "assertions": [
+        "adfMediaWarning event emitted exactly once",
+        "affectedIssueIds contains all 3 seeded issue keys: WEB-1, WEB-2, WEB-3",
+        "store.adfMediaWarningEmitted=true",
+        "store.adfMediaWarnings contains all seeded issue keys"
+      ],
+      "capturedAt": "2026-05-03T18:01:52.981Z"
+    },
+    {
+      "file": "scenario3b-adf-warning-csv-export.json",
+      "scenario": "3b",
+      "description": "ADF warning issue keys are CSV-exportable; CSV round-trips through format correctly; header \"issue_key\" + one row per affected issue",
+      "assertions": [
+        "adfMediaWarnings array is present and non-empty",
+        "CSV has correct header: issue_key",
+        "CSV has 4 data rows (one per affected issue)",
+        "CSV round-trips: parsed keys match seeded issue keys",
+        "CSV file writes to disk without error"
+      ],
+      "capturedAt": "2026-05-03T18:01:52.990Z"
+    },
+    {
+      "file": "scenario3c-adf-warning-api-response.json",
+      "scenario": "3c",
+      "description": "API-level: GET /restore/jobs/:id returns adfMediaWarningEmitted=true with populated adfMediaWarnings array containing scope issue keys",
+      "assertions": [
+        "status is completed or completed_with_errors",
+        "adfMediaWarningEmitted=true",
+        "adfMediaWarnings is a non-empty array",
+        "All scope issue keys present in adfMediaWarnings",
+        "failureDiagnostic=null (ADF warning does NOT halt the restore)"
+      ],
+      "capturedAt": "2026-05-03T18:01:53.022Z"
+    },
+    {
+      "file": "scenario4a-heartbeat-per-assembly-step.json",
+      "scenario": "4a",
+      "description": "BrowserDownloadAssembler fires onHeartbeat once per entity file (6) and once per attachment (3); all gaps ≤10s",
+      "assertions": [
+        "9 heartbeat events fired (6 entity files + 3 attachments)",
+        "All consecutive gaps between heartbeats are ≤10 000ms",
+        "onHeartbeat fires after each entity file and after each attachment",
+        "Heartbeat cadence contract satisfied during browser-download assembly"
+      ],
+      "capturedAt": "2026-05-03T18:01:53.053Z"
+    },
+    {
+      "file": "scenario4b-worker-relay-heartbeats.json",
+      "scenario": "4b",
+      "description": "RestoreWorker relays BrowserDownloadAssembler onHeartbeat callbacks to event bus as heartbeat events; all gaps ≤10s",
+      "assertions": [
+        "At least 6 heartbeat events relayed to bus (one per entity file)",
+        "All consecutive heartbeat gaps ≤10 000ms",
+        "Worker completes with status=completed",
+        "Heartbeat relay chain: assembler → worker → event bus works end-to-end"
+      ],
+      "capturedAt": "2026-05-03T18:01:53.062Z"
+    },
+    {
+      "file": "scenario5a-live-smoke-trash-block.json",
+      "scenario": "5a",
+      "description": "Live-tenant smoke: trash-window block lifecycle — Original blocked, structured logs captured, Alternate succeeds; DoD evidence artifact",
+      "assertions": [
+        "[jira-restore] trash-window-block action=blocked log emitted",
+        "[jira-restore] job.created log emitted for alternate-location job",
+        "[jira-restore] job.complete log emitted when alternate-location job finishes",
+        "Original-location restore returns 400 TRASH_WINDOW_BLOCK",
+        "Alternate-location restore returns 201 and completes successfully"
+      ],
+      "capturedAt": "2026-05-03T18:01:53.193Z"
+    },
+    {
+      "file": "scenario5b-live-smoke-alternate-location.json",
+      "scenario": "5b",
+      "description": "Live-tenant smoke: alternate-location restore full lifecycle — all 7 phase logs, job.created, job.complete, ADF warning, heartbeat captured; DoD evidence artifact",
+      "assertions": [
+        "[jira-restore] job.created emitted with correct jobId",
+        "[restore-engine] phase=X logs emitted for all 7 phases",
+        "[jira-restore] job.complete emitted with correct jobId",
+        "[restore-engine] adf-media-link-breakage-possible emitted (attachments restored)",
+        "[jira-restore] job.heartbeat emitted during phase execution",
+        "Final status is completed or completed_with_errors"
+      ],
+      "capturedAt": "2026-05-03T18:01:53.312Z"
+    }
+  ]
+}

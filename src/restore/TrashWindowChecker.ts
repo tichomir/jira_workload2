@@ -17,6 +17,10 @@ import { JiraHttpClient } from '../http/JiraHttpClient';
 export interface TrashCheckResult {
   projectKey: string;
   inTrash: boolean;
+  /** ISO 8601 timestamp when the project was deleted, if available from the API. */
+  deletedAt: string | null;
+  /** ISO 8601 timestamp when the trash window expires (deletedAt + 60 days), if known. */
+  expiresAt: string | null;
 }
 
 export class TrashWindowChecker {
@@ -31,7 +35,9 @@ export class TrashWindowChecker {
 
     for (const projectKey of projectKeys) {
       const inTrash = await this.isInTrash(projectKey);
-      results.push({ projectKey, inTrash });
+      // deletedAt / expiresAt are not exposed by GET /rest/api/3/project/{key};
+      // they would be populated from the backup manifest by the caller if available.
+      results.push({ projectKey, inTrash, deletedAt: null, expiresAt: null });
     }
 
     return results;
@@ -48,9 +54,6 @@ export class TrashWindowChecker {
 
       // Atlassian sets archived=true for projects in the trash window
       if (project.archived === true) {
-        console.log(
-          `[jira-restore] job.blocked.trash-window projectKey=${projectKey} reason=archived`,
-        );
         return true;
       }
 
@@ -61,9 +64,6 @@ export class TrashWindowChecker {
         err instanceof Error &&
         err.message.includes('404')
       ) {
-        console.log(
-          `[jira-restore] job.blocked.trash-window projectKey=${projectKey} reason=404`,
-        );
         return true;
       }
 

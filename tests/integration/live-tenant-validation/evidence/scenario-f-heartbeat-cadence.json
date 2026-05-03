@@ -1,6 +1,6 @@
 {
   "scenario": "Scenario F: Heartbeat Cadence ≤10s + Final Job Status",
-  "generatedAt": "2026-05-03T17:28:15.363Z",
+  "generatedAt": "2026-05-03T17:56:25.087Z",
   "configuration": {
     "jobId": "job-bp-heartbeat-cadence-001",
     "backupPointId": "bp-heartbeat-cadence-001",
@@ -22,15 +22,15 @@
     "[live-val] jobId=job-bp-heartbeat-cadence-001 heartbeatIntervalMs=9000",
     "[live-val] simulatedRunMs=30000",
     "[live-val] busHeartbeatsReceived=3 (≥3 required)",
-    "[live-val] heartbeatTimestamps=1777829304362,1777829313362,1777829322362",
+    "[live-val] heartbeatTimestamps=1777830994086,1777831003086,1777831012086",
     "[live-val] maxGapMs=9000 (≤10000 required)",
     "[live-val] finalStatus=\"completed\" displayStatus=\"Completed successfully\"",
-    "[live-val] terminalEvent={\"type\":\"terminal\",\"jobId\":\"job-bp-heartbeat-cadence-001\",\"backupPointId\":\"bp-heartbeat-cadence-001\",\"phase\":\"issues\",\"itemsProcessed\":5,\"itemsFailed\":0,\"timestamp\":\"2026-05-03T17:28:45.362Z\",\"displayStatus\":\"Completed successfully\"}"
+    "[live-val] terminalEvent={\"type\":\"terminal\",\"jobId\":\"job-bp-heartbeat-cadence-001\",\"backupPointId\":\"bp-heartbeat-cadence-001\",\"phase\":\"issues\",\"itemsProcessed\":5,\"itemsFailed\":0,\"timestamp\":\"2026-05-03T17:56:55.086Z\",\"displayStatus\":\"Completed successfully\"}"
   ],
   "heartbeatTimestamps": [
-    "2026-05-03T17:28:24.362Z",
-    "2026-05-03T17:28:33.362Z",
-    "2026-05-03T17:28:42.362Z"
+    "2026-05-03T17:56:34.086Z",
+    "2026-05-03T17:56:43.086Z",
+    "2026-05-03T17:56:52.086Z"
   ],
   "terminalEvent": {
     "type": "terminal",
@@ -39,7 +39,7 @@
     "phase": "issues",
     "itemsProcessed": 5,
     "itemsFailed": 0,
-    "timestamp": "2026-05-03T17:28:45.362Z",
+    "timestamp": "2026-05-03T17:56:55.086Z",
     "displayStatus": "Completed successfully"
   },
   "jobSummary": {

@@ -1,0 +1,29 @@
+{
+  "description": "When multiple trashed projects exist, the first blocked project is reported in the TRASH_WINDOW_BLOCK response",
+  "scenario": "1c",
+  "request": {
+    "sourceBackupPointId": "bp-trash-test-003",
+    "scope": {
+      "type": "projects",
+      "projectKeys": [
+        "DEAD-PROJ",
+        "DELETED-PROJ"
+      ]
+    },
+    "destination": {
+      "type": "original"
+    }
+  },
+  "response": {
+    "httpStatus": 400,
+    "code": "TRASH_WINDOW_BLOCK",
+    "projectKey": "DEAD-PROJ",
+    "guidance": "Use Alternate location restore"
+  },
+  "assertions": [
+    "HTTP 400 returned",
+    "code=TRASH_WINDOW_BLOCK",
+    "projectKey is one of the trashed projects"
+  ],
+  "timestamp": "2026-05-03T18:01:52.732Z"
+}

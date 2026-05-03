@@ -18,6 +18,7 @@
 import { randomUUID } from 'crypto';
 import { RestoreJobStore } from './RestoreJobStore';
 import { RestoreEventBus } from './RestoreEventBus';
+import { restoreMetrics } from './RestoreMetrics';
 import {
   ConflictMode,
   RestoreDestination,
@@ -220,6 +221,9 @@ export class RestoreEngine {
         `[restore-engine] phase=${handler.phase} outcome=${result.status} items=${result.processed}`,
       );
 
+      // Manifest-loaded log + counter: record how many entities were loaded for this phase
+      restoreMetrics.logManifestLoaded(handler.phase, result.total);
+
       if (result.status === 'failed') {
         const diagnostic = result.diagnostic ?? `PHASE_FAILED: ${handler.phase}`;
 
@@ -249,7 +253,7 @@ export class RestoreEngine {
         result.affectedIssueIds &&
         result.affectedIssueIds.length > 0
       ) {
-        this.store.setAdfMediaWarning(jobId);
+        this.store.setAdfMediaWarnings(jobId, result.affectedIssueIds);
         this.bus.publish({
           type: 'adfMediaWarning',
           jobId,

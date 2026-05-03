@@ -834,3 +834,53 @@ This is sprint 2 of 3 for the phase. Plan a slice of the deliverables appropriat
 - ✅ File Figma spec request for restore-unit & Board/Sprint sidebar filters — Software Architect (⚡ Quick, 1 SP)
 
 ---
+### Sprint 13 - Restore Wizard Final Slice: Trash-Window Block, ADF Warning & Browser Download Export | 2026-05-03 | ⏳ in progress | 18 SP est.
+**Goal:** [Phase: Restore Engine & Wizard — Sprint 3 of 3]
+Implement the restore wizard (conflict modes, destination options) and the dependency-ordered restore engine, including the post-issue-creation pass for links/comments/attachments. Cross-site restore and ADF media rewrite are explicitly deferred.
+
+Deliverables (across all sprints in this phase):
+- Restore wizard with three conflict modes (Override, Skip default, Ask per conflict)
+- Destination options: Original location, Alternate location (same site), Browser Download export
+- Restore engine enforcing write order: Project → Workflow + WorkflowScheme → CustomField + FieldConfiguration → Board → Sprint → Issue body → links/comments/attachments
+- Phase-failure halt with named diagnostic before next phase
+- Block in-place restore for projects in Atlassian's 60-day trash window with alternate-location guidance
+- Best-effort warning for ADF media link breakage post-attachment-restore
+- Heartbeat and progress events ≤10s for restore jobs
+
+This is sprint 3 of 3 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+_Sprint started. Role checkpoints below will update as work completes._
+
+---
+### Sprint 13 - Restore Wizard Final Slice: Trash-Window Block, ADF Warning & Browser Download Export | 2026-05-03 | ✅ Backend Developer checkpoint (3/3 done)
+
+- ✅ Implement trash-window detection & in-place restore block with alternate-location guidance (◈ Standard, 3 SP)
+- ✅ Implement Browser Download export destination for restore (◉ Deep, 5 SP)
+- ✅ Add structured logs & metrics for restore manifest emission and pagination termination (⚡ Quick, 2 SP)
+
+---
+### Sprint 13 - Restore Wizard Final Slice: Trash-Window Block, ADF Warning & Browser Download Export | 2026-05-03 | ✅ done | 24 SP
+**Goal:** [Phase: Restore Engine & Wizard — Sprint 3 of 3]
+Implement the restore wizard (conflict modes, destination options) and the dependency-ordered restore engine, including the post-issue-creation pass for links/comments/attachments. Cross-site restore and ADF media rewrite are explicitly deferred.
+
+Deliverables (across all sprints in this phase):
+- Restore wizard with three conflict modes (Override, Skip default, Ask per conflict)
+- Destination options: Original location, Alternate location (same site), Browser Download export
+- Restore engine enforcing write order: Project → Workflow + WorkflowScheme → CustomField + FieldConfiguration → Board → Sprint → Issue body → links/comments/attachments
+- Phase-failure halt with named diagnostic before next phase
+- Block in-place restore for projects in Atlassian's 60-day trash window with alternate-location guidance
+- Best-effort warning for ADF media link breakage post-attachment-restore
+- Heartbeat and progress events ≤10s for restore jobs
+
+This is sprint 3 of 3 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+**Delivered:**
+- ✅ Implement trash-window detection & in-place restore block with alternate-location guidance — Backend Developer (◈ Standard, 3 SP)
+- ✅ Implement Browser Download export destination for restore — Backend Developer (◉ Deep, 5 SP)
+- ✅ Wire ADF media-link breakage warning into restore report UI — Frontend Developer (◈ Standard, 3 SP)
+- ✅ Playwright + integration coverage for trash-window block, browser download, and ADF warning — Qa Engineer (◉ Deep, 5 SP)
+- ✅ Add structured logs & metrics for restore manifest emission and pagination termination — Backend Developer (⚡ Quick, 2 SP)
+- ✅ Complete Browser Download export destination implementation — Backend Developer (◈ Standard, 3 SP)
+- ✅ Verify and complete ADF media warnings wiring in RestoreWizard — Frontend Developer (◈ Standard, 3 SP)
+
+---

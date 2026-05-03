@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS restore_jobs (
   error_count                INTEGER NOT NULL DEFAULT 0,
   failure_diagnostic         TEXT,
   adf_media_warning_emitted  INTEGER NOT NULL DEFAULT 0,  -- 0=false, 1=true
+  adf_media_warnings         TEXT    NOT NULL DEFAULT '[]', -- JSON: string[] of affected issue IDs
   trash_window_blocked       INTEGER NOT NULL DEFAULT 0,  -- 0=false, 1=true
   last_heartbeat_at          INTEGER,           -- Unix epoch ms; NULL until worker starts
   stalled                    INTEGER NOT NULL DEFAULT 0,  -- 0=false, 1=true

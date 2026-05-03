@@ -1,0 +1,25 @@
+{
+  "description": "Live-tenant smoke: trash-window block lifecycle — Original blocked, structured logs captured, Alternate succeeds; DoD evidence artifact",
+  "scenario": "5a",
+  "capturedLogLines": {
+    "trashWindowBlock": [
+      "[jira-restore] trash-window-block project=LIVE-DELETED-PROJ action=blocked"
+    ],
+    "jobCreated": [
+      "[jira-restore] job.created jobId=restore-ec188484-5dcc-4db3-8ccc-5bb411db199e sourceBackupPointId=bp-live-smoke-alt conflictMode=skip",
+      "[jira-restore] job.created jobId=restore-ec188484-5dcc-4db3-8ccc-5bb411db199e status=running"
+    ],
+    "jobComplete": [
+      "[jira-restore] job.complete jobId=restore-ec188484-5dcc-4db3-8ccc-5bb411db199e status=completed"
+    ]
+  },
+  "assertions": [
+    "[jira-restore] trash-window-block action=blocked log emitted",
+    "[jira-restore] job.created log emitted for alternate-location job",
+    "[jira-restore] job.complete log emitted when alternate-location job finishes",
+    "Original-location restore returns 400 TRASH_WINDOW_BLOCK",
+    "Alternate-location restore returns 201 and completes successfully"
+  ],
+  "evidenceType": "structured_logs",
+  "timestamp": "2026-05-03T18:01:53.193Z"
+}

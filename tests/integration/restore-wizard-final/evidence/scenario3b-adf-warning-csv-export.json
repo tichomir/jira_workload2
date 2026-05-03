@@ -1,0 +1,18 @@
+{
+  "description": "ADF warning issue keys are CSV-exportable; CSV round-trips through format correctly; header \"issue_key\" + one row per affected issue",
+  "scenario": "3b",
+  "jobId": "adf-csv-export-1777831312988",
+  "affectedIssueCount": 4,
+  "csvHeader": "issue_key",
+  "csvRowCount": 4,
+  "csvOutputPreview": "issue_key\nALPHA-1\nALPHA-2\nBETA-1\nBETA-5",
+  "parsedKeysMatchInput": true,
+  "assertions": [
+    "adfMediaWarnings array is present and non-empty",
+    "CSV has correct header: issue_key",
+    "CSV has 4 data rows (one per affected issue)",
+    "CSV round-trips: parsed keys match seeded issue keys",
+    "CSV file writes to disk without error"
+  ],
+  "timestamp": "2026-05-03T18:01:52.990Z"
+}

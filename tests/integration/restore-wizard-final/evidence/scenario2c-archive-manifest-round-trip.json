@@ -1,0 +1,19 @@
+{
+  "description": "Archive entity contents match manifest input exactly; JSON round-trip fidelity verified for all 6 entity types",
+  "scenario": "2c",
+  "entitiesCounts": {
+    "projects": 2,
+    "workflows": 1,
+    "customFields": 1,
+    "boards": 1,
+    "sprints": 1,
+    "issues": 2
+  },
+  "assertions": [
+    "projects.json round-trips 2 project records with correct keys",
+    "issues.json round-trips 2 issue records with correct keys",
+    "custom-fields.json round-trips 1 custom field with correct name",
+    "All entity data survives ZIP compression and decompression"
+  ],
+  "timestamp": "2026-05-03T18:01:52.961Z"
+}

@@ -1,0 +1,23 @@
+{
+  "description": "RestoreWorker relays BrowserDownloadAssembler onHeartbeat callbacks to event bus as heartbeat events; all gaps ≤10s",
+  "scenario": "4b",
+  "jobId": "worker-relay-heartbeat-test",
+  "heartbeatEventCount": 6,
+  "gaps": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "maxGapMs": 0,
+  "allGapsWithin10s": true,
+  "finalStatus": "completed",
+  "assertions": [
+    "At least 6 heartbeat events relayed to bus (one per entity file)",
+    "All consecutive heartbeat gaps ≤10 000ms",
+    "Worker completes with status=completed",
+    "Heartbeat relay chain: assembler → worker → event bus works end-to-end"
+  ],
+  "timestamp": "2026-05-03T18:01:53.062Z"
+}

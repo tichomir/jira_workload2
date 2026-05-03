@@ -1,6 +1,6 @@
 {
   "scenario": "Scenario C: JSM Project-Type Detection",
-  "generatedAt": "2026-05-03T17:28:15.339Z",
+  "generatedAt": "2026-05-03T17:56:25.065Z",
   "assertions": {
     "jsmProjectsDetected": 1,
     "jsmNoticePresent": true,

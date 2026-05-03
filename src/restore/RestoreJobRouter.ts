@@ -15,6 +15,8 @@
 
 import { Router, Request, Response } from 'express';
 import { randomUUID } from 'crypto';
+import * as fs from 'fs';
+import * as path from 'path';
 import { RestoreJobStore } from './RestoreJobStore';
 import { RestoreEventBus } from './RestoreEventBus';
 import { RestoreWorker } from './RestoreWorker';
@@ -36,6 +38,11 @@ export interface RestoreJobRouterOptions {
   checkIntervalMs?: number;
   /** Stale threshold override for testing */
   staleThresholdMs?: number;
+  /**
+   * Override the trash-window checker used by POST /restore/jobs.
+   * Inject a mock in tests to avoid real Jira API calls.
+   */
+  trashWindowChecker?: Pick<TrashWindowChecker, 'checkProjects'>;
 }
 
 export function createRestoreJobRouter(
@@ -177,24 +184,25 @@ export function createRestoreJobRouter(
       const projectKeys = scopeObj['projectKeys'] as string[];
 
       try {
-        const httpClient = new JiraHttpClient(cloudId, credRepo);
-        const checker = new TrashWindowChecker(httpClient);
+        const checker: Pick<TrashWindowChecker, 'checkProjects'> =
+          opts.trashWindowChecker ??
+          new TrashWindowChecker(new JiraHttpClient(cloudId, credRepo));
+
         const results = await checker.checkProjects(projectKeys);
         const blocked = results.filter((r) => r.inTrash);
 
         if (blocked.length > 0) {
-          const affectedProjectKeys = blocked.map((r) => r.projectKey);
+          const first = blocked[0];
           console.log(
-            `[jira-restore] job.blocked.trash-window affectedProjects=${affectedProjectKeys.join(',')}`,
+            `[jira-restore] trash-window-block project=${first.projectKey} action=blocked`,
           );
 
-          res.status(409).json({
-            error: 'TRASH_WINDOW_BLOCK',
-            message:
-              `Project '${affectedProjectKeys[0]}' is currently in Atlassian's 60-day trash window ` +
-              `and cannot be restored in place. Use 'alternate' destination or wait for an admin to ` +
-              `restore the project from Atlassian trash.`,
-            affectedProjectKeys,
+          res.status(400).json({
+            code: 'TRASH_WINDOW_BLOCK',
+            projectKey: first.projectKey,
+            deletedAt: first.deletedAt ?? null,
+            expiresAt: first.expiresAt ?? null,
+            guidance: 'Use Alternate location restore',
           });
           return;
         }
@@ -381,6 +389,60 @@ export function createRestoreJobRouter(
     });
   });
 
+  // ── GET /restore/jobs/:id/download ────────────────────────────────────────
+
+  router.get('/:id/download', (req: Request, res: Response): void => {
+    const cloudId = getCloudId(req, res);
+    if (cloudId === null) return;
+
+    const jobId = req.params['id'] as string;
+    const job = restoreStore.getJob(jobId);
+
+    if (!job) {
+      res.status(404).json({
+        error: 'NOT_FOUND',
+        message: `Restore job '${jobId}' not found.`,
+      });
+      return;
+    }
+
+    if (job.destination.type !== 'export') {
+      res.status(400).json({
+        error: 'NOT_EXPORT_JOB',
+        message: `Job '${jobId}' is not a browser-download export job.`,
+      });
+      return;
+    }
+
+    if (job.status !== 'completed') {
+      res.status(409).json({
+        error: 'JOB_NOT_COMPLETE',
+        message: `Job '${jobId}' is not yet complete (status: ${job.status}).`,
+      });
+      return;
+    }
+
+    const zipPath = restoreStore.getDownloadPath(jobId);
+    if (!zipPath || !fs.existsSync(zipPath)) {
+      res.status(404).json({
+        error: 'ARCHIVE_NOT_FOUND',
+        message: `Archive for job '${jobId}' is not available.`,
+      });
+      return;
+    }
+
+    const filename = `restore-${jobId}.zip`;
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-Length', fs.statSync(zipPath).size);
+
+    const stream = fs.createReadStream(zipPath);
+    stream.pipe(res);
+    stream.on('error', () => {
+      res.status(500).end();
+    });
+  });
+
   return router;
 }
 
@@ -401,6 +463,7 @@ function serializeJob(job: ReturnType<RestoreJobStore['getJob']>) {
     errorCount: job.errorCount,
     failureDiagnostic: job.failureDiagnostic,
     adfMediaWarningEmitted: job.adfMediaWarningEmitted,
+    adfMediaWarnings: job.adfMediaWarnings,
     trashWindowBlocked: job.trashWindowBlocked,
   };
 }

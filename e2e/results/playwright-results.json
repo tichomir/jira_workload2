@@ -59,20 +59,20 @@
   },
   "suites": [
     {
-      "title": "sprint12-restore-engine.spec.ts",
-      "file": "sprint12-restore-engine.spec.ts",
+      "title": "sprint13-restore-wizard-final.spec.ts",
+      "file": "sprint13-restore-wizard-final.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Sprint 12 — Scenario 1: Happy-path 7-phase stepper",
-          "file": "sprint12-restore-engine.spec.ts",
-          "line": 205,
+          "title": "Sprint 13 — Scenario 1: Trash-window block",
+          "file": "sprint13-restore-wizard-final.spec.ts",
+          "line": 255,
           "column": 6,
           "specs": [
             {
-              "title": "(1a) POST /restore/jobs → all 7 phases complete in canonical order",
+              "title": "(1a) Original-location restore with trashed project → 400 TRASH_WINDOW_BLOCK + guidance",
               "ok": true,
               "tags": [],
               "tests": [
@@ -87,46 +87,105 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 93,
+                      "duration": 50,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[jira-restore] job.created jobId=restore-de2f7b98-e7b7-4d8b-97a5-b6b133903214 sourceBackupPointId=bp-happy-path-001 conflictMode=skip\n"
+                          "text": "[jira-restore] trash-window-block project=DEAD-PROJ action=blocked\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T18:01:52.605Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "78c8374674f4fc97d700-daff8f5320f6c6c5289b",
+              "file": "sprint13-restore-wizard-final.spec.ts",
+              "line": 265,
+              "column": 7
+            },
+            {
+              "title": "(1b) Alternate-location restore for same trashed project → 201 created (no block)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 35,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[jira-restore] job.created jobId=restore-f14c8a7d-c0b2-444c-8945-303fc331bf15 sourceBackupPointId=bp-trash-test-002 conflictMode=skip\n"
                         },
                         {
-                          "text": "[jira-restore] job.created jobId=restore-de2f7b98-e7b7-4d8b-97a5-b6b133903214 status=running\n"
+                          "text": "[jira-restore] job.created jobId=restore-f14c8a7d-c0b2-444c-8945-303fc331bf15 status=running\n"
                         },
                         {
                           "text": "[restore-engine] phase=project outcome=completed items=1\n"
                         },
                         {
+                          "text": "[jira-restore] manifest-loaded phase=project count=1\n"
+                        },
+                        {
                           "text": "[restore-engine] phase=workflow outcome=completed items=3\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=workflow count=3\n"
                         },
                         {
                           "text": "[restore-engine] phase=custom_field outcome=completed items=2\n"
                         },
                         {
+                          "text": "[jira-restore] manifest-loaded phase=custom_field count=2\n"
+                        },
+                        {
                           "text": "[restore-engine] phase=board outcome=completed items=1\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=board count=1\n"
                         },
                         {
                           "text": "[restore-engine] phase=sprint outcome=completed items=2\n"
                         },
                         {
-                          "text": "[restore-engine] phase=issue_body outcome=completed items=2\n"
+                          "text": "[jira-restore] manifest-loaded phase=sprint count=2\n"
                         },
                         {
-                          "text": "[restore-engine] phase=post_issue outcome=completed items=2\n"
+                          "text": "[restore-engine] phase=issue_body outcome=completed items=1\n"
                         },
                         {
-                          "text": "[restore-engine] adf-media-link-breakage-possible jobId=restore-de2f7b98-e7b7-4d8b-97a5-b6b133903214 affectedIssues=MOCK-1,MOCK-2\n"
+                          "text": "[jira-restore] manifest-loaded phase=issue_body count=1\n"
                         },
                         {
-                          "text": "[jira-restore] job.complete jobId=restore-de2f7b98-e7b7-4d8b-97a5-b6b133903214 status=completed\n"
+                          "text": "[restore-engine] phase=post_issue outcome=completed items=1\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=post_issue count=1\n"
+                        },
+                        {
+                          "text": "[restore-engine] adf-media-link-breakage-possible jobId=restore-f14c8a7d-c0b2-444c-8945-303fc331bf15 affectedIssues=DEAD-PROJ-1\n"
+                        },
+                        {
+                          "text": "[jira-restore] job.complete jobId=restore-f14c8a7d-c0b2-444c-8945-303fc331bf15 status=completed\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T17:37:25.663Z",
+                      "startTime": "2026-05-03T18:01:52.686Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -134,13 +193,13 @@
                   "status": "expected"
                 }
               ],
-              "id": "9bd1d26d44e2eff5796f-830cb60091e925036631",
-              "file": "sprint12-restore-engine.spec.ts",
-              "line": 215,
+              "id": "78c8374674f4fc97d700-39787b8478a740d084f4",
+              "file": "sprint13-restore-wizard-final.spec.ts",
+              "line": 315,
               "column": 7
             },
             {
-              "title": "(1b) GET /restore/jobs/:id reflects completed stepper state",
+              "title": "(1c) Multiple trashed projects: first blocked project reported in response",
               "ok": true,
               "tags": [],
               "tests": [
@@ -155,46 +214,16 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 36,
+                      "duration": 11,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[jira-restore] job.created jobId=restore-1d5cae4b-5464-4d94-9cb1-bdc24293b9bd sourceBackupPointId=bp-happy-path-002 conflictMode=override\n"
-                        },
-                        {
-                          "text": "[jira-restore] job.created jobId=restore-1d5cae4b-5464-4d94-9cb1-bdc24293b9bd status=running\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=project outcome=completed items=2\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=workflow outcome=completed items=3\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=custom_field outcome=completed items=2\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=board outcome=completed items=1\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=sprint outcome=completed items=2\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=issue_body outcome=completed items=2\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=post_issue outcome=completed items=2\n"
-                        },
-                        {
-                          "text": "[restore-engine] adf-media-link-breakage-possible jobId=restore-1d5cae4b-5464-4d94-9cb1-bdc24293b9bd affectedIssues=ALPHA-1,BETA-1\n"
-                        },
-                        {
-                          "text": "[jira-restore] job.complete jobId=restore-1d5cae4b-5464-4d94-9cb1-bdc24293b9bd status=completed\n"
+                          "text": "[jira-restore] trash-window-block project=DEAD-PROJ action=blocked\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T17:37:25.791Z",
+                      "startTime": "2026-05-03T18:01:52.726Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -202,21 +231,21 @@
                   "status": "expected"
                 }
               ],
-              "id": "9bd1d26d44e2eff5796f-44343a8fffbb22dacd9f",
-              "file": "sprint12-restore-engine.spec.ts",
-              "line": 287,
+              "id": "78c8374674f4fc97d700-e28fa22a00402cf35512",
+              "file": "sprint13-restore-wizard-final.spec.ts",
+              "line": 358,
               "column": 7
             }
           ]
         },
         {
-          "title": "Sprint 12 — Scenario 2: Workflow phase failure halt",
-          "file": "sprint12-restore-engine.spec.ts",
-          "line": 336,
+          "title": "Sprint 13 — Scenario 2: Browser Download export",
+          "file": "sprint13-restore-wizard-final.spec.ts",
+          "line": 398,
           "column": 6,
           "specs": [
             {
-              "title": "(2a) In-process: engine halts at workflow; board/sprint/issue phases NOT run",
+              "title": "(2a) Export job completes and archive contains 6 entity JSON files",
               "ok": true,
               "tags": [],
               "tests": [
@@ -231,19 +260,43 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 19,
+                      "duration": 167,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[restore-engine] phase=project outcome=completed items=1\n"
+                          "text": "[jira-restore] job.created jobId=restore-951ecab5-0237-457a-bba6-5b7fa52767c9 sourceBackupPointId=bp-export-archive-001 conflictMode=skip\n"
                         },
                         {
-                          "text": "[restore-engine] phase=workflow outcome=failed items=0\n"
+                          "text": "[jira-restore] job.created jobId=restore-951ecab5-0237-457a-bba6-5b7fa52767c9 status=running\n"
+                        },
+                        {
+                          "text": "[jira-restore] job.heartbeat jobId=restore-951ecab5-0237-457a-bba6-5b7fa52767c9 phase=none processed=0/0\n"
+                        },
+                        {
+                          "text": "[jira-restore] job.heartbeat jobId=restore-951ecab5-0237-457a-bba6-5b7fa52767c9 phase=none processed=0/0\n"
+                        },
+                        {
+                          "text": "[jira-restore] job.heartbeat jobId=restore-951ecab5-0237-457a-bba6-5b7fa52767c9 phase=none processed=0/0\n"
+                        },
+                        {
+                          "text": "[jira-restore] job.heartbeat jobId=restore-951ecab5-0237-457a-bba6-5b7fa52767c9 phase=none processed=0/0\n"
+                        },
+                        {
+                          "text": "[jira-restore] job.heartbeat jobId=restore-951ecab5-0237-457a-bba6-5b7fa52767c9 phase=none processed=0/0\n"
+                        },
+                        {
+                          "text": "[jira-restore] job.heartbeat jobId=restore-951ecab5-0237-457a-bba6-5b7fa52767c9 phase=none processed=0/0\n"
+                        },
+                        {
+                          "text": "[jira-restore] browser-download assembled jobId=restore-951ecab5-0237-457a-bba6-5b7fa52767c9 sizeBytes=660 attachments=0\n"
+                        },
+                        {
+                          "text": "[jira-restore] job.complete jobId=restore-951ecab5-0237-457a-bba6-5b7fa52767c9 status=completed\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T17:37:25.838Z",
+                      "startTime": "2026-05-03T18:01:52.747Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -251,13 +304,281 @@
                   "status": "expected"
                 }
               ],
-              "id": "9bd1d26d44e2eff5796f-28851a001be50273a1bd",
-              "file": "sprint12-restore-engine.spec.ts",
-              "line": 346,
+              "id": "78c8374674f4fc97d700-1475eb9a80fa0161870d",
+              "file": "sprint13-restore-wizard-final.spec.ts",
+              "line": 408,
               "column": 7
             },
             {
-              "title": "(2b) API-level: GET /restore/jobs/:id returns failureDiagnostic with named code on halted job",
+              "title": "(2b) Export job does not call any Jira write APIs (TrackingNullJiraWriteClient)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[jira-restore] job.created jobId=export-no-write-test status=running\n"
+                        },
+                        {
+                          "text": "[jira-restore] job.heartbeat jobId=export-no-write-test phase=none processed=0/0\n"
+                        },
+                        {
+                          "text": "[jira-restore] job.heartbeat jobId=export-no-write-test phase=none processed=0/0\n"
+                        },
+                        {
+                          "text": "[jira-restore] job.heartbeat jobId=export-no-write-test phase=none processed=0/0\n"
+                        },
+                        {
+                          "text": "[jira-restore] job.heartbeat jobId=export-no-write-test phase=none processed=0/0\n"
+                        },
+                        {
+                          "text": "[jira-restore] job.heartbeat jobId=export-no-write-test phase=none processed=0/0\n"
+                        },
+                        {
+                          "text": "[jira-restore] job.heartbeat jobId=export-no-write-test phase=none processed=0/0\n"
+                        },
+                        {
+                          "text": "[jira-restore] browser-download assembled jobId=export-no-write-test sizeBytes=660 attachments=0\n"
+                        },
+                        {
+                          "text": "[jira-restore] job.complete jobId=export-no-write-test status=completed\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T18:01:52.938Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "78c8374674f4fc97d700-2f925fdb2d7315765e05",
+              "file": "sprint13-restore-wizard-final.spec.ts",
+              "line": 475,
+              "column": 7
+            },
+            {
+              "title": "(2c) Archive contents match the manifest entities (round-trip fidelity)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[jira-restore] browser-download assembled jobId=round-trip-test sizeBytes=997 attachments=0\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T18:01:52.952Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "78c8374674f4fc97d700-d2effb6032730e1b5692",
+              "file": "sprint13-restore-wizard-final.spec.ts",
+              "line": 532,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Sprint 13 — Scenario 3: ADF media warning panel + CSV export",
+          "file": "sprint13-restore-wizard-final.spec.ts",
+          "line": 603,
+          "column": 6,
+          "specs": [
+            {
+              "title": "(3a) In-process: ADF warning emitted with specific issue keys from seeded scope",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[restore-engine] phase=project outcome=completed items=0\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=project count=0\n"
+                        },
+                        {
+                          "text": "[restore-engine] phase=workflow outcome=completed items=3\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=workflow count=3\n"
+                        },
+                        {
+                          "text": "[restore-engine] phase=custom_field outcome=completed items=2\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=custom_field count=2\n"
+                        },
+                        {
+                          "text": "[restore-engine] phase=board outcome=completed items=1\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=board count=1\n"
+                        },
+                        {
+                          "text": "[restore-engine] phase=sprint outcome=completed items=2\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=sprint count=2\n"
+                        },
+                        {
+                          "text": "[restore-engine] phase=issue_body outcome=completed items=3\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=issue_body count=3\n"
+                        },
+                        {
+                          "text": "[restore-engine] phase=post_issue outcome=completed items=3\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=post_issue count=3\n"
+                        },
+                        {
+                          "text": "[restore-engine] adf-media-link-breakage-possible jobId=adf-warning-issue-keys-1777831312978 affectedIssues=WEB-1,WEB-2,WEB-3\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T18:01:52.968Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "78c8374674f4fc97d700-55fd6a80bb822cfbd979",
+              "file": "sprint13-restore-wizard-final.spec.ts",
+              "line": 613,
+              "column": 7
+            },
+            {
+              "title": "(3b) ADF warning issue keys are CSV-exportable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 20,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[restore-engine] phase=project outcome=completed items=0\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=project count=0\n"
+                        },
+                        {
+                          "text": "[restore-engine] phase=workflow outcome=completed items=3\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=workflow count=3\n"
+                        },
+                        {
+                          "text": "[restore-engine] phase=custom_field outcome=completed items=2\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=custom_field count=2\n"
+                        },
+                        {
+                          "text": "[restore-engine] phase=board outcome=completed items=1\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=board count=1\n"
+                        },
+                        {
+                          "text": "[restore-engine] phase=sprint outcome=completed items=2\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=sprint count=2\n"
+                        },
+                        {
+                          "text": "[restore-engine] phase=issue_body outcome=completed items=4\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=issue_body count=4\n"
+                        },
+                        {
+                          "text": "[restore-engine] phase=post_issue outcome=completed items=4\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=post_issue count=4\n"
+                        },
+                        {
+                          "text": "[restore-engine] adf-media-link-breakage-possible jobId=adf-csv-export-1777831312988 affectedIssues=ALPHA-1,ALPHA-2,BETA-1,BETA-5\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T18:01:52.984Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "78c8374674f4fc97d700-5f4d0765274f90e48ac5",
+              "file": "sprint13-restore-wizard-final.spec.ts",
+              "line": 680,
+              "column": 7
+            },
+            {
+              "title": "(3c) API-level: adfMediaWarningEmitted=true and adfMediaWarnings array populated",
               "ok": true,
               "tags": [],
               "tests": [
@@ -276,59 +597,63 @@
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[restore-engine] phase=project outcome=completed items=1\n"
+                          "text": "[jira-restore] job.created jobId=restore-bb5ca4d3-ee07-46a8-af00-b3f15525edce sourceBackupPointId=bp-adf-api-001 conflictMode=skip\n"
                         },
                         {
-                          "text": "[restore-engine] phase=workflow outcome=failed items=0\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-03T17:37:25.872Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "9bd1d26d44e2eff5796f-59e13367f29f035b79ef",
-              "file": "sprint12-restore-engine.spec.ts",
-              "line": 480,
-              "column": 7
-            },
-            {
-              "title": "(2c) custom_field failure: sprint and issue phases are also NOT run",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "api",
-                  "projectName": "api",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 4,
-                      "errors": [],
-                      "stdout": [
+                          "text": "[jira-restore] job.created jobId=restore-bb5ca4d3-ee07-46a8-af00-b3f15525edce status=running\n"
+                        },
                         {
-                          "text": "[restore-engine] phase=project outcome=completed items=1\n"
+                          "text": "[restore-engine] phase=project outcome=completed items=0\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=project count=0\n"
                         },
                         {
                           "text": "[restore-engine] phase=workflow outcome=completed items=3\n"
                         },
                         {
-                          "text": "[restore-engine] phase=custom_field outcome=failed items=0\n"
+                          "text": "[jira-restore] manifest-loaded phase=workflow count=3\n"
+                        },
+                        {
+                          "text": "[restore-engine] phase=custom_field outcome=completed items=2\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=custom_field count=2\n"
+                        },
+                        {
+                          "text": "[restore-engine] phase=board outcome=completed items=1\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=board count=1\n"
+                        },
+                        {
+                          "text": "[restore-engine] phase=sprint outcome=completed items=2\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=sprint count=2\n"
+                        },
+                        {
+                          "text": "[restore-engine] phase=issue_body outcome=completed items=3\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=issue_body count=3\n"
+                        },
+                        {
+                          "text": "[restore-engine] phase=post_issue outcome=completed items=3\n"
+                        },
+                        {
+                          "text": "[jira-restore] manifest-loaded phase=post_issue count=3\n"
+                        },
+                        {
+                          "text": "[restore-engine] adf-media-link-breakage-possible jobId=restore-bb5ca4d3-ee07-46a8-af00-b3f15525edce affectedIssues=PROJ-10,PROJ-11,PROJ-12\n"
+                        },
+                        {
+                          "text": "[jira-restore] job.complete jobId=restore-bb5ca4d3-ee07-46a8-af00-b3f15525edce status=completed\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T17:37:25.903Z",
+                      "startTime": "2026-05-03T18:01:53.009Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -336,62 +661,21 @@
                   "status": "expected"
                 }
               ],
-              "id": "9bd1d26d44e2eff5796f-2a15c834d5818190584b",
-              "file": "sprint12-restore-engine.spec.ts",
-              "line": 539,
+              "id": "78c8374674f4fc97d700-56cfe349ca65bb57fadb",
+              "file": "sprint13-restore-wizard-final.spec.ts",
+              "line": 751,
               "column": 7
             }
           ]
         },
         {
-          "title": "Sprint 12 — Scenario 3: Heartbeat cadence (≤10s)",
-          "file": "sprint12-restore-engine.spec.ts",
-          "line": 626,
+          "title": "Sprint 13 — Scenario 4: Heartbeat during slow archive assembly",
+          "file": "sprint13-restore-wizard-final.spec.ts",
+          "line": 815,
           "column": 6,
           "specs": [
             {
-              "title": "(3a) RestoreWorker emits heartbeat with phase/processed/total using fake timer",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "api",
-                  "projectName": "api",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 4,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "[jira-restore] job.heartbeat jobId=hb-cadence-test-01 phase=issue_body processed=85/200\n"
-                        },
-                        {
-                          "text": "[jira-restore] job.heartbeat jobId=hb-cadence-test-01 phase=issue_body processed=85/200\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-03T17:37:25.917Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "9bd1d26d44e2eff5796f-cb867e5569f6a2f7af24",
-              "file": "sprint12-restore-engine.spec.ts",
-              "line": 627,
-              "column": 7
-            },
-            {
-              "title": "(3b) Multiple heartbeats: consecutive timestamps are ≤10s apart (fake timer)",
+              "title": "(4a) Heartbeat events fired per entity/attachment via onHeartbeat callback",
               "ok": true,
               "tags": [],
               "tests": [
@@ -410,18 +694,12 @@
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[jira-restore] job.heartbeat jobId=hb-cadence-test-02 phase=board processed=2/5\n"
-                        },
-                        {
-                          "text": "[jira-restore] job.heartbeat jobId=hb-cadence-test-02 phase=board processed=2/5\n"
-                        },
-                        {
-                          "text": "[jira-restore] job.heartbeat jobId=hb-cadence-test-02 phase=board processed=2/5\n"
+                          "text": "[jira-restore] browser-download assembled jobId=slow-assembly-heartbeat-test sizeBytes=1712 attachments=3\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T17:37:25.924Z",
+                      "startTime": "2026-05-03T18:01:53.047Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -429,21 +707,13 @@
                   "status": "expected"
                 }
               ],
-              "id": "9bd1d26d44e2eff5796f-12253fe9629213b8cf09",
-              "file": "sprint12-restore-engine.spec.ts",
-              "line": 748,
+              "id": "78c8374674f4fc97d700-999f7b49270e5472d8ff",
+              "file": "sprint13-restore-wizard-final.spec.ts",
+              "line": 816,
               "column": 7
-            }
-          ]
-        },
-        {
-          "title": "Sprint 12 — Scenario 4: ADF media breakage warning",
-          "file": "sprint12-restore-engine.spec.ts",
-          "line": 868,
-          "column": 6,
-          "specs": [
+            },
             {
-              "title": "(4a) In-process: adfMediaWarning event emitted after post_issue phase",
+              "title": "(4b) RestoreWorker relays assembler heartbeats to event bus as heartbeat events",
               "ok": true,
               "tags": [],
               "tests": [
@@ -462,33 +732,36 @@
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[restore-engine] phase=project outcome=completed items=1\n"
+                          "text": "[jira-restore] job.created jobId=worker-relay-heartbeat-test status=running\n"
                         },
                         {
-                          "text": "[restore-engine] phase=workflow outcome=completed items=3\n"
+                          "text": "[jira-restore] job.heartbeat jobId=worker-relay-heartbeat-test phase=none processed=0/0\n"
                         },
                         {
-                          "text": "[restore-engine] phase=custom_field outcome=completed items=2\n"
+                          "text": "[jira-restore] job.heartbeat jobId=worker-relay-heartbeat-test phase=none processed=0/0\n"
                         },
                         {
-                          "text": "[restore-engine] phase=board outcome=completed items=1\n"
+                          "text": "[jira-restore] job.heartbeat jobId=worker-relay-heartbeat-test phase=none processed=0/0\n"
                         },
                         {
-                          "text": "[restore-engine] phase=sprint outcome=completed items=2\n"
+                          "text": "[jira-restore] job.heartbeat jobId=worker-relay-heartbeat-test phase=none processed=0/0\n"
                         },
                         {
-                          "text": "[restore-engine] phase=issue_body outcome=completed items=2\n"
+                          "text": "[jira-restore] job.heartbeat jobId=worker-relay-heartbeat-test phase=none processed=0/0\n"
                         },
                         {
-                          "text": "[restore-engine] phase=post_issue outcome=completed items=2\n"
+                          "text": "[jira-restore] job.heartbeat jobId=worker-relay-heartbeat-test phase=none processed=0/0\n"
                         },
                         {
-                          "text": "[restore-engine] adf-media-link-breakage-possible jobId=adf-warn-inprocess-1777829845944 affectedIssues=MOCK-1,MOCK-2\n"
+                          "text": "[jira-restore] browser-download assembled jobId=worker-relay-heartbeat-test sizeBytes=660 attachments=0\n"
+                        },
+                        {
+                          "text": "[jira-restore] job.complete jobId=worker-relay-heartbeat-test status=completed\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T17:37:25.933Z",
+                      "startTime": "2026-05-03T18:01:53.056Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -496,145 +769,21 @@
                   "status": "expected"
                 }
               ],
-              "id": "9bd1d26d44e2eff5796f-3270bf0bcbc5e105d900",
-              "file": "sprint12-restore-engine.spec.ts",
-              "line": 878,
-              "column": 7
-            },
-            {
-              "title": "(4b) API-level: GET /restore/jobs/:id shows adfMediaWarningEmitted=true",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "api",
-                  "projectName": "api",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 55,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "[jira-restore] job.created jobId=restore-06fb527e-04d7-4446-ba6b-794cc577cf7d sourceBackupPointId=bp-adf-api-001 conflictMode=skip\n"
-                        },
-                        {
-                          "text": "[jira-restore] job.created jobId=restore-06fb527e-04d7-4446-ba6b-794cc577cf7d status=running\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=project outcome=completed items=1\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=workflow outcome=completed items=3\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=custom_field outcome=completed items=2\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=board outcome=completed items=1\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=sprint outcome=completed items=2\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=issue_body outcome=completed items=2\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=post_issue outcome=completed items=2\n"
-                        },
-                        {
-                          "text": "[restore-engine] adf-media-link-breakage-possible jobId=restore-06fb527e-04d7-4446-ba6b-794cc577cf7d affectedIssues=MOCK-1,MOCK-2\n"
-                        },
-                        {
-                          "text": "[jira-restore] job.complete jobId=restore-06fb527e-04d7-4446-ba6b-794cc577cf7d status=completed\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-03T17:37:25.949Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "9bd1d26d44e2eff5796f-980b95cd8b726428d80c",
-              "file": "sprint12-restore-engine.spec.ts",
-              "line": 955,
-              "column": 7
-            },
-            {
-              "title": "(4c) ADF warning does NOT emit when post_issue has no attachments (empty affectedIssueIds)",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "api",
-                  "projectName": "api",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 4,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "[restore-engine] phase=project outcome=completed items=1\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=workflow outcome=completed items=3\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=custom_field outcome=completed items=2\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=board outcome=completed items=1\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=sprint outcome=completed items=2\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=issue_body outcome=completed items=2\n"
-                        },
-                        {
-                          "text": "[restore-engine] phase=post_issue outcome=completed items=2\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-03T17:37:26.008Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "9bd1d26d44e2eff5796f-c5d473a23863cc5fbd3c",
-              "file": "sprint12-restore-engine.spec.ts",
-              "line": 999,
+              "id": "78c8374674f4fc97d700-094bbbda44d2cd79905d",
+              "file": "sprint13-restore-wizard-final.spec.ts",
+              "line": 882,
               "column": 7
             }
           ]
         },
         {
-          "title": "Sprint 12 evidence manifest",
-          "file": "sprint12-restore-engine.spec.ts",
-          "line": 1069,
+          "title": "Sprint 13 — Scenario 5: Live-tenant smoke evidence",
+          "file": "sprint13-restore-wizard-final.spec.ts",
+          "line": 952,
           "column": 6,
           "specs": [
             {
-              "title": "all evidence files were written to tests/integration/restore-engine/evidence/",
+              "title": "(5a) Trash-window smoke: structured log lines captured for full block lifecycle",
               "ok": true,
               "tags": [],
               "tests": [
@@ -649,12 +798,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 13,
+                      "duration": 128,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T17:37:26.021Z",
+                      "startTime": "2026-05-03T18:01:53.065Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -662,9 +811,85 @@
                   "status": "expected"
                 }
               ],
-              "id": "9bd1d26d44e2eff5796f-4c43bb0bd4b0add8c69e",
-              "file": "sprint12-restore-engine.spec.ts",
-              "line": 1070,
+              "id": "78c8374674f4fc97d700-ab8287542c92e0fe9e58",
+              "file": "sprint13-restore-wizard-final.spec.ts",
+              "line": 953,
+              "column": 7
+            },
+            {
+              "title": "(5b) Alternate-location restore smoke: full job lifecycle log evidence",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 113,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T18:01:53.197Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "78c8374674f4fc97d700-0b3f0ae4f56034dfffc1",
+              "file": "sprint13-restore-wizard-final.spec.ts",
+              "line": 1071,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Sprint 13 evidence manifest",
+          "file": "sprint13-restore-wizard-final.spec.ts",
+          "line": 1199,
+          "column": 6,
+          "specs": [
+            {
+              "title": "all evidence files were written to tests/integration/restore-wizard-final/evidence/",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 67,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T18:01:53.315Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "78c8374674f4fc97d700-907d11923c632477a78d",
+              "file": "sprint13-restore-wizard-final.spec.ts",
+              "line": 1200,
               "column": 7
             }
           ]
@@ -674,9 +899,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-05-03T17:37:24.662Z",
-    "duration": 1403.78,
-    "expected": 11,
+    "startTime": "2026-05-03T18:01:51.518Z",
+    "duration": 1909.7009999999998,
+    "expected": 14,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

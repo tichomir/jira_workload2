@@ -36,6 +36,7 @@ interface RawRestoreJobRow {
   error_count: number;
   failure_diagnostic: string | null;
   adf_media_warning_emitted: number;
+  adf_media_warnings: string;
   trash_window_blocked: number;
   last_heartbeat_at: number | null;
   stalled: number;
@@ -58,6 +59,9 @@ interface RawConflictRow {
 // ── Store ──────────────────────────────────────────────────────────────────────
 
 export class RestoreJobStore {
+  /** In-memory map of jobId → ZIP file path for browser-download jobs. */
+  private readonly downloadPaths = new Map<string, string>();
+
   constructor(private readonly db: Database.Database) {}
 
   static migrate(db: Database.Database): void {
@@ -180,6 +184,22 @@ export class RestoreJobStore {
       .run(jobId);
   }
 
+  setAdfMediaWarnings(jobId: string, issueIds: string[]): void {
+    this.db
+      .prepare(
+        `UPDATE restore_jobs SET adf_media_warning_emitted = 1, adf_media_warnings = ? WHERE id = ?`,
+      )
+      .run(JSON.stringify(issueIds), jobId);
+  }
+
+  setDownloadPath(jobId: string, zipPath: string): void {
+    this.downloadPaths.set(jobId, zipPath);
+  }
+
+  getDownloadPath(jobId: string): string | null {
+    return this.downloadPaths.get(jobId) ?? null;
+  }
+
   // ── Queries ─────────────────────────────────────────────────────────────────
 
   getJob(jobId: string): RestoreJob | null {
@@ -272,6 +292,7 @@ function mapJobRow(r: RawRestoreJobRow): RestoreJob {
     errorCount: r.error_count,
     failureDiagnostic: r.failure_diagnostic,
     adfMediaWarningEmitted: r.adf_media_warning_emitted === 1,
+    adfMediaWarnings: JSON.parse(r.adf_media_warnings ?? '[]') as string[],
     trashWindowBlocked: r.trash_window_blocked === 1,
     lastHeartbeatAt: r.last_heartbeat_at,
     stalled: r.stalled === 1,

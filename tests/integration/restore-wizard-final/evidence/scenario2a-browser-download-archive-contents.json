@@ -1,0 +1,32 @@
+{
+  "description": "Browser Download export job completes; archive contains all 6 entity JSON files with parseable content",
+  "scenario": "2a",
+  "jobId": "restore-951ecab5-0237-457a-bba6-5b7fa52767c9",
+  "finalStatus": "completed",
+  "archiveEntryCount": 6,
+  "entityFilesPresent": [
+    "projects.json",
+    "workflows.json",
+    "custom-fields.json",
+    "boards.json",
+    "sprints.json",
+    "issues.json"
+  ],
+  "archiveEntries": [
+    "projects.json",
+    "workflows.json",
+    "custom-fields.json",
+    "boards.json",
+    "sprints.json",
+    "issues.json"
+  ],
+  "assertions": [
+    "POST /restore/jobs returns 201",
+    "Job reaches status=completed",
+    "GET /restore/jobs/:id/download returns 200 with application/zip",
+    "Content-Disposition header contains \"attachment\"",
+    "All 6 entity JSON files present in archive",
+    "All entity JSON files are parseable arrays"
+  ],
+  "timestamp": "2026-05-03T18:01:52.895Z"
+}

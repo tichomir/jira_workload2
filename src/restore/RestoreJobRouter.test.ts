@@ -73,6 +73,7 @@ describe('POST /restore/jobs', () => {
     expect(res.body.errorCount).toBe(0);
     expect(res.body.failureDiagnostic).toBeNull();
     expect(res.body.adfMediaWarningEmitted).toBe(false);
+    expect(res.body.adfMediaWarnings).toEqual([]);
     expect(res.body.trashWindowBlocked).toBe(false);
   });
 
@@ -260,6 +261,23 @@ describe('POST /restore/jobs', () => {
 
 // ── Trash-window block ──────────────────────────────────────────────────────
 
+/** Build a mock trash checker that returns inTrash for the given set of keys. */
+function makeMockTrashChecker(trashedKeys: string[]) {
+  return {
+    checkProjects: jest.fn().mockImplementation(
+      (projectKeys: string[]) =>
+        Promise.resolve(
+          projectKeys.map((k) => ({
+            projectKey: k,
+            inTrash: trashedKeys.includes(k),
+            deletedAt: trashedKeys.includes(k) ? '2026-04-01T00:00:00Z' : null,
+            expiresAt: trashedKeys.includes(k) ? '2026-06-01T00:00:00Z' : null,
+          })),
+        ),
+    ),
+  };
+}
+
 describe('POST /restore/jobs — trash-window detection', () => {
   it('skips trash check when destination is not original', async () => {
     const { app } = buildApp();
@@ -289,6 +307,212 @@ describe('POST /restore/jobs — trash-window detection', () => {
       });
 
     expect(res.status).toBe(201);
+  });
+
+  it('happy-path: project NOT in trash + destination=original → 201 created', async () => {
+    const db = new Database(':memory:');
+    RestoreJobStore.migrate(db);
+    JiraCredentialRepository.runMigration(db);
+    const restoreStore = new RestoreJobStore(db);
+    const eventBus = new RestoreEventBus();
+    const credRepo = new JiraCredentialRepository(db);
+
+    const app = express();
+    app.use(express.json());
+    app.use(
+      '/restore/jobs',
+      createRestoreJobRouter(restoreStore, eventBus, credRepo, {
+        allowUnauthenticated: true,
+        trashWindowChecker: makeMockTrashChecker([]), // nothing in trash
+      }),
+    );
+
+    const res = await request(app)
+      .post('/restore/jobs')
+      .send({
+        sourceBackupPointId: 'bp-happy',
+        scope: { type: 'projects', projectKeys: ['SAFE-PROJ'] },
+        destination: { type: 'original' },
+      });
+
+    expect(res.status).toBe(201);
+    expect(res.body.status).toBe('pending');
+  });
+
+  it('error-path: project IN trash + destination=original → 400 TRASH_WINDOW_BLOCK', async () => {
+    const db = new Database(':memory:');
+    RestoreJobStore.migrate(db);
+    JiraCredentialRepository.runMigration(db);
+    const restoreStore = new RestoreJobStore(db);
+    const eventBus = new RestoreEventBus();
+    const credRepo = new JiraCredentialRepository(db);
+
+    const app = express();
+    app.use(express.json());
+    app.use(
+      '/restore/jobs',
+      createRestoreJobRouter(restoreStore, eventBus, credRepo, {
+        allowUnauthenticated: true,
+        trashWindowChecker: makeMockTrashChecker(['DEAD-PROJ']),
+      }),
+    );
+
+    const res = await request(app)
+      .post('/restore/jobs')
+      .send({
+        sourceBackupPointId: 'bp-blocked',
+        scope: { type: 'projects', projectKeys: ['DEAD-PROJ'] },
+        destination: { type: 'original' },
+      });
+
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe('TRASH_WINDOW_BLOCK');
+    expect(res.body.projectKey).toBe('DEAD-PROJ');
+    expect(res.body.guidance).toBe('Use Alternate location restore');
+    expect(res.body.deletedAt).toBeTruthy();
+    expect(res.body.expiresAt).toBeTruthy();
+  });
+
+  it('alternate location with trashed project is NOT blocked → 201 created', async () => {
+    const db = new Database(':memory:');
+    RestoreJobStore.migrate(db);
+    JiraCredentialRepository.runMigration(db);
+    const restoreStore = new RestoreJobStore(db);
+    const eventBus = new RestoreEventBus();
+    const credRepo = new JiraCredentialRepository(db);
+
+    const app = express();
+    app.use(express.json());
+    app.use(
+      '/restore/jobs',
+      createRestoreJobRouter(restoreStore, eventBus, credRepo, {
+        allowUnauthenticated: true,
+        trashWindowChecker: makeMockTrashChecker(['DEAD-PROJ']),
+      }),
+    );
+
+    // alternate destination with the same trashed project → no trash check
+    const res = await request(app)
+      .post('/restore/jobs')
+      .send({
+        sourceBackupPointId: 'bp-alt',
+        scope: { type: 'projects', projectKeys: ['DEAD-PROJ'] },
+        destination: { type: 'alternate', targetProjectKey: 'NEWPROJ' },
+      });
+
+    expect(res.status).toBe(201);
+  });
+
+  it('structured log [jira-restore] trash-window-block emitted on block', async () => {
+    const db = new Database(':memory:');
+    RestoreJobStore.migrate(db);
+    JiraCredentialRepository.runMigration(db);
+    const restoreStore = new RestoreJobStore(db);
+    const eventBus = new RestoreEventBus();
+    const credRepo = new JiraCredentialRepository(db);
+
+    const app = express();
+    app.use(express.json());
+    app.use(
+      '/restore/jobs',
+      createRestoreJobRouter(restoreStore, eventBus, credRepo, {
+        allowUnauthenticated: true,
+        trashWindowChecker: makeMockTrashChecker(['LOG-PROJ']),
+      }),
+    );
+
+    const logs: string[] = [];
+    const spy = jest.spyOn(console, 'log').mockImplementation((m: string) => logs.push(m));
+
+    await request(app)
+      .post('/restore/jobs')
+      .send({
+        sourceBackupPointId: 'bp-log',
+        scope: { type: 'projects', projectKeys: ['LOG-PROJ'] },
+        destination: { type: 'original' },
+      });
+
+    spy.mockRestore();
+
+    expect(logs.some((l) => l.includes('[jira-restore] trash-window-block') && l.includes('action=blocked'))).toBe(true);
+  });
+});
+
+// ── Mid-flight trash-window block ───────────────────────────────────────────
+
+describe('RestoreWorker — mid-flight trash-window block', () => {
+  it('halts job before phase 1 when project is in trash (mid-flight detection)', async () => {
+    const db = new Database(':memory:');
+    RestoreJobStore.migrate(db);
+    const store = new RestoreJobStore(db);
+    const bus = new RestoreEventBus();
+
+    // Create job directly (bypass router pre-flight)
+    const job = store.createJob({
+      jobId: 'restore-midflighttrash',
+      sourceBackupPointId: 'bp-mf',
+      scope: { type: 'projects', projectKeys: ['TRASHED-MF'] },
+      destination: { type: 'original' },
+      conflictMode: 'skip',
+    });
+
+    const phaseTransitions: string[] = [];
+    const completeEvents: unknown[] = [];
+    bus.subscribe(job.jobId, (e) => {
+      if (e.type === 'phaseTransition' && e.phase) phaseTransitions.push(e.phase);
+      if (e.type === 'complete') completeEvents.push(e);
+    });
+
+    const trashChecker = makeMockTrashChecker(['TRASHED-MF']);
+
+    const worker = new RestoreWorker(
+      { jobId: job.jobId, heartbeatIntervalMs: 9000, trashChecker },
+      store,
+      bus,
+    );
+
+    await worker.run();
+
+    // No phase transitions — halted before phase 1
+    expect(phaseTransitions).toHaveLength(0);
+
+    // Job is marked failed with trash-window block
+    const updated = store.getJob(job.jobId);
+    expect(updated?.status).toBe('failed');
+    expect(updated?.trashWindowBlocked).toBe(true);
+    expect(updated?.failureDiagnostic).toBe('TRASH_WINDOW_BLOCK');
+
+    // complete event emitted with failed status
+    expect(completeEvents).toHaveLength(1);
+  });
+
+  it('proceeds normally when project is NOT in trash (mid-flight happy path)', async () => {
+    const db = new Database(':memory:');
+    RestoreJobStore.migrate(db);
+    const store = new RestoreJobStore(db);
+    const bus = new RestoreEventBus();
+
+    const job = store.createJob({
+      jobId: 'restore-midflight-safe',
+      sourceBackupPointId: 'bp-safe',
+      scope: { type: 'projects', projectKeys: ['SAFE-PROJ'] },
+      destination: { type: 'original' },
+      conflictMode: 'skip',
+    });
+
+    const trashChecker = makeMockTrashChecker([]); // nothing in trash
+
+    const worker = new RestoreWorker(
+      { jobId: job.jobId, heartbeatIntervalMs: 9000, trashChecker },
+      store,
+      bus,
+    );
+
+    await worker.run();
+
+    const updated = store.getJob(job.jobId);
+    expect(['completed', 'completed_with_errors']).toContain(updated?.status);
+    expect(updated?.trashWindowBlocked).toBe(false);
   });
 });
 
@@ -495,7 +719,7 @@ describe('RestoreWorker', () => {
       jobId: 'restore-worker-test',
       sourceBackupPointId: 'bp-w-test',
       scope: { type: 'all' },
-      destination: { type: 'export' },
+      destination: { type: 'original' },
       conflictMode: 'skip',
     });
 

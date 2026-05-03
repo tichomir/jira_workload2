@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entities>
+  <user id="1" email="alice@example.com">
+    <name>Alice Smith</name>
+    <phone>+12025551234</phone>
+    <notes>Customer since 2020</notes>
+  </user>
+  <user id="2" email="bob@company.org">
+    <name>Bob Jones</name>
+    <phone>0207 946 0958</phone>
+    <notes>Enterprise account</notes>
+  </user>
+  <payment>
+    <cardNumber>4111111111111111</cardNumber>
+    <expiry>12/2027</expiry>
+  </payment>
+</entities>

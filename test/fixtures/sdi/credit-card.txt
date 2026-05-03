@@ -1,0 +1,4 @@
+Payment details for order #12345.
+Card number: 4111111111111111
+Expiry: 12/2027
+Amount: $99.99

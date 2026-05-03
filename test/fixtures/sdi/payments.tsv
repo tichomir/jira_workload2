@@ -1,0 +1,3 @@
+order_id	customer_email	card_number	amount
+ORD-001	buyer@example.com	4111111111111111	99.99
+ORD-002	customer@shop.com	5500005555555559	149.00

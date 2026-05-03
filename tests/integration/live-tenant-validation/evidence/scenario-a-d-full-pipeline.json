@@ -1,6 +1,6 @@
 {
   "scenario": "Scenario A+D: Full Capture Pipeline + Coverage Invariant",
-  "generatedAt": "2026-05-03T16:07:55.619Z",
+  "generatedAt": "2026-05-03T16:26:09.516Z",
   "pipelineConfig": {
     "backupPointId": "bp-full-pipeline-001",
     "jobId": "job-bp-full-pipeline-001",
@@ -21,7 +21,7 @@
     "totalIssuesCaptured": 2,
     "totalErrors": 0,
     "jobStatus": "Completed successfully",
-    "completedAt": "2026-05-03T16:07:55.617Z"
+    "completedAt": "2026-05-03T16:26:09.514Z"
   },
   "coverageInvariant": {
     "issueKey": "LIVE-1",

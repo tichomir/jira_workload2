@@ -605,3 +605,46 @@ This is sprint 3 of 3 for the phase. Plan a slice of the deliverables appropriat
 - ✅ Fix HeartbeatEmitter.complete() regression for completed_with_errors status — Backend Developer (◈ Standard, 3 SP)
 
 ---
+### Sprint 8 - SDI Teaser Scanner: Detectors, File Handlers & Pipeline Integration | 2026-05-03 | ⏳ in progress | 21 SP est.
+**Goal:** [Phase: Sensitive Data Intelligence Teaser Scanner]
+Implement the SDI scanner that detects emails, API keys/secrets, credit card numbers, and phone numbers across entities.xml, tabular exports, dev-config attachments, and text/log files, activating GDPR and PCI DSS regulation tags accordingly.
+
+Deliverables:
+- Pattern detectors for email, API keys/secret tokens, credit card numbers (Luhn-validated), phone numbers
+- File-type handlers for entities.xml, .csv/.xlsx/.tsv, .env/.yaml/.yml/.json/.toml/.properties/.config, .txt/.log/.md
+- Regulation tag activation rules: email/phone → GDPR, credit card → PCI DSS
+- SDI scan results surfaced on Protected Object cards without operator action
+- Scan integration into the backup post-processing pipeline
+
+_Sprint started. Role checkpoints below will update as work completes._
+
+---
+### Sprint 8 - SDI Teaser Scanner: Detectors, File Handlers & Pipeline Integration | 2026-05-03 | ✅ Software Architect checkpoint (1/1 done)
+
+- ✅ Design SDI scanner architecture and detector interface (⚡ Quick, 2 SP)
+
+---
+### Sprint 8 - SDI Teaser Scanner: Detectors, File Handlers & Pipeline Integration | 2026-05-03 | ✅ Backend Developer checkpoint (1/1 done)
+
+- ✅ Implement file-type handlers and scanner orchestrator with pipeline integration (◉ Deep, 8 SP)
+
+---
+### Sprint 8 - SDI Teaser Scanner: Detectors, File Handlers & Pipeline Integration | 2026-05-03 | ✅ done | 21 SP
+**Goal:** [Phase: Sensitive Data Intelligence Teaser Scanner]
+Implement the SDI scanner that detects emails, API keys/secrets, credit card numbers, and phone numbers across entities.xml, tabular exports, dev-config attachments, and text/log files, activating GDPR and PCI DSS regulation tags accordingly.
+
+Deliverables:
+- Pattern detectors for email, API keys/secret tokens, credit card numbers (Luhn-validated), phone numbers
+- File-type handlers for entities.xml, .csv/.xlsx/.tsv, .env/.yaml/.yml/.json/.toml/.properties/.config, .txt/.log/.md
+- Regulation tag activation rules: email/phone → GDPR, credit card → PCI DSS
+- SDI scan results surfaced on Protected Object cards without operator action
+- Scan integration into the backup post-processing pipeline
+
+**Delivered:**
+- ✅ Design SDI scanner architecture and detector interface — Software Architect (⚡ Quick, 2 SP)
+- ✅ Implement pattern detectors (email, API key/secret, credit card with Luhn, phone) — Backend Developer (◉ Deep, 5 SP)
+- ✅ Implement file-type handlers and scanner orchestrator with pipeline integration — Backend Developer (◉ Deep, 8 SP)
+- ✅ Surface SDI findings and regulation tags on Protected Object cards — Frontend Developer (◈ Standard, 3 SP)
+- ✅ QA: end-to-end SDI scan validation against live-tenant backup + carry-forward live-tenant capture validation — Qa Engineer (◈ Standard, 3 SP)
+
+---

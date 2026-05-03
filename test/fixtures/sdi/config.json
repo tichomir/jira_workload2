@@ -1,0 +1,10 @@
+{
+  "app": {
+    "name": "MyApp",
+    "adminEmail": "admin@example.com",
+    "supportPhone": "+12025551234"
+  },
+  "payments": {
+    "testCard": "4111111111111111"
+  }
+}

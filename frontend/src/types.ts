@@ -19,6 +19,22 @@ export interface WorkloadConfig {
   selectedKeys: string[];
 }
 
+/** Regulation tags activated by the SDI scanner. */
+export type RegulationTag = 'GDPR' | 'PCI_DSS';
+
+/**
+ * SDI scan result attached to a backup-point manifest.
+ * Populated by the post-processing pipeline after capture completes.
+ */
+export interface SdiScanResult {
+  /** Regulation frameworks triggered by detected data (email/phone → GDPR, credit card → PCI_DSS). */
+  regulationTags: RegulationTag[];
+  /** Total number of sensitive findings across all scanned items. */
+  findingCount: number;
+  /** Per-detector finding counts (only detectors with ≥1 finding are present). */
+  detectorBreakdown: Partial<Record<'email' | 'api_key' | 'credit_card' | 'phone', number>>;
+}
+
 export type ConnectionFlowState =
   | { phase: 'idle' }
   | { phase: 'pending' }                           // waiting for OAuth redirect return

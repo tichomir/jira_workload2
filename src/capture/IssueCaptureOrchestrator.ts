@@ -33,10 +33,11 @@ import * as path from 'path';
 import { randomUUID } from 'crypto';
 import { JiraHttpClient, JiraIssue } from '../http/JiraHttpClient';
 import { BackupPointManifestWriter } from '../manifest/BackupPointManifestWriter';
-import { JiraObjectType } from '../manifest/types';
+import { JiraObjectType, SdiScanEntry } from '../manifest/types';
 import { AttachmentBlobStore } from '../backup/AttachmentBlobStore';
 import { HeartbeatEmitter } from '../jobs/HeartbeatEmitter';
 import { JobStore } from '../jobs/JobStore';
+import { SdiScanner, SdiAttachmentDescriptor } from '../sdi/SdiScanner';
 
 // ── Default heartbeat interval ─────────────────────────────────────────────────
 
@@ -159,6 +160,12 @@ export interface IssueCaptureConfig {
    * jobId for the JobStore / HeartbeatEmitter; defaults to backupPointId.
    */
   jobId?: string;
+  /**
+   * Optional SDI scanner — when provided, each attachment is scanned after
+   * being persisted. Results are aggregated per-issue and included in the
+   * issue's manifest entry. Scan failures never halt the backup.
+   */
+  sdiScanner?: SdiScanner;
 }
 
 // ── Run result ─────────────────────────────────────────────────────────────────
@@ -349,26 +356,61 @@ export class IssueCaptureOrchestrator {
       // Persist issue JSON to backup store
       this.writeIssuePayload(payload);
 
-      // Record ok entry in manifest
+      this.totalCaptured++;
+
+      // Tick the external emitter (if wired in) for the captured issue
+      this.config.heartbeatEmitter?.tick({ currentItemKey: issue.key });
+
+      // Download attachments after issue is persisted (post-issue-creation pass),
+      // then SDI-scan each one so results can be included in the issue manifest entry.
+      const sdiDescriptors: SdiAttachmentDescriptor[] = [];
+      for (const att of attachmentRefs) {
+        const storedPath = await this.downloadAttachment(att, issue.key);
+        if (storedPath) {
+          sdiDescriptors.push({
+            filePath: storedPath,
+            filename: att.filename,
+            mimeType: att.mimeType,
+            fileRef: att.id,
+          });
+        }
+        this.maybeHeartbeat();
+        this.config.heartbeatEmitter?.tick({ currentItemKey: `${issue.key}:att:${att.id}` });
+      }
+
+      // SDI scan: runs after all attachments are persisted, before manifest entry is written
+      let sdiScan: SdiScanEntry | undefined;
+      if (this.config.sdiScanner && sdiDescriptors.length > 0) {
+        try {
+          const result = await this.config.sdiScanner.scanProtectedObject(
+            issue.key,
+            sdiDescriptors,
+            this.config.backupPointId,
+          );
+          sdiScan = {
+            regulationTags: result.regulationTags,
+            findingCount: result.findingCount,
+            findingsByDetector: result.findingsByDetector,
+          };
+        } catch (sdiErr) {
+          // SDI scan failure must not halt the backup
+          console.error(
+            `[sdi-scan] scan_error issueKey=${issue.key} ` +
+              `error="${sdiErr instanceof Error ? sdiErr.message : String(sdiErr)}"`,
+          );
+        }
+      }
+
+      // Record ok entry in manifest — after attachment processing so sdiScan can be included
       this.writer.appendEntry({
         objectType: 'JiraIssue' as JiraObjectType,
         objectId: issue.key,
         capturedAt: Date.now(),
         sourceEndpoint,
         status: 'ok',
+        ...(sdiScan !== undefined ? { sdiScan } : {}),
       });
 
-      this.totalCaptured++;
-
-      // Tick the external emitter (if wired in) for the captured issue
-      this.config.heartbeatEmitter?.tick({ currentItemKey: issue.key });
-
-      // Download attachments after issue is persisted (post-issue-creation pass)
-      for (const att of attachmentRefs) {
-        await this.downloadAttachment(att, issue.key);
-        this.maybeHeartbeat();
-        this.config.heartbeatEmitter?.tick({ currentItemKey: `${issue.key}:att:${att.id}` });
-      }
       this.emitProgress({
         type: 'issue_captured',
         issueKey: issue.key,
@@ -467,11 +509,14 @@ export class IssueCaptureOrchestrator {
    * Filename and MIME type are taken from the issue's attachment metadata
    * (not from Content-Disposition headers).
    * Per-attachment failures are recorded independently and do not abort the run.
+   *
+   * Returns the absolute path to the stored data.bin on success, or null on failure.
+   * The path is used by the SDI scanner in the post-processing pipeline.
    */
   private async downloadAttachment(
     att: AttachmentRef,
     issueKey: string,
-  ): Promise<void> {
+  ): Promise<string | null> {
     const sourceEndpoint = `/rest/api/3/attachment/content/${att.id}`;
     try {
       const data = await this.client.downloadAttachment(att.id);
@@ -491,6 +536,15 @@ export class IssueCaptureOrchestrator {
         sourceEndpoint,
         status: 'ok',
       });
+
+      // Return the path where data.bin was stored for downstream SDI scan
+      return path.join(
+        this.config.backupDir,
+        this.config.backupPointId,
+        'attachments',
+        att.id,
+        'data.bin',
+      );
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       const capturedAt = new Date().toISOString();
@@ -526,6 +580,7 @@ export class IssueCaptureOrchestrator {
         `[jira-issue-capture] attachment_error attachmentId=${att.id} ` +
           `issueKey=${issueKey} error="${errorMessage}"`,
       );
+      return null;
     }
   }
 

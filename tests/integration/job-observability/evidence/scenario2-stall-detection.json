@@ -1,6 +1,6 @@
 {
   "scenario": "Scenario 2: Stalled Detection and Recovery",
-  "generatedAt": "2026-05-03T16:05:04.524Z",
+  "generatedAt": "2026-05-03T16:22:25.295Z",
   "timeline": {
     "T+0ms": "Job created, lastHeartbeatAt set",
     "T+25000ms": "No heartbeat for 25000ms — StalledJobDetector.check() fires stalled event",

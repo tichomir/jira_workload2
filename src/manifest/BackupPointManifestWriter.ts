@@ -210,11 +210,15 @@ export class BackupPointManifestWriter {
    */
   append(entry: SimpleManifestEntry): void {
     this.repo.insertEntry(entry);
+    const sdiPart = entry.sdiScan
+      ? ` sdiTags=[${entry.sdiScan.regulationTags.join(',')}] sdiFindings=${entry.sdiScan.findingCount}`
+      : '';
     console.log(
       `[jira-manifest] append backupPointId=${entry.backupPointId} ` +
         `objectType=${entry.objectType} objectId=${entry.objectId} ` +
         `status=${entry.status}` +
-        (entry.errorMessage ? ` error=${entry.errorMessage}` : ''),
+        (entry.errorMessage ? ` error=${entry.errorMessage}` : '') +
+        sdiPart,
     );
   }
 

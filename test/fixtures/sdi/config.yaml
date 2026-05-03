@@ -1,0 +1,9 @@
+app:
+  name: MyApp
+  admin_email: admin@example.com
+  support_phone: "+12025551234"
+database:
+  host: localhost
+  port: 5432
+secrets:
+  api_key: sk_live_abcdefghijklmnopqrstuvwxyz

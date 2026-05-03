@@ -1,6 +1,6 @@
 {
   "suite": "Sprint 7 QA — Live-Tenant Validation (Simulated)",
-  "generatedAt": "2026-05-03T16:07:55.663Z",
+  "generatedAt": "2026-05-03T16:26:09.575Z",
   "description": "End-to-end validation of the Jira Cloud capture pipeline against a simulated tenant (mocked HTTP responses). Covers all six Sprint 7 acceptance criteria.",
   "acceptanceCriteria": {
     "(a) Full pipeline produces complete manifest": "scenario-a-d-full-pipeline.json",

@@ -167,6 +167,19 @@ export interface JsmOutOfScopeNotice {
 }
 
 /**
+ * SDI scan summary embedded in a Protected Object manifest entry.
+ * Populated after post-processing scan completes, before manifest finalisation.
+ */
+export interface SdiScanEntry {
+  /** Activated regulation tags: GDPR (email/phone), PCI_DSS (credit card) */
+  regulationTags: string[];
+  /** Total number of findings across all scanned attachments */
+  findingCount: number;
+  /** Per-detector finding counts */
+  findingsByDetector: Partial<Record<string, number>>;
+}
+
+/**
  * An individual entry in the manifest_entries table.
  * One row per backed-up object (issue, attachment, context node, etc.).
  * Used by IssueCaptureOrchestrator to record per-item outcomes and by the
@@ -182,6 +195,12 @@ export interface SimpleManifestEntry {
   sourceEndpoint: string;
   status: 'ok' | 'error';
   errorMessage?: string;
+  /**
+   * SDI scan summary for Protected Object (JiraIssue) entries.
+   * Present after post-processing scan; absent for context nodes and
+   * issues whose attachments produced no scan-eligible files.
+   */
+  sdiScan?: SdiScanEntry;
 }
 
 export const JSM_NOTICE_MESSAGE =

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { JiraSite } from '../types';
 import { submitManualConnection, ApiError, ManualAuthError } from '../api/jira';
 
@@ -93,7 +93,7 @@ export function ManualConnectForm({ onConnected, onCancel }: ManualConnectFormPr
     setFormError(null);
 
     try {
-      const result = await submitManualConnection({
+      await submitManualConnection({
         siteUrl: siteUrl.trim(),
         cloudId: cloudId.trim(),
         email: email.trim(),

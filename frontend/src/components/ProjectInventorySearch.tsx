@@ -19,7 +19,7 @@
  * (no Figma spec for the filter panel — OC-002 in inventory-ui.md §6).
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { fetchProjectIssues } from '../api/jira';
 import type { IssueTableRow, ProjectIssuesParams } from '../api/jira';
 

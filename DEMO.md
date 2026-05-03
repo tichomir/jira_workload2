@@ -21,8 +21,12 @@ verifying round-trip integrity. Follow the sections in order on a fresh installa
 
 ### 1a. Navigate to the Connector Settings page
 
-Open the DCC UI in your browser (`https://localhost:3000` in local dev). The Workload Card
-for Jira Cloud is shown on the main dashboard. Click **Connect Jira Cloud** to start.
+Open the DCC UI in your browser. The URL depends on how you started the stack:
+
+- **Container mode** (`./start.sh` or `podman-compose up -d`): `https://localhost:4443`
+- **Local dev** (`node dist/server.js`): `https://localhost:3000`
+
+The Workload Card for Jira Cloud is shown on the main dashboard. Click **Connect Jira Cloud** to start.
 
 ![Screenshot 01 — Workload Card showing Connect button and protected object types](docs/img/demo-01-workload-card.png)
 

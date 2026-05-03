@@ -1421,3 +1421,216 @@ backend code beyond adding /health.
 - ✅ Fix: Create missing podman-compose.yml, Caddyfile.example, .env.example, and start scripts — Devops Engineer (◈ Standard, 3 SP)
 
 ---
+### Sprint: Frontend Containerisation Repair | 2026-05-03 | ⏳ in progress | 6 SP est.
+**Goal:** [Phase: Frontend Containerisation Repair]
+
+The container build for JIRA_WORKLOAD_2 ships only the backend. The
+frontend (Vite + React in /frontend) was never copied into the image,
+and the backend doesn't serve it. Result: https://localhost:4443/
+returns 404, no UI is reachable.
+
+This sprint fixes both: build the frontend bundle in the Docker
+builder stage AND have the backend serve it as static files with a
+SPA fallback.
+
+REFERENCE FACTS (verified against current codebase before writing this
+goal — do NOT re-research; act on these):
+
+- Vite output dir: /frontend/vite.config.ts:14 → outDir: '../dist/frontend'
+- Frontend build: /frontend/package.json scripts.build → "tsc && vite build"
+- Backend port: src/server.ts:47 → process.env.PORT ?? '3000'
+- Actual runtime port: .env PORT=4000
+- Backend currently registers only API routes + /health (src/server.ts:97-117)
+- Express is already imported in src/server.ts:25 — no new dep needed
+
+DELIVERABLES:
+
+1. Backend static serve + SPA fallback (backend_developer, 2 SP) —
+   Edit src/server.ts:
+   - Add `import path from 'path';` to imports.
+   - BEFORE the `app.get('/health', ...)` line: register
+     `app.use(express.static(path.join(__dirname, 'frontend')))`.
+   - AFTER all `app.use('/api/...', ...)` route registrations: add a
+     SPA fallback: `app.get('*', (_req, res) => res.sendFile(path.join(
+     __dirname, 'frontend', 'index.html')))`.
+   - The path.join uses 'frontend' (not 'dist/frontend') because at
+     runtime, dist/server.js lives at /app/dist/server.js, and the
+     static bundle will be at /app/dist/frontend/, so __dirname
+     resolves to /app/dist and 'frontend' is the relative folder.
+   Verify locally via `npm run build` from project root + check that
+   dist/frontend/index.html exists and dist/server.js compiles.
+
+2. Dockerfile — build the frontend in builder stage (devops_engineer, 2 SP) —
+   In the builder stage, AFTER `COPY db/ ./db/`, add:
+     COPY frontend/ ./frontend/
+   AFTER `RUN npm run build` (the existing backend build), add:
+     RUN cd frontend && npm ci && npm run build
+   This produces dist/frontend/ which is picked up by the existing
+   `COPY --from=builder /app/dist ./dist` line in the runtime stage.
+   No runtime stage changes needed.
+   Verify: `podman build -t jira_workload_2_backend:dev .` succeeds;
+   capture last 10 lines of build output as evidence.
+
+3. Rebuild + verify the stack end-to-end (devops_engineer, 1 SP) —
+   Run from project root:
+     podman-compose down
+     podman-compose build backend
+     podman-compose up -d
+   Wait 30 seconds. Then verify:
+     podman ps  → both containers (healthy)
+     curl -k -s -o /dev/null -w "%{http_code}" https://localhost:4443/
+        → MUST return 200 (was 404 before this sprint)
+     curl -k -s -o /dev/null -w "%{http_code}" https://localhost:4443/health
+        → MUST return 200 (no regression)
+     curl -k -s https://localhost:4443/ | head -30
+        → MUST contain `<div id="root">` or similar React app marker
+   If any check fails, fix before declaring task done.
+
+4. Doc grounding update (qa_engineer, 1 SP — also fulfils the
+   planner-allocated grounding verification rule) —
+   Re-read DEMO.md and INSTALL.md. Confirm the URL https://localhost:4443/
+   is documented as reaching the UI (it is, currently aspirationally —
+   make it a true claim now). Add a CHANGELOG.md entry:
+     "## 1.x.x — Frontend Containerisation Fix
+     - **Fixed**: Container build now includes the frontend bundle.
+       https://localhost:4443/ now serves the Vite + React app
+       (was returning 404 against backend before this fix).
+     - **Changed**: Backend (src/server.ts) now serves static files
+       from /app/dist/frontend/ with SPA fallback for client-side
+       routing."
+
+ACCEPTANCE CRITERIA — Definition of Done (execution evidence required):
+- Task 3 captures the actual curl output (not just the exit code) for
+  https://localhost:4443/ AND https://localhost:4443/health.
+- The HTML body returned by https://localhost:4443/ contains
+  `id="root"` or similar React app marker.
+- Both containers in `podman ps` show `(healthy)`.
+- CHANGELOG.md has the new entry.
+- Doc grounding verification reports zero new aspirational refs.
+
+NON-GOALS:
+- Reorganising the API route structure.
+- Optimising the frontend bundle.
+- Adding a separate frontend container (we're using the
+  backend-serves-frontend pattern; if we ever want a separate nginx
+  sidecar, that's a future sprint).
+
+DOC CANON RULE: per the global Engineering Standards "Docs must reflect
+actual state" — by sprint end, https://localhost:4443/ ACTUALLY
+serving the UI is the ground truth. DEMO.md / INSTALL.md must match
+that ground truth.
+
+_Sprint started. Role checkpoints below will update as work completes._
+
+---
+### Sprint: Frontend Containerisation Repair | 2026-05-03 | ✅ Backend Developer checkpoint (1/1 done)
+
+- ✅ Add static serve + SPA fallback to backend (⚡ Quick, 2 SP)
+
+---
+### Sprint: Frontend Containerisation Repair | 2026-05-03 | 📋 reviewing | 6 SP
+**Goal:** [Phase: Frontend Containerisation Repair]
+
+The container build for JIRA_WORKLOAD_2 ships only the backend. The
+frontend (Vite + React in /frontend) was never copied into the image,
+and the backend doesn't serve it. Result: https://localhost:4443/
+returns 404, no UI is reachable.
+
+This sprint fixes both: build the frontend bundle in the Docker
+builder stage AND have the backend serve it as static files with a
+SPA fallback.
+
+REFERENCE FACTS (verified against current codebase before writing this
+goal — do NOT re-research; act on these):
+
+- Vite output dir: /frontend/vite.config.ts:14 → outDir: '../dist/frontend'
+- Frontend build: /frontend/package.json scripts.build → "tsc && vite build"
+- Backend port: src/server.ts:47 → process.env.PORT ?? '3000'
+- Actual runtime port: .env PORT=4000
+- Backend currently registers only API routes + /health (src/server.ts:97-117)
+- Express is already imported in src/server.ts:25 — no new dep needed
+
+DELIVERABLES:
+
+1. Backend static serve + SPA fallback (backend_developer, 2 SP) —
+   Edit src/server.ts:
+   - Add `import path from 'path';` to imports.
+   - BEFORE the `app.get('/health', ...)` line: register
+     `app.use(express.static(path.join(__dirname, 'frontend')))`.
+   - AFTER all `app.use('/api/...', ...)` route registrations: add a
+     SPA fallback: `app.get('*', (_req, res) => res.sendFile(path.join(
+     __dirname, 'frontend', 'index.html')))`.
+   - The path.join uses 'frontend' (not 'dist/frontend') because at
+     runtime, dist/server.js lives at /app/dist/server.js, and the
+     static bundle will be at /app/dist/frontend/, so __dirname
+     resolves to /app/dist and 'frontend' is the relative folder.
+   Verify locally via `npm run build` from project root + check that
+   dist/frontend/index.html exists and dist/server.js compiles.
+
+2. Dockerfile — build the frontend in builder stage (devops_engineer, 2 SP) —
+   In the builder stage, AFTER `COPY db/ ./db/`, add:
+     COPY frontend/ ./frontend/
+   AFTER `RUN npm run build` (the existing backend build), add:
+     RUN cd frontend && npm ci && npm run build
+   This produces dist/frontend/ which is picked up by the existing
+   `COPY --from=builder /app/dist ./dist` line in the runtime stage.
+   No runtime stage changes needed.
+   Verify: `podman build -t jira_workload_2_backend:dev .` succeeds;
+   capture last 10 lines of build output as evidence.
+
+3. Rebuild + verify the stack end-to-end (devops_engineer, 1 SP) —
+   Run from project root:
+     podman-compose down
+     podman-compose build backend
+     podman-compose up -d
+   Wait 30 seconds. Then verify:
+     podman ps  → both containers (healthy)
+     curl -k -s -o /dev/null -w "%{http_code}" https://localhost:4443/
+        → MUST return 200 (was 404 before this sprint)
+     curl -k -s -o /dev/null -w "%{http_code}" https://localhost:4443/health
+        → MUST return 200 (no regression)
+     curl -k -s https://localhost:4443/ | head -30
+        → MUST contain `<div id="root">` or similar React app marker
+   If any check fails, fix before declaring task done.
+
+4. Doc grounding update (qa_engineer, 1 SP — also fulfils the
+   planner-allocated grounding verification rule) —
+   Re-read DEMO.md and INSTALL.md. Confirm the URL https://localhost:4443/
+   is documented as reaching the UI (it is, currently aspirationally —
+   make it a true claim now). Add a CHANGELOG.md entry:
+     "## 1.x.x — Frontend Containerisation Fix
+     - **Fixed**: Container build now includes the frontend bundle.
+       https://localhost:4443/ now serves the Vite + React app
+       (was returning 404 against backend before this fix).
+     - **Changed**: Backend (src/server.ts) now serves static files
+       from /app/dist/frontend/ with SPA fallback for client-side
+       routing."
+
+ACCEPTANCE CRITERIA — Definition of Done (execution evidence required):
+- Task 3 captures the actual curl output (not just the exit code) for
+  https://localhost:4443/ AND https://localhost:4443/health.
+- The HTML body returned by https://localhost:4443/ contains
+  `id="root"` or similar React app marker.
+- Both containers in `podman ps` show `(healthy)`.
+- CHANGELOG.md has the new entry.
+- Doc grounding verification reports zero new aspirational refs.
+
+NON-GOALS:
+- Reorganising the API route structure.
+- Optimising the frontend bundle.
+- Adding a separate frontend container (we're using the
+  backend-serves-frontend pattern; if we ever want a separate nginx
+  sidecar, that's a future sprint).
+
+DOC CANON RULE: per the global Engineering Standards "Docs must reflect
+actual state" — by sprint end, https://localhost:4443/ ACTUALLY
+serving the UI is the ground truth. DEMO.md / INSTALL.md must match
+that ground truth.
+
+**Delivered:**
+- ✅ Add static serve + SPA fallback to backend — Backend Developer (⚡ Quick, 2 SP)
+- ✅ Build frontend bundle in Dockerfile builder stage — Devops Engineer (⚡ Quick, 2 SP)
+- ✅ Rebuild stack and verify end-to-end UI delivery — Devops Engineer (⚡ Quick, 1 SP)
+- ✅ Update CHANGELOG and re-ground DEMO.md / INSTALL.md — Qa Engineer (⚡ Quick, 1 SP)
+
+---

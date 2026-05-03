@@ -1,4 +1,3 @@
-import React from 'react';
 import { JiraConnectFlow } from './components/JiraConnectFlow';
 
 export default function App() {

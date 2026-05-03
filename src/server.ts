@@ -89,6 +89,11 @@ const oauthConfig = {
 const app = express();
 app.use(express.json());
 
+// Serve the compiled Vite + React frontend bundle.
+// At runtime, dist/server.js lives at /app/dist/server.js, so __dirname is
+// /app/dist and the frontend bundle is at /app/dist/frontend/.
+app.use(express.static(path.join(__dirname, 'frontend')));
+
 /**
  * GET /health
  * Container health probe. Returns HTTP 200 with { status: 'ok' }.
@@ -121,6 +126,13 @@ app.use('/api/jobs', createJobRouter(jobStore, jobEventBus, credRepo));
 
 // Restore jobs: POST/GET /api/restore/jobs[/:id]
 app.use('/api', createRestoreJobRouter(restoreJobStore, restoreEventBus, credRepo));
+
+// SPA fallback — must be registered after all /api/* routes to avoid swallowing
+// API 404s. Any non-API route returns the React app's index.html so client-side
+// routing (React Router, etc.) handles it in-browser.
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+});
 
 // ── Start ──────────────────────────────────────────────────────────────────────
 

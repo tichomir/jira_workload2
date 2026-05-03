@@ -6,6 +6,32 @@ Format: `Added` / `Changed` / `Fixed` / `Removed` per phase.
 
 ---
 
+## [1.x.x+1] — 2026-05-03 — Frontend Containerisation Fix
+
+### Fixed
+- Container build now includes the frontend bundle.
+  `https://localhost:4443/` now serves the Vite + React app (was returning 404 before this fix).
+- `frontend/tsconfig.json` updated to exclude test files from the production TypeScript check,
+  enabling `npm run build` in the Docker builder stage to succeed.
+- Unused `React` default imports removed from production components (`ProtectedObjectCard`,
+  `SitePicker`, and 9 other files) to satisfy `noUnusedLocals: true`.
+- `frontend/package-lock.json` generated so `npm ci` in the Docker builder stage can run.
+
+### Changed
+- Backend (`src/server.ts`) now serves static files from `/app/dist/frontend/` with SPA
+  fallback for client-side routing. All `/api/*` routes continue to respond as before; the
+  SPA fallback only fires for non-API paths.
+- `Dockerfile` builder stage now runs `COPY frontend/ ./frontend/` + `RUN cd frontend && npm ci && npm run build`
+  so the Vite bundle lands in `dist/frontend/` inside the image.
+
+### Removed
+- `docker-compose.yml` — the file that was added in Sprint 17 as an identical copy of
+  `podman-compose.yml` has been removed. Use `podman-compose.yml` directly.
+  For Docker Compose users: `docker compose -f podman-compose.yml up -d` continues to work
+  because the file uses standard Compose schema v3.
+
+---
+
 ## [1.x.x] — 2026-05-03 — Container Deployment Shipped (Sprint 17)
 
 ### Added
@@ -18,7 +44,7 @@ Format: `Added` / `Changed` / `Fixed` / `Removed` per phase.
   `caddy` (`caddy:2-alpine`). Named volumes `jira-data:/data`, `jira-attachments:/attachments`,
   `caddy-data`, `caddy-config`. Backend healthcheck on `GET /health`.
 - `docker-compose.yml` — identical copy of `podman-compose.yml` for Docker Compose
-  compatibility.
+  compatibility. _(Removed in [1.x.x+1]; see entry above.)_
 - `Caddyfile.example` — HTTPS termination on `localhost:4443` via `tls internal` (local
   CA); reverse-proxies to `backend:3000`. Copy to `Caddyfile` before starting (gitignored).
 - `.env.example` — complete inventory of every `process.env.*` read in `src/`, grouped

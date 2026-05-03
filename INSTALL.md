@@ -157,6 +157,15 @@ podman-compose up -d
 podman-compose logs -f
 ```
 
+Once both containers are healthy (`podman ps` shows `(healthy)` for both), open:
+
+```
+https://localhost:4443
+```
+
+This is the Vite + React UI served by the backend container through Caddy's HTTPS termination.
+The `/health` endpoint is also reachable at `https://localhost:4443/health`.
+
 ### 3.3 Environment variables (container)
 
 Set these in a `.env` file at the project root (read by `podman-compose.yml`) or

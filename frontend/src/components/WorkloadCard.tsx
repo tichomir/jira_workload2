@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { AuthMode, JiraSite } from '../types';
 import { subscribeAuthError, type AuthErrorCode } from '../api/authErrorChannel';
 import { initiateOAuth } from '../api/jira';

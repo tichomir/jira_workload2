@@ -20,7 +20,7 @@
  * to sprint 2.
  */
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { searchInventory } from '../api/jira';
 import type { SearchCard } from '../api/jira';
 

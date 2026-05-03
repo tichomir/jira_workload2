@@ -17,7 +17,7 @@
  * respectively — see inventory-ui.md §6.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   InventorySidebar,
   DEFAULT_SELECTED_TYPE,

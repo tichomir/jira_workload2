@@ -19,7 +19,7 @@
  *    priority, assigneeAccountId, labels, updated date range).
  */
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { fetchIssues } from '../api/jira';
 import type { IssueTableRow } from '../api/jira';
 

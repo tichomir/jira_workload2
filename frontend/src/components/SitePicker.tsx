@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { JiraSite } from '../types';
 import { ApiError, selectSite } from '../api/jira';
 

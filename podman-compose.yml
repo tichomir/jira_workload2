@@ -22,10 +22,10 @@ services:
       - jira-data:/data
       - jira-attachments:/attachments
     expose:
-      - "3000"
+      - "4000"
     healthcheck:
       # Hits GET /health — src/server.ts:97
-      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:4000/health || exit 1"]
       interval: 15s
       timeout: 5s
       retries: 3

@@ -1,4 +1,3 @@
-import React from 'react';
 import { initiateOAuth } from '../api/jira';
 
 interface ConnectButtonProps {

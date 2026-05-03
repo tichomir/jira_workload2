@@ -9,7 +9,7 @@
 FROM node:20-alpine AS builder
 
 WORKDIR /app
-
+RUN apk add --no-cache bash
 # Copy manifests first for layer-cache efficiency
 COPY package*.json ./
 RUN npm ci
@@ -19,8 +19,10 @@ COPY tsconfig.json ./
 COPY scripts/ ./scripts/
 COPY src/ ./src/
 COPY db/ ./db/
+COPY frontend/ ./frontend/
 
 RUN npm run build
+RUN cd frontend && npm ci && npm run build
 
 # ── Stage 2: runtime ───────────────────────────────────────────────────────────
 # Copies compiled output + production dependencies only. Runs as non-root user.
@@ -51,7 +53,7 @@ RUN addgroup -S jiraapp && adduser -S jiraapp -G jiraapp \
 USER jiraapp
 
 # Port discovered in preflight: process.env.PORT ?? '3000' (src/server.ts:49)
-EXPOSE 3000
+EXPOSE 4000
 
 # Matches package.json scripts.start verbatim
 CMD ["node", "dist/server.js"]

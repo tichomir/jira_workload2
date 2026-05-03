@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { AuthMode, ConnectionFlowState, JiraSite } from '../types';
 import { clearOAuthParams, parseOAuthCallbackParam } from '../api/jira';
 import { ConnectButton } from './ConnectButton';

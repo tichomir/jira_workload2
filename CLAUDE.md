@@ -256,3 +256,53 @@ This is sprint 2 of 2 for the phase. Plan a slice of the deliverables appropriat
 - ⏭ QA: integration tests for context pipeline ordering, custom-field gating, and manifest invariant — Qa Engineer (◈ Standard, 3 SP)
 
 ---
+### Sprint 5 - Issue Backup Engine via search/jql + Pagination | 2026-05-03 | ⏳ in progress | 26 SP est.
+**Goal:** [Phase: Issue & Attachment Backup Engine — Sprint 1 of 3]
+Deliver the primary coverage invariant: full Issue capture (system + custom fields, comments, links, subtasks, sprint membership, watchers, worklogs) via POST /rest/api/3/search/jql, plus binary-faithful attachment download. This is the core value-delivery phase.
+
+Deliverables (across all sprints in this phase):
+- Issue backup via POST /rest/api/3/search/jql (deprecated GET endpoint forbidden in codebase)
+- Full Issue payload capture: system fields, customFieldValues map, ADF comments, issue links (both directions), subtasks, sprint membership, watchers, worklogs
+- Binary-faithful attachment download via GET /rest/api/3/attachment/content/{id} preserving bytes, MIME type, and filename
+- Pagination termination on issues.length === 0 or < maxResults
+- Per-item error tracking emitting 'Completed with N errors' status on partial failure
+- Backup-point ID and timestamp traceability for every captured item
+- Heartbeat progress events ≤10s with stalled-job detection at >20s
+
+This is sprint 1 of 3 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+_Sprint started. Role checkpoints below will update as work completes._
+
+---
+### Sprint 5 - Issue Backup Engine via search/jql + Pagination | 2026-05-03 | ✅ Backend Developer checkpoint (4/4 done)
+
+- ✅ Carry-forward: Backup point manifest writer with zero-silent-omission guarantee (◉ Deep, 5 SP)
+- ✅ Implement Issue search + pagination via POST /rest/api/3/search/jql (◉ Deep, 5 SP)
+- ✅ Issue capture orchestrator with full payload + per-item error tracking (◉ Deep, 8 SP)
+- ✅ Binary-faithful attachment download via /rest/api/3/attachment/content/{id} (◈ Standard, 3 SP)
+
+---
+### Sprint 5 - Issue Backup Engine via search/jql + Pagination | 2026-05-03 | ✅ done | 29 SP
+**Goal:** [Phase: Issue & Attachment Backup Engine — Sprint 1 of 3]
+Deliver the primary coverage invariant: full Issue capture (system + custom fields, comments, links, subtasks, sprint membership, watchers, worklogs) via POST /rest/api/3/search/jql, plus binary-faithful attachment download. This is the core value-delivery phase.
+
+Deliverables (across all sprints in this phase):
+- Issue backup via POST /rest/api/3/search/jql (deprecated GET endpoint forbidden in codebase)
+- Full Issue payload capture: system fields, customFieldValues map, ADF comments, issue links (both directions), subtasks, sprint membership, watchers, worklogs
+- Binary-faithful attachment download via GET /rest/api/3/attachment/content/{id} preserving bytes, MIME type, and filename
+- Pagination termination on issues.length === 0 or < maxResults
+- Per-item error tracking emitting 'Completed with N errors' status on partial failure
+- Backup-point ID and timestamp traceability for every captured item
+- Heartbeat progress events ≤10s with stalled-job detection at >20s
+
+This is sprint 1 of 3 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+**Delivered:**
+- ✅ Carry-forward: Backup point manifest writer with zero-silent-omission guarantee — Backend Developer (◉ Deep, 5 SP)
+- ✅ Implement Issue search + pagination via POST /rest/api/3/search/jql — Backend Developer (◉ Deep, 5 SP)
+- ✅ Issue capture orchestrator with full payload + per-item error tracking — Backend Developer (◉ Deep, 8 SP)
+- ✅ Binary-faithful attachment download via /rest/api/3/attachment/content/{id} — Backend Developer (◈ Standard, 3 SP)
+- ✅ QA: Coverage-invariant integration tests for Issue + Attachment capture — Qa Engineer (◉ Deep, 5 SP)
+- ✅ Fix: Verify IssueCaptureOrchestrator tests pass after error handling changes — Backend Developer (◈ Standard, 3 SP)
+
+---

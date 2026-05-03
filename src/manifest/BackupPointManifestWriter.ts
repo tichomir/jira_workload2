@@ -2,23 +2,23 @@
  * BackupPointManifestWriter
  *
  * Writes per-stage sections to the backup-point manifest atomically.
- * Enforces the integrity invariant on every append:
+ * Also persists individual item entries via append() for issue/attachment capture.
  *
- *   capturedCount + skippedIds.length === apiTotalReported
- *   (when apiTotalReported is not null)
+ * Enforces two invariants:
  *
- * A violation raises ManifestIntegrityError and marks the backup-point
- * status 'completed_with_errors' — surfaced in the UI as
- * "Completed with N errors", not "Completed successfully".
+ * 1. Stage integrity: capturedCount + skippedIds.length === apiTotalReported
+ *    Violation raises ManifestIntegrityError and marks status 'completed_with_errors'.
  *
- * The writer also exposes a static validate() function that can be run
- * standalone against any persisted manifest (CLI harness, test scripts).
+ * 2. Omission check (finalize with discoveredCounts): captured ok-entries count
+ *    must equal the discovered count for every objectType passed.
+ *    Violation raises ManifestOmissionError.
  *
  * See: docs/architecture/context-capture-pipeline.md §2
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { randomUUID } from 'crypto';
 import {
   BackupPointManifest,
   ManifestEntry,
@@ -27,6 +27,7 @@ import {
   PhaseSummary,
   ReconciliationReport,
   JiraObjectType,
+  SimpleManifestEntry,
 } from './types';
 import { BackupPointRepository } from './BackupPointRepository';
 
@@ -66,6 +67,33 @@ export class ManifestIntegrityError extends Error {
     this.skippedCount = skippedCount;
     this.apiTotalReported = apiTotalReported;
     this.actualSum = actualSum;
+  }
+}
+
+/**
+ * Raised by finalize() when the number of ok-status manifest_entries for an
+ * objectType does not match the discovered count supplied by the caller.
+ * Zero-silent-omission guarantee: every discovered object must have a
+ * corresponding ok entry, or finalize() throws this error.
+ */
+export class ManifestOmissionError extends Error {
+  readonly objectType: JiraObjectType;
+  readonly discoveredCount: number;
+  readonly capturedCount: number;
+
+  constructor(
+    objectType: JiraObjectType,
+    discoveredCount: number,
+    capturedCount: number,
+  ) {
+    super(
+      `ManifestOmissionError for '${objectType}': ` +
+        `discovered ${discoveredCount} but only ${capturedCount} ok entries in manifest`,
+    );
+    this.name = 'ManifestOmissionError';
+    this.objectType = objectType;
+    this.discoveredCount = discoveredCount;
+    this.capturedCount = capturedCount;
   }
 }
 
@@ -162,14 +190,74 @@ export class BackupPointManifestWriter {
   }
 
   /**
+   * Appends a single per-item entry to the manifest_entries table.
+   *
+   * Used by IssueCaptureOrchestrator and attachment download to record
+   * every captured item (ok or error) with full traceability:
+   *   backupPointId + capturedAt → single-click lookup in Inventory UI.
+   *
+   * A structured log line is emitted for every append so the test suite
+   * can verify execution evidence without inspecting the DB directly.
+   */
+  append(entry: SimpleManifestEntry): void {
+    this.repo.insertEntry(entry);
+    console.log(
+      `[jira-manifest] append backupPointId=${entry.backupPointId} ` +
+        `objectType=${entry.objectType} objectId=${entry.objectId} ` +
+        `status=${entry.status}` +
+        (entry.errorMessage ? ` error=${entry.errorMessage}` : ''),
+    );
+  }
+
+  /**
+   * Convenience helper that generates a UUID id for the entry.
+   */
+  appendEntry(
+    partial: Omit<SimpleManifestEntry, 'id' | 'backupPointId'>,
+  ): void {
+    this.append({
+      id: randomUUID(),
+      backupPointId: this.config.backupPointId,
+      ...partial,
+    });
+  }
+
+  /**
    * Finalises the manifest, sets the terminal status, and writes the
    * completed manifest to SQLite. Returns the finalized manifest.
    *
-   * Call this after all stages have completed (or after a halt).
+   * When discoveredCounts is provided, performs the zero-silent-omission check:
+   * for each objectType, the count of ok-status manifest_entries must equal
+   * the discovered count. Throws ManifestOmissionError on mismatch BEFORE
+   * persisting the final status (the backup-point row already has a status
+   * from the last appendStageSection call, so data is not lost).
+   *
+   * @throws ManifestOmissionError when any objectType has fewer ok entries
+   *         than the supplied discovered count.
    */
   finalize(
     status: 'completed' | 'completed_with_errors' | 'halted',
+    discoveredCounts?: Partial<Record<JiraObjectType, number>>,
   ): BackupPointManifest {
+    // Zero-silent-omission check
+    if (discoveredCounts) {
+      for (const [objectType, discoveredCount] of Object.entries(discoveredCounts)) {
+        if (discoveredCount === undefined || discoveredCount === null) continue;
+        const capturedCount = this.repo.countEntriesByObjectType(
+          this.config.backupPointId,
+          objectType as JiraObjectType,
+          'ok',
+        );
+        if (capturedCount !== discoveredCount) {
+          throw new ManifestOmissionError(
+            objectType as JiraObjectType,
+            discoveredCount,
+            capturedCount,
+          );
+        }
+      }
+    }
+
     const effectiveStatus =
       this.integrityErrors > 0 && status !== 'halted'
         ? 'completed_with_errors'

@@ -1,35 +1,44 @@
 /**
- * BackupPointRepository — SQLite-backed store for backup-point manifests.
+ * BackupPointRepository — SQLite-backed store for backup-point manifests
+ * and per-item manifest_entries.
  *
- * The backup_points table (migration 003_backup_points.sql) stores the full
- * BackupPointManifest JSON in a single manifest_json column. Manifests are
- * NEVER held only in-process memory — every stage boundary writes to disk.
+ * Tables:
+ *   backup_points   (migration 003) — full BackupPointManifest JSON blob
+ *   manifest_entries (migration 005) — individual per-item capture rows
  */
 
 import Database from 'better-sqlite3';
 import * as fs from 'fs';
 import * as path from 'path';
-import { BackupPointManifest } from './types';
+import { BackupPointManifest, SimpleManifestEntry, JiraObjectType } from './types';
 
-const MIGRATION_PATH = path.join(
+const MIGRATION_003 = path.join(
   __dirname,
   '../../db/migrations/003_backup_points.sql',
+);
+
+const MIGRATION_005 = path.join(
+  __dirname,
+  '../../db/migrations/005_manifest_entries.sql',
 );
 
 export class BackupPointRepository {
   constructor(private readonly db: Database.Database) {}
 
   /**
-   * Runs the backup_points migration (idempotent — uses CREATE TABLE IF NOT EXISTS).
+   * Runs all backup-point migrations (idempotent — uses CREATE TABLE IF NOT EXISTS).
+   * Includes backup_points (003) and manifest_entries (005).
    */
   static migrate(db: Database.Database): void {
-    const sql = fs.readFileSync(MIGRATION_PATH, 'utf-8');
-    db.exec(sql);
+    const sql003 = fs.readFileSync(MIGRATION_003, 'utf-8');
+    db.exec(sql003);
+    const sql005 = fs.readFileSync(MIGRATION_005, 'utf-8');
+    db.exec(sql005);
   }
 
   /**
    * Creates a new in-progress backup-point row.
-   * manifest_json is NULL until the first stage section is written.
+   * manifest_json is initialised with an empty skeleton until first stage write.
    */
   create(
     id: string,
@@ -117,5 +126,88 @@ export class BackupPointRepository {
           ORDER BY started_at DESC`,
       )
       .all(cloudId) as Array<{ id: string; status: string; startedAt: number }>;
+  }
+
+  // ── manifest_entries ────────────────────────────────────────────────────────
+
+  /**
+   * Persists a single manifest entry to the manifest_entries table.
+   * Called by BackupPointManifestWriter.append() on each captured item.
+   */
+  insertEntry(entry: SimpleManifestEntry): void {
+    this.db
+      .prepare(
+        `INSERT OR IGNORE INTO manifest_entries
+           (id, backup_point_id, object_type, object_id, captured_at, source_endpoint, status, error_message)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        entry.id,
+        entry.backupPointId,
+        entry.objectType,
+        entry.objectId,
+        Math.floor(entry.capturedAt / 1000),
+        entry.sourceEndpoint,
+        entry.status,
+        entry.errorMessage ?? null,
+      );
+  }
+
+  /**
+   * Returns all manifest entries for a given backup point, ordered by captured_at.
+   * Used by the Inventory UI and the IssueCaptureOrchestrator finalize check.
+   */
+  getEntriesByBackupPoint(backupPointId: string): SimpleManifestEntry[] {
+    const rows = this.db
+      .prepare(
+        `SELECT id, backup_point_id, object_type, object_id,
+                captured_at, source_endpoint, status, error_message
+           FROM manifest_entries
+          WHERE backup_point_id = ?
+          ORDER BY captured_at ASC`,
+      )
+      .all(backupPointId) as Array<{
+        id: string;
+        backup_point_id: string;
+        object_type: string;
+        object_id: string;
+        captured_at: number;
+        source_endpoint: string;
+        status: string;
+        error_message: string | null;
+      }>;
+
+    return rows.map((r) => ({
+      id: r.id,
+      backupPointId: r.backup_point_id,
+      objectType: r.object_type as JiraObjectType,
+      objectId: r.object_id,
+      capturedAt: r.captured_at * 1000,
+      sourceEndpoint: r.source_endpoint,
+      status: r.status as 'ok' | 'error',
+      errorMessage: r.error_message ?? undefined,
+    }));
+  }
+
+  /**
+   * Counts entries of a given objectType for a backup point.
+   * Used by finalize() omission check.
+   */
+  countEntriesByObjectType(
+    backupPointId: string,
+    objectType: JiraObjectType,
+    status?: 'ok' | 'error',
+  ): number {
+    const statusClause = status ? `AND status = '${status}'` : '';
+    const row = this.db
+      .prepare(
+        `SELECT COUNT(*) as cnt
+           FROM manifest_entries
+          WHERE backup_point_id = ?
+            AND object_type = ?
+            ${statusClause}`,
+      )
+      .get(backupPointId, objectType) as { cnt: number };
+    return row.cnt;
   }
 }

@@ -8,12 +8,18 @@
  *   - HTTP Basic (email:apiToken) auth for manual connection path
  *
  * Public API:
- *   get(path)           → parsed JSON response body
- *   post(path, body)    → parsed JSON response body
- *   getBinary(path)     → Buffer (for attachment downloads)
+ *   get(path)                            → parsed JSON response body
+ *   post(path, body)                     → parsed JSON response body
+ *   getBinary(path)                      → Buffer (for attachment downloads)
+ *   searchIssues(jql, fields, opts)      → single-page JQL search result
+ *   paginateIssues(jql, fields, maxRes)  → all issues via paginateAtlassian
+ *   downloadAttachment(id)               → binary Buffer (byte-faithful)
+ *
+ * FORBIDDEN: GET /rest/api/3/search — use POST /rest/api/3/search/jql only.
  */
 
 import { JiraCredentialRepository } from '../db/JiraCredentialRepository';
+import { paginateAtlassian, AtlassianPaginationResult, AtlassianPage } from '../pagination/paginateAtlassian';
 
 type FetchFn = typeof globalThis.fetch;
 
@@ -33,6 +39,28 @@ export class AuthError extends Error {
     super(message);
     this.name = 'AuthError';
   }
+}
+
+// ─── Issue search types ──────────────────────────────────────────────────────
+
+/** Minimal shape of a Jira issue returned by the search endpoint. */
+export interface JiraIssue {
+  id: string;
+  key: string;
+  self: string;
+  fields: Record<string, unknown>;
+}
+
+export interface IssueSearchResponse {
+  issues: JiraIssue[];
+  total?: number;
+  startAt?: number;
+  maxResults?: number;
+}
+
+export interface IssueSearchOptions {
+  startAt?: number;
+  maxResults?: number;
 }
 
 // ─── Client ─────────────────────────────────────────────────────────────────
@@ -100,6 +128,83 @@ export class JiraHttpClient {
     }
     const ab = await response.arrayBuffer();
     return Buffer.from(ab);
+  }
+
+  // ── Issue search (POST /rest/api/3/search/jql — required, GET forbidden) ──
+
+  /**
+   * Single-page JQL issue search via POST /rest/api/3/search/jql.
+   *
+   * The deprecated GET /rest/api/3/search endpoint MUST NOT be used anywhere
+   * in this codebase. A CI lint gate (scripts/check-deprecated-endpoint.sh)
+   * will fail the build if the forbidden path appears in src/.
+   *
+   * @param jql    JQL query string
+   * @param fields Array of field names to return; ['*all'] returns every field
+   *               (required for the coverage invariant — no field skipped).
+   * @param opts   Optional startAt and maxResults for pagination control.
+   */
+  async searchIssues(
+    jql: string,
+    fields: string[] = ['*all'],
+    opts: IssueSearchOptions = {},
+  ): Promise<IssueSearchResponse> {
+    const body = {
+      jql,
+      fields,
+      startAt: opts.startAt ?? 0,
+      maxResults: opts.maxResults ?? 50,
+    };
+    const result = await this.post('/rest/api/3/search/jql', body);
+    return result as IssueSearchResponse;
+  }
+
+  /**
+   * Paginates through all issues matching the JQL query using the shared
+   * paginateAtlassian utility (same termination conditions used by project
+   * discovery: empty page OR partial page).
+   *
+   * Returns all issues in a single AtlassianPaginationResult so the caller
+   * can feed them to the IssueCaptureOrchestrator.
+   *
+   * PAGINATION CONTRACT (from paginateAtlassian):
+   *   - Terminates when issues.length === 0
+   *   - Terminates when issues.length < maxResults (partial page = last page)
+   *   - Terminates when isLast === true (Agile API compat)
+   *   - Terminates when collected items >= API-reported total
+   *
+   * @param jql        JQL query string
+   * @param fields     Fields to include; default ['*all'] for full coverage
+   * @param maxResults Page size; default 50
+   */
+  async paginateIssues(
+    jql: string,
+    fields: string[] = ['*all'],
+    maxResults = 50,
+  ): Promise<AtlassianPaginationResult<JiraIssue>> {
+    return paginateAtlassian<JiraIssue>(
+      (startAt, mr) =>
+        this.post('/rest/api/3/search/jql', {
+          jql,
+          fields,
+          startAt,
+          maxResults: mr,
+        }).then((r) => r as AtlassianPage<JiraIssue>),
+      maxResults,
+    );
+  }
+
+  /**
+   * Downloads a Jira attachment as a binary Buffer.
+   * Byte-faithful: no transform, no recompression, no encoding change.
+   * MIME type and filename must be read from the issue's attachment metadata
+   * (the 'attachment' field in the issue's fields map), not from
+   * Content-Disposition headers (which may differ from the original filename).
+   *
+   * @param attachmentId  The attachment ID from the issue's fields.attachment array.
+   */
+  async downloadAttachment(attachmentId: string): Promise<Buffer> {
+    return this.getBinary(`/rest/api/3/attachment/content/${attachmentId}`);
   }
 
   // ── Internal ───────────────────────────────────────────────────────────────

@@ -4,7 +4,8 @@
   "private": true,
   "description": "Jira Cloud backup and restore connector",
   "scripts": {
-    "build": "tsc",
+    "build": "bash scripts/check-deprecated-endpoint.sh && tsc",
+    "lint:deprecated": "bash scripts/check-deprecated-endpoint.sh",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:e2e": "playwright test",

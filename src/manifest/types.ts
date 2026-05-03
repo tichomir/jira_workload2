@@ -166,6 +166,24 @@ export interface JsmOutOfScopeNotice {
   phase2Note: string;
 }
 
+/**
+ * An individual entry in the manifest_entries table.
+ * One row per backed-up object (issue, attachment, context node, etc.).
+ * Used by IssueCaptureOrchestrator to record per-item outcomes and by the
+ * Inventory UI via getEntriesByBackupPoint().
+ */
+export interface SimpleManifestEntry {
+  id: string;
+  backupPointId: string;
+  objectType: JiraObjectType;
+  objectId: string;
+  /** Unix epoch milliseconds */
+  capturedAt: number;
+  sourceEndpoint: string;
+  status: 'ok' | 'error';
+  errorMessage?: string;
+}
+
 export const JSM_NOTICE_MESSAGE =
   'Jira Service Management projects were detected on this site. ' +
   'JSM objects (JSMTicket, JSMQueue, JSMRequestType, JSMSLAM) are out of scope for Phase 1 backup. ' +

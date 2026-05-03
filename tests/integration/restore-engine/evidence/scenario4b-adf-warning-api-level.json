@@ -1,0 +1,14 @@
+{
+  "description": "API-level: GET /restore/jobs/:id returns adfMediaWarningEmitted=true after successful restore",
+  "scenario": "4b",
+  "jobId": "restore-06fb527e-04d7-4446-ba6b-794cc577cf7d",
+  "finalStatus": "completed",
+  "adfMediaWarningEmitted": true,
+  "assertions": [
+    "status is completed or completed_with_errors (not failed)",
+    "adfMediaWarningEmitted=true in GET /restore/jobs/:id response",
+    "failureDiagnostic=null (warning does NOT halt the restore)",
+    "ADF media warning is surfaced to operator via job payload field"
+  ],
+  "timestamp": "2026-05-03T17:37:25.958Z"
+}

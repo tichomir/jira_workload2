@@ -1,0 +1,28 @@
+{
+  "description": "RestoreWorker emits heartbeat with phase/processed/total; consecutive heartbeats are ≤10s apart",
+  "scenario": "3a",
+  "jobId": "hb-cadence-test-01",
+  "configuredHeartbeatIntervalMs": 9000,
+  "heartbeat1": {
+    "phase": "issue_body",
+    "processed": 85,
+    "total": 200,
+    "errorCount": 0,
+    "timestamp": "1970-01-01T00:00:00.000Z"
+  },
+  "heartbeat2": {
+    "phase": "issue_body",
+    "processed": 85,
+    "total": 200,
+    "errorCount": 0,
+    "timestamp": "1970-01-01T00:00:09.000Z"
+  },
+  "gapMs": 9000,
+  "assertions": [
+    "Heartbeat emitted with correct phase=issue_body",
+    "Heartbeat has processed=85, total=200, errorCount=0",
+    "Gap between heartbeats is 9000ms ≤ 10000ms",
+    "UI progress view is guaranteed to update at least once within any 10s window"
+  ],
+  "timestamp": "2026-05-03T17:37:25.922Z"
+}

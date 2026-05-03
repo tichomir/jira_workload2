@@ -1,0 +1,47 @@
+{
+  "description": "API-level: GET /restore/jobs/:id returns failureDiagnostic with named code on a halted job",
+  "scenario": "2b",
+  "jobId": "restore-failing-wf-8cf45f0a-3f13-46c9-b142-3c1902c314f5",
+  "httpStatus": 200,
+  "responseStatus": "failed",
+  "failureDiagnostic": "RESTORE_PHASE_WORKFLOW_FAILED: 403 Forbidden — insufficient scope",
+  "phaseStatuses": [
+    {
+      "phase": "project",
+      "status": "completed"
+    },
+    {
+      "phase": "workflow",
+      "status": "failed"
+    },
+    {
+      "phase": "custom_field",
+      "status": "pending"
+    },
+    {
+      "phase": "board",
+      "status": "pending"
+    },
+    {
+      "phase": "sprint",
+      "status": "pending"
+    },
+    {
+      "phase": "issue_body",
+      "status": "pending"
+    },
+    {
+      "phase": "post_issue",
+      "status": "pending"
+    }
+  ],
+  "assertions": [
+    "GET /restore/jobs/:id returns 200",
+    "body.status=failed",
+    "body.failureDiagnostic is a non-null string",
+    "body.failureDiagnostic contains RESTORE_PHASE_WORKFLOW_FAILED",
+    "project phase=completed, workflow phase=failed",
+    "board/sprint/issue_body/post_issue phases=pending (never ran)"
+  ],
+  "timestamp": "2026-05-03T17:37:25.885Z"
+}

@@ -1,0 +1,17 @@
+{
+  "description": "Halt-on-failure at custom_field phase: board/sprint/issue_body/post_issue NOT run",
+  "scenario": "2c",
+  "jobId": "cf-fail-inprocess-1777829845907",
+  "failedPhase": "custom_field",
+  "phasesRan": [
+    "project",
+    "workflow",
+    "custom_field"
+  ],
+  "assertions": [
+    "custom_field phase fails with named diagnostic",
+    "board, sprint, issue_body, post_issue NOT executed",
+    "Halt guarantee verified for mid-pipeline failure"
+  ],
+  "timestamp": "2026-05-03T17:37:25.909Z"
+}

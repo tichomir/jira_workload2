@@ -541,38 +541,73 @@ function StepReview({
 
 // ── Step 6: Execute / Progress ────────────────────────────────────────────────
 
-function PhaseRow({ progress }: { progress: PhaseProgress }) {
-  const statusColor: Record<PhaseProgress['status'], string> = {
-    pending:              'text-gray-400',
-    running:              'text-blue-600',
-    completed:            'text-green-600',
-    completed_with_errors:'text-yellow-600',
-    failed:               'text-red-600',
-  };
-
+function PhaseRow({ progress, isCurrent }: { progress: PhaseProgress; isCurrent: boolean }) {
   const pct = progress.total > 0
     ? Math.round((progress.processed / progress.total) * 100)
     : 0;
 
-  return (
-    <div className="py-2">
-      <div className="flex items-center justify-between text-sm">
-        <span className="font-medium text-gray-800">{PHASE_LABELS[progress.phase]}</span>
-        <span className={`text-xs font-semibold ${statusColor[progress.status]}`}>
-          {progress.status === 'running' ? `${pct}%` : progress.status.replace(/_/g, ' ')}
+  const icon =
+    progress.status === 'completed' || progress.status === 'completed_with_errors'
+      ? (
+        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-500 text-white text-xs font-bold" aria-label="completed">
+          ✓
         </span>
-      </div>
-      {progress.status === 'running' && (
-        <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
-          <div
-            className="h-full rounded-full bg-blue-500 transition-all"
-            style={{ width: `${pct}%` }}
-          />
+      )
+      : progress.status === 'failed'
+      ? (
+        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500 text-white text-xs font-bold" aria-label="failed">
+          ✗
+        </span>
+      )
+      : progress.status === 'running'
+      ? (
+        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-500 text-white text-xs" aria-label="running">
+          ●
+        </span>
+      )
+      : (
+        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-gray-300" aria-label="pending" />
+      );
+
+  return (
+    <div
+      className={`py-2 px-3 rounded ${isCurrent ? 'bg-blue-50' : ''}`}
+      data-testid={`phase-row-${progress.phase}`}
+    >
+      <div className="flex items-center gap-3 text-sm">
+        {icon}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-2">
+            <span className={`font-medium truncate ${progress.status === 'pending' ? 'text-gray-400' : 'text-gray-800'}`}>
+              {PHASE_LABELS[progress.phase]}
+            </span>
+            <span className={`shrink-0 text-xs font-semibold ${
+              progress.status === 'running'              ? 'text-blue-600' :
+              progress.status === 'completed'            ? 'text-green-600' :
+              progress.status === 'completed_with_errors'? 'text-yellow-600' :
+              progress.status === 'failed'               ? 'text-red-600' :
+                                                           'text-gray-400'
+            }`}>
+              {progress.status === 'running'
+                ? (progress.total > 0 ? `${progress.processed}/${progress.total}` : 'running…')
+                : progress.status !== 'pending'
+                ? progress.status.replace(/_/g, ' ')
+                : ''}
+            </span>
+          </div>
+          {progress.status === 'running' && (
+            <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
+              <div
+                className="h-full rounded-full bg-blue-500 transition-all"
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+          )}
+          {progress.errorCount > 0 && (
+            <p className="mt-0.5 text-xs text-yellow-700">{progress.errorCount} error(s)</p>
+          )}
         </div>
-      )}
-      {progress.errorCount > 0 && (
-        <p className="mt-0.5 text-xs text-yellow-700">{progress.errorCount} error(s)</p>
-      )}
+      </div>
     </div>
   );
 }
@@ -597,6 +632,7 @@ function StepExecute({
   const [stalled, setStalled] = useState(false);
   const [conflict, setConflict] = useState<ConflictPrompt | null>(null);
   const [decidingConflict, setDecidingConflict] = useState(false);
+  const [adfDismissed, setAdfDismissed] = useState(false);
 
   const lastEventRef = useRef<number>(Date.now());
   const stallTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -714,18 +750,37 @@ function StepExecute({
             )}
           </div>
 
-          {/* ADF media warning */}
-          {job.adfMediaWarningEmitted && (
-            <InlineBanner variant="warning">
-              Attachments in this restore received new IDs. ADF media links in descriptions and comments may be broken. Full link rewriting is deferred to Phase 2.
-            </InlineBanner>
+          {/* ADF media warning — shown after post_issue phase, dismissible */}
+          {job.adfMediaWarningEmitted && !adfDismissed && (
+            <div data-testid="adf-warning-banner">
+              <InlineBanner variant="warning">
+                <div className="flex items-start justify-between gap-2">
+                  <span>
+                    Some ADF media links in restored issues may be broken — review affected issues.
+                    {' '}Full ADF media link rewriting is deferred to Phase 2.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setAdfDismissed(true)}
+                    data-testid="adf-warning-dismiss"
+                    className="shrink-0 text-yellow-700 hover:text-yellow-900 font-bold text-lg leading-none"
+                    aria-label="Dismiss ADF media warning"
+                  >
+                    ×
+                  </button>
+                </div>
+              </InlineBanner>
+            </div>
           )}
 
           {/* Phase-failure diagnostic */}
           {job.failureDiagnostic && (
-            <InlineBanner variant="error">
-              <strong>Restore failed:</strong> {job.failureDiagnostic}
-            </InlineBanner>
+            <div data-testid="phase-failure-banner">
+              <InlineBanner variant="error">
+                <p><strong>Restore failed:</strong> {job.failureDiagnostic}</p>
+                <p className="mt-1 text-xs font-medium">Restore halted before next phase.</p>
+              </InlineBanner>
+            </div>
           )}
 
           {/* Ask-mode conflict prompt */}
@@ -758,21 +813,31 @@ function StepExecute({
             </div>
           )}
 
-          {/* Phase progress */}
-          {job.phaseProgress.length > 0 && (
-            <div className="rounded border border-gray-200 bg-white p-4 divide-y divide-gray-100">
-              {PHASE_ORDER
-                .map(phase => job.phaseProgress.find(p => p.phase === phase))
-                .filter((p): p is PhaseProgress => p !== undefined)
-                .map(p => <PhaseRow key={p.phase} progress={p} />)
-              }
-            </div>
-          )}
-
-          {/* Pending phases (not yet started) */}
-          {job.phaseProgress.length === 0 && job.status === 'pending' && (
-            <p className="text-sm text-gray-500">Waiting for restore engine to start…</p>
-          )}
+          {/* Phase stepper — all 7 phases always visible */}
+          <div
+            className="rounded border border-gray-200 bg-white divide-y divide-gray-100"
+            data-testid="phase-stepper"
+          >
+            {PHASE_ORDER.map(phase => {
+              const found = job.phaseProgress.find(p => p.phase === phase);
+              const progress: PhaseProgress = found ?? {
+                phase,
+                status: 'pending',
+                total: 0,
+                processed: 0,
+                errorCount: 0,
+                startedAt: null,
+                completedAt: null,
+              };
+              return (
+                <PhaseRow
+                  key={phase}
+                  progress={progress}
+                  isCurrent={job.currentPhase === phase}
+                />
+              );
+            })}
+          </div>
         </div>
       )}
 

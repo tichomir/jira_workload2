@@ -1,0 +1,13 @@
+{
+  "description": "adfMediaWarning NOT emitted when post_issue returns empty affectedIssueIds (no attachments written)",
+  "scenario": "4c",
+  "jobId": "adf-no-warn-1777829846012",
+  "adfWarningCount": 0,
+  "storeAdfMediaWarningEmitted": false,
+  "assertions": [
+    "adfMediaWarning event count=0 when affectedIssueIds=[]",
+    "store.adfMediaWarningEmitted=false",
+    "Warning only fires when attachments are actually written (ADF refs could break)"
+  ],
+  "timestamp": "2026-05-03T17:37:26.014Z"
+}

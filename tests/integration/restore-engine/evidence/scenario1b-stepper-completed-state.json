@@ -1,0 +1,42 @@
+{
+  "description": "GET /restore/jobs/:id shows completed stepper state after all phases finish",
+  "scenario": "1b",
+  "jobId": "restore-1d5cae4b-5464-4d94-9cb1-bdc24293b9bd",
+  "finalStatus": "completed",
+  "phaseSummary": [
+    {
+      "phase": "project",
+      "status": "completed"
+    },
+    {
+      "phase": "workflow",
+      "status": "completed"
+    },
+    {
+      "phase": "custom_field",
+      "status": "completed"
+    },
+    {
+      "phase": "board",
+      "status": "completed"
+    },
+    {
+      "phase": "sprint",
+      "status": "completed"
+    },
+    {
+      "phase": "issue_body",
+      "status": "completed"
+    },
+    {
+      "phase": "post_issue",
+      "status": "completed"
+    }
+  ],
+  "assertions": [
+    "status in [completed, completed_with_errors]",
+    "phaseProgress has 7 entries",
+    "All phase statuses are terminal (completed or completed_with_errors)"
+  ],
+  "timestamp": "2026-05-03T17:37:25.803Z"
+}

@@ -21,6 +21,7 @@ export type RestoreEventType =
   | 'phaseTransition'
   | 'ConflictDecisionRequired'
   | 'phaseFailure'
+  | 'adfMediaWarning'
   | 'complete';
 
 export interface RestoreProgressEvent {
@@ -37,12 +38,17 @@ export interface RestoreProgressEvent {
   diagnostic?: string;
   /** Present on complete */
   status?: RestoreJobStatus;
+  /** Present on heartbeat / progress events */
+  processed?: number;
+  total?: number;
   /** Present on ConflictDecisionRequired */
   conflictId?: string;
   objectType?: string;
   objectKey?: string;
   existingObjectSummary?: string;
   incomingObjectSummary?: string;
+  /** Present on adfMediaWarning */
+  affectedIssueIds?: string[];
 }
 
 export class RestoreEventBus {

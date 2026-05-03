@@ -1,0 +1,56 @@
+{
+  "description": "Full happy-path restore: all 7 phases execute in canonical order, stepper reaches Completed state",
+  "scenario": "1a",
+  "request": {
+    "sourceBackupPointId": "bp-happy-path-001",
+    "scope": {
+      "type": "all"
+    },
+    "destination": {
+      "type": "export"
+    },
+    "conflictMode": "skip"
+  },
+  "jobId": "restore-de2f7b98-e7b7-4d8b-97a5-b6b133903214",
+  "finalStatus": "completed",
+  "phaseOrder": [
+    {
+      "phase": "project",
+      "status": "completed"
+    },
+    {
+      "phase": "workflow",
+      "status": "completed"
+    },
+    {
+      "phase": "custom_field",
+      "status": "completed"
+    },
+    {
+      "phase": "board",
+      "status": "completed"
+    },
+    {
+      "phase": "sprint",
+      "status": "completed"
+    },
+    {
+      "phase": "issue_body",
+      "status": "completed"
+    },
+    {
+      "phase": "post_issue",
+      "status": "completed"
+    }
+  ],
+  "assertions": [
+    "7 phases present in phaseProgress",
+    "Phases in canonical order: project→workflow→custom_field→board→sprint→issue_body→post_issue",
+    "All phases have status=completed",
+    "All phases have non-null completedAt timestamps",
+    "Final job status=completed",
+    "failureDiagnostic=null",
+    "currentPhase=null after completion"
+  ],
+  "timestamp": "2026-05-03T17:37:25.744Z"
+}

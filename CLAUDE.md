@@ -787,3 +787,50 @@ This is sprint 1 of 3 for the phase. Plan a slice of the deliverables appropriat
 - ✅ Carry-forward: file Figma spec request for restore-unit & Board/Sprint sidebar filters — Software Architect (⚡ Quick, 1 SP)
 
 ---
+### Sprint 12 - Restore Engine Dependency-Ordered Writer | 2026-05-03 | ⏳ in progress | 20 SP est.
+**Goal:** [Phase: Restore Engine & Wizard — Sprint 2 of 3]
+Implement the restore wizard (conflict modes, destination options) and the dependency-ordered restore engine, including the post-issue-creation pass for links/comments/attachments. Cross-site restore and ADF media rewrite are explicitly deferred.
+
+Deliverables (across all sprints in this phase):
+- Restore wizard with three conflict modes (Override, Skip default, Ask per conflict)
+- Destination options: Original location, Alternate location (same site), Browser Download export
+- Restore engine enforcing write order: Project → Workflow + WorkflowScheme → CustomField + FieldConfiguration → Board → Sprint → Issue body → links/comments/attachments
+- Phase-failure halt with named diagnostic before next phase
+- Block in-place restore for projects in Atlassian's 60-day trash window with alternate-location guidance
+- Best-effort warning for ADF media link breakage post-attachment-restore
+- Heartbeat and progress events ≤10s for restore jobs
+
+This is sprint 2 of 3 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+_Sprint started. Role checkpoints below will update as work completes._
+
+---
+### Sprint 12 - Restore Engine Dependency-Ordered Writer | 2026-05-03 | ✅ Software Architect checkpoint (2/2 done)
+
+- ✅ Design restore engine phase executor & diagnostic contract (◈ Standard, 3 SP)
+- ✅ File Figma spec request for restore-unit & Board/Sprint sidebar filters (⚡ Quick, 1 SP)
+
+---
+### Sprint 12 - Restore Engine Dependency-Ordered Writer | 2026-05-03 | ✅ done | 20 SP
+**Goal:** [Phase: Restore Engine & Wizard — Sprint 2 of 3]
+Implement the restore wizard (conflict modes, destination options) and the dependency-ordered restore engine, including the post-issue-creation pass for links/comments/attachments. Cross-site restore and ADF media rewrite are explicitly deferred.
+
+Deliverables (across all sprints in this phase):
+- Restore wizard with three conflict modes (Override, Skip default, Ask per conflict)
+- Destination options: Original location, Alternate location (same site), Browser Download export
+- Restore engine enforcing write order: Project → Workflow + WorkflowScheme → CustomField + FieldConfiguration → Board → Sprint → Issue body → links/comments/attachments
+- Phase-failure halt with named diagnostic before next phase
+- Block in-place restore for projects in Atlassian's 60-day trash window with alternate-location guidance
+- Best-effort warning for ADF media link breakage post-attachment-restore
+- Heartbeat and progress events ≤10s for restore jobs
+
+This is sprint 2 of 3 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+**Delivered:**
+- ✅ Design restore engine phase executor & diagnostic contract — Software Architect (◈ Standard, 3 SP)
+- ✅ Implement dependency-ordered restore engine with phase halt & heartbeats — Backend Developer (◉ Deep, 8 SP)
+- ✅ Wire restore job progress UI: phase tracker, diagnostic banner, ADF warning — Frontend Developer (◈ Standard, 3 SP)
+- ✅ Playwright coverage: restore engine phase order, halt diagnostic, ADF warning, heartbeat — Qa Engineer (◉ Deep, 5 SP)
+- ✅ File Figma spec request for restore-unit & Board/Sprint sidebar filters — Software Architect (⚡ Quick, 1 SP)
+
+---

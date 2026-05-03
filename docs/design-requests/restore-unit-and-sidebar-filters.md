@@ -1,7 +1,9 @@
 # Design Request: Restore-Unit Wizard & Board/Sprint Sidebar Filters
-_Sprint 11 carry-forward · Open contracts: OC-001, OC-002, OC-003_
+_Sprint 12 carry-forward (second sprint carried) · Open contracts: OC-001, OC-002, OC-003_
 _Raised: 2026-05-03 · Design owner: **Design** (tag: `@design`)_
-_Required by: Sprint 12 planning · Status: **OPEN**_
+_Required by: Sprint 13 planning · Status: **OPEN — P1 RISK**_
+
+> **⚠ P1 Risk:** This design request has now been carried for two consecutive sprints (Sprint 11 → Sprint 12) without a Figma frame being delivered. The restore engine phase executor (Sprint 12) and the post-issue-creation pass (Sprint 13) both depend on wizard layout decisions that are currently provisional. If no Figma frame is delivered before Sprint 13 kickoff, the restore wizard will ship with invented layout that will require rework. **Escalate to Design lead immediately.**
 
 ---
 
@@ -174,13 +176,18 @@ The SDI scanner produces regulation tags (`GDPR`, `PCI DSS`) surfaced on Protect
 ## 5. References
 
 - `docs/open-contracts.md` — OC-001, OC-002, OC-003
-- `docs/restore-architecture.md` — full restore engine spec
+- `docs/restore-architecture.md` — full restore engine spec (wizard steps, API shapes, conflict-mode state machine)
+- `docs/architecture/restore-engine.md` — **phase executor & diagnostic contract** (Sprint 12 source of truth: phase order, PhaseResult shape, named diagnostic codes, heartbeat schema, ADF media warning)
 - `docs/architecture/inventory-ui.md` — Inventory UI data contracts and §6 open contracts
 - `docs/architecture/project-inventory-search.md` — Project Inventory search and filter contracts
 - `frontend/src/components/RestoreWizard.tsx` — as-built wizard (provisional layout, see design note at top of file)
 - `frontend/src/components/InventorySidebar.tsx` — as-built sidebar
 - `frontend/src/components/ProjectInventorySearch.tsx` — as-built Issues filter panel
 - Sprint 11 PR description (links back here per acceptance criteria)
+
+---
+
+_Updated Sprint 12: P1 risk escalation added. Frames remain undelivered for a second consecutive sprint. Target date for all frames: Sprint 13 kickoff. Failure to deliver by that date will cause the restore wizard (Steps 1–6) to ship with provisional layout requiring post-launch rework._
 
 ---
 

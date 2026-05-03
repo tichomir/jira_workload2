@@ -1,6 +1,6 @@
 {
   "scenario": "Scenario 3: Partial Failure (N injected HTTP 500s)",
-  "generatedAt": "2026-05-03T17:10:45.519Z",
+  "generatedAt": "2026-05-03T17:28:10.738Z",
   "configuration": {
     "jobId": "obs-s3-job",
     "backupPointId": "obs-s3-bp",
@@ -32,42 +32,42 @@
     "[scenario-3] result.jobStatus=\"Completed with 3 errors\"",
     "[scenario-3] summary.status=\"completed_with_errors\"",
     "[scenario-3] summary.displayStatus=\"Completed with 3 errors\"",
-    "[scenario-3] errorRecords=[{\"itemId\":\"OBS-5\",\"backupPointId\":\"obs-s3-bp\",\"timestamp\":\"2026-05-03T17:10:45.102Z\",\"errorCode\":\"API_ERROR\"},{\"itemId\":\"OBS-6\",\"backupPointId\":\"obs-s3-bp\",\"timestamp\":\"2026-05-03T17:10:45.103Z\",\"errorCode\":\"API_ERROR\"},{\"itemId\":\"OBS-7\",\"backupPointId\":\"obs-s3-bp\",\"timestamp\":\"2026-05-03T17:10:45.104Z\",\"errorCode\":\"API_ERROR\"}]",
+    "[scenario-3] errorRecords=[{\"itemId\":\"OBS-5\",\"backupPointId\":\"obs-s3-bp\",\"timestamp\":\"2026-05-03T17:28:10.311Z\",\"errorCode\":\"API_ERROR\"},{\"itemId\":\"OBS-6\",\"backupPointId\":\"obs-s3-bp\",\"timestamp\":\"2026-05-03T17:28:10.313Z\",\"errorCode\":\"API_ERROR\"},{\"itemId\":\"OBS-7\",\"backupPointId\":\"obs-s3-bp\",\"timestamp\":\"2026-05-03T17:28:10.314Z\",\"errorCode\":\"API_ERROR\"}]",
     "[scenario-3] sseTerminal: displayStatus=\"undefined\" itemsFailed=3"
   ],
   "sseTranscript": [
-    "data: {\"type\":\"terminal\",\"jobId\":\"obs-s3-job\",\"backupPointId\":\"obs-s3-bp\",\"phase\":\"issues\",\"itemsProcessed\":4,\"itemsFailed\":3,\"timestamp\":\"2026-05-03T17:10:45.105Z\"}"
+    "data: {\"type\":\"terminal\",\"jobId\":\"obs-s3-job\",\"backupPointId\":\"obs-s3-bp\",\"phase\":\"issues\",\"itemsProcessed\":4,\"itemsFailed\":3,\"timestamp\":\"2026-05-03T17:28:10.315Z\"}"
   ],
   "errorRecords": [
     {
-      "id": "jerr-obs-s3-job-1777828245103-3xhh3",
+      "id": "jerr-obs-s3-job-1777829290313-tryt5",
       "jobId": "obs-s3-job",
       "backupPointId": "obs-s3-bp",
       "itemType": "JiraIssue",
       "itemId": "OBS-5",
       "errorCode": "API_ERROR",
       "errorMessage": "[jira-http] GET /rest/api/3/issue/OBS-5/watchers → 500",
-      "timestamp": "2026-05-03T17:10:45.102Z"
+      "timestamp": "2026-05-03T17:28:10.311Z"
     },
     {
-      "id": "jerr-obs-s3-job-1777828245104-ql75o",
+      "id": "jerr-obs-s3-job-1777829290314-qgcfk",
       "jobId": "obs-s3-job",
       "backupPointId": "obs-s3-bp",
       "itemType": "JiraIssue",
       "itemId": "OBS-6",
       "errorCode": "API_ERROR",
       "errorMessage": "[jira-http] GET /rest/api/3/issue/OBS-6/watchers → 500",
-      "timestamp": "2026-05-03T17:10:45.103Z"
+      "timestamp": "2026-05-03T17:28:10.313Z"
     },
     {
-      "id": "jerr-obs-s3-job-1777828245105-5et9v",
+      "id": "jerr-obs-s3-job-1777829290314-af70n",
       "jobId": "obs-s3-job",
       "backupPointId": "obs-s3-bp",
       "itemType": "JiraIssue",
       "itemId": "OBS-7",
       "errorCode": "API_ERROR",
       "errorMessage": "[jira-http] GET /rest/api/3/issue/OBS-7/watchers → 500",
-      "timestamp": "2026-05-03T17:10:45.104Z"
+      "timestamp": "2026-05-03T17:28:10.314Z"
     }
   ],
   "terminalBusEvent": {
@@ -77,7 +77,7 @@
     "phase": "issues",
     "itemsProcessed": 4,
     "itemsFailed": 3,
-    "timestamp": "2026-05-03T17:10:45.105Z",
+    "timestamp": "2026-05-03T17:28:10.315Z",
     "displayStatus": "Completed with 3 errors"
   },
   "jobApiResponse": {
@@ -87,39 +87,39 @@
     "itemsProcessed": 4,
     "itemsFailed": 3,
     "itemsTotal": null,
-    "lastHeartbeatAt": 1777828245078,
+    "lastHeartbeatAt": 1777829290285,
     "stalled": false,
     "backupPointId": "obs-s3-bp",
     "errors": [
       {
-        "id": "jerr-obs-s3-job-1777828245103-3xhh3",
+        "id": "jerr-obs-s3-job-1777829290313-tryt5",
         "jobId": "obs-s3-job",
         "backupPointId": "obs-s3-bp",
         "itemType": "JiraIssue",
         "itemId": "OBS-5",
         "errorCode": "API_ERROR",
         "errorMessage": "[jira-http] GET /rest/api/3/issue/OBS-5/watchers → 500",
-        "timestamp": "2026-05-03T17:10:45.102Z"
+        "timestamp": "2026-05-03T17:28:10.311Z"
       },
       {
-        "id": "jerr-obs-s3-job-1777828245104-ql75o",
+        "id": "jerr-obs-s3-job-1777829290314-qgcfk",
         "jobId": "obs-s3-job",
         "backupPointId": "obs-s3-bp",
         "itemType": "JiraIssue",
         "itemId": "OBS-6",
         "errorCode": "API_ERROR",
         "errorMessage": "[jira-http] GET /rest/api/3/issue/OBS-6/watchers → 500",
-        "timestamp": "2026-05-03T17:10:45.103Z"
+        "timestamp": "2026-05-03T17:28:10.313Z"
       },
       {
-        "id": "jerr-obs-s3-job-1777828245105-5et9v",
+        "id": "jerr-obs-s3-job-1777829290314-af70n",
         "jobId": "obs-s3-job",
         "backupPointId": "obs-s3-bp",
         "itemType": "JiraIssue",
         "itemId": "OBS-7",
         "errorCode": "API_ERROR",
         "errorMessage": "[jira-http] GET /rest/api/3/issue/OBS-7/watchers → 500",
-        "timestamp": "2026-05-03T17:10:45.104Z"
+        "timestamp": "2026-05-03T17:28:10.314Z"
       }
     ]
   }

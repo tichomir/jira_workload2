@@ -1,0 +1,152 @@
+{
+  "sprint": "Sprint 12 — Restore Engine Dependency-Ordered Writer",
+  "generatedAt": "2026-05-03T17:37:26.035Z",
+  "totalArtefacts": 10,
+  "dodCoverage": [
+    "Full 7-phase happy path: all phases execute in canonical order project→workflow→custom_field→board→sprint→issue_body→post_issue",
+    "All phases reach status=completed on clean run",
+    "Stepper shows completed state: failureDiagnostic=null, currentPhase=null",
+    "GET /restore/jobs/:id reflects completed stepper state",
+    "Workflow phase failure halts engine; board/sprint/issue_body/post_issue NOT run",
+    "phaseFailure event emitted with named RESTORE_PHASE_WORKFLOW_FAILED diagnostic code",
+    "Store phaseProgress: project=completed, workflow=failed, subsequent phases=pending",
+    "API-level: GET /restore/jobs/:id failureDiagnostic field present with named code on halted jobs",
+    "custom_field failure also halts subsequent phases (general halt-on-failure contract)",
+    "Heartbeat emitted with correct phase/processed/total fields",
+    "Consecutive heartbeats are ≤10 000ms apart (cadence contract)",
+    "At least one heartbeat emitted during restore run (UI update guarantee)",
+    "adfMediaWarning event emitted after post_issue phase when attachments written",
+    "affectedIssueIds non-empty in ADF warning event",
+    "adfMediaWarningEmitted=true in API response after successful restore",
+    "ADF warning does NOT emit when no attachments written (empty affectedIssueIds)"
+  ],
+  "artefacts": [
+    {
+      "file": "scenario1a-happy-path-7-phases.json",
+      "scenario": "1a",
+      "description": "Full happy-path restore: all 7 phases execute in canonical order, stepper reaches Completed state",
+      "assertions": [
+        "7 phases present in phaseProgress",
+        "Phases in canonical order: project→workflow→custom_field→board→sprint→issue_body→post_issue",
+        "All phases have status=completed",
+        "All phases have non-null completedAt timestamps",
+        "Final job status=completed",
+        "failureDiagnostic=null",
+        "currentPhase=null after completion"
+      ],
+      "capturedAt": "2026-05-03T17:37:25.744Z"
+    },
+    {
+      "file": "scenario1b-stepper-completed-state.json",
+      "scenario": "1b",
+      "description": "GET /restore/jobs/:id shows completed stepper state after all phases finish",
+      "assertions": [
+        "status in [completed, completed_with_errors]",
+        "phaseProgress has 7 entries",
+        "All phase statuses are terminal (completed or completed_with_errors)"
+      ],
+      "capturedAt": "2026-05-03T17:37:25.803Z"
+    },
+    {
+      "file": "scenario2a-workflow-failure-halt-inprocess.json",
+      "scenario": "2a",
+      "description": "RestoreEngine halts at workflow phase failure; board/sprint/issue_body/post_issue phases are NOT run",
+      "assertions": [
+        "result.outcome=failed",
+        "result.phase=workflow",
+        "result.diagnostic contains RESTORE_PHASE_WORKFLOW_FAILED",
+        "phaseTransitions contains project and workflow only",
+        "board, sprint, issue_body, post_issue NOT in phaseTransitions",
+        "phaseFailure event emitted with diagnostic code",
+        "store phaseProgress: project=completed, workflow=failed, board/sprint/issue_body/post_issue=pending",
+        "store failureDiagnostic=RESTORE_PHASE_WORKFLOW_FAILED: ..."
+      ],
+      "capturedAt": "2026-05-03T17:37:25.869Z"
+    },
+    {
+      "file": "scenario2b-api-diagnostic-code-on-halted-job.json",
+      "scenario": "2b",
+      "description": "API-level: GET /restore/jobs/:id returns failureDiagnostic with named code on a halted job",
+      "assertions": [
+        "GET /restore/jobs/:id returns 200",
+        "body.status=failed",
+        "body.failureDiagnostic is a non-null string",
+        "body.failureDiagnostic contains RESTORE_PHASE_WORKFLOW_FAILED",
+        "project phase=completed, workflow phase=failed",
+        "board/sprint/issue_body/post_issue phases=pending (never ran)"
+      ],
+      "capturedAt": "2026-05-03T17:37:25.885Z"
+    },
+    {
+      "file": "scenario2c-custom-field-failure-halt.json",
+      "scenario": "2c",
+      "description": "Halt-on-failure at custom_field phase: board/sprint/issue_body/post_issue NOT run",
+      "assertions": [
+        "custom_field phase fails with named diagnostic",
+        "board, sprint, issue_body, post_issue NOT executed",
+        "Halt guarantee verified for mid-pipeline failure"
+      ],
+      "capturedAt": "2026-05-03T17:37:25.909Z"
+    },
+    {
+      "file": "scenario3a-heartbeat-cadence-fake-timer.json",
+      "scenario": "3a",
+      "description": "RestoreWorker emits heartbeat with phase/processed/total; consecutive heartbeats are ≤10s apart",
+      "assertions": [
+        "Heartbeat emitted with correct phase=issue_body",
+        "Heartbeat has processed=85, total=200, errorCount=0",
+        "Gap between heartbeats is 9000ms ≤ 10000ms",
+        "UI progress view is guaranteed to update at least once within any 10s window"
+      ],
+      "capturedAt": "2026-05-03T17:37:25.922Z"
+    },
+    {
+      "file": "scenario3b-heartbeat-intervals-accelerated.json",
+      "scenario": "3b",
+      "description": "Multiple heartbeat ticks (fake timer): consecutive timestamps ≤10s apart; fields consistent",
+      "assertions": [
+        "3 heartbeat events emitted at T=0, T=9000, T=18000ms",
+        "All consecutive gaps ≤ 10 000ms",
+        "All heartbeats carry phase=board, processed=2, total=5",
+        "heartbeatIntervalMs=9000 satisfies the ≤10s cadence contract"
+      ],
+      "capturedAt": "2026-05-03T17:37:25.931Z"
+    },
+    {
+      "file": "scenario4a-adf-warning-inprocess.json",
+      "scenario": "4a",
+      "description": "adfMediaWarning event emitted after post_issue phase; affectedIssueIds non-empty; store flag set",
+      "assertions": [
+        "adfMediaWarning event emitted exactly once",
+        "affectedIssueIds is non-empty (MOCK-1, MOCK-2 for scope=all)",
+        "store.adfMediaWarningEmitted=true",
+        "Warning is triggered by restored attachments having new IDs (ADF media refs may break)",
+        "Best-effort warning — operator informed without halting the restore"
+      ],
+      "capturedAt": "2026-05-03T17:37:25.946Z"
+    },
+    {
+      "file": "scenario4b-adf-warning-api-level.json",
+      "scenario": "4b",
+      "description": "API-level: GET /restore/jobs/:id returns adfMediaWarningEmitted=true after successful restore",
+      "assertions": [
+        "status is completed or completed_with_errors (not failed)",
+        "adfMediaWarningEmitted=true in GET /restore/jobs/:id response",
+        "failureDiagnostic=null (warning does NOT halt the restore)",
+        "ADF media warning is surfaced to operator via job payload field"
+      ],
+      "capturedAt": "2026-05-03T17:37:25.958Z"
+    },
+    {
+      "file": "scenario4c-no-adf-warning-empty-attachments.json",
+      "scenario": "4c",
+      "description": "adfMediaWarning NOT emitted when post_issue returns empty affectedIssueIds (no attachments written)",
+      "assertions": [
+        "adfMediaWarning event count=0 when affectedIssueIds=[]",
+        "store.adfMediaWarningEmitted=false",
+        "Warning only fires when attachments are actually written (ADF refs could break)"
+      ],
+      "capturedAt": "2026-05-03T17:37:26.014Z"
+    }
+  ]
+}

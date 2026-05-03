@@ -1,0 +1,31 @@
+{
+  "description": "adfMediaWarning event emitted after post_issue phase; affectedIssueIds non-empty; store flag set",
+  "scenario": "4a",
+  "jobId": "adf-warn-inprocess-1777829845944",
+  "phaseOrder": [
+    "project",
+    "workflow",
+    "custom_field",
+    "board",
+    "sprint",
+    "issue_body",
+    "post_issue"
+  ],
+  "adfWarning": {
+    "type": "adfMediaWarning",
+    "affectedIssueIds": [
+      "MOCK-1",
+      "MOCK-2"
+    ],
+    "timestamp": "2026-05-03T17:37:25.944Z"
+  },
+  "storeAdfMediaWarningEmitted": true,
+  "assertions": [
+    "adfMediaWarning event emitted exactly once",
+    "affectedIssueIds is non-empty (MOCK-1, MOCK-2 for scope=all)",
+    "store.adfMediaWarningEmitted=true",
+    "Warning is triggered by restored attachments having new IDs (ADF media refs may break)",
+    "Best-effort warning — operator informed without halting the restore"
+  ],
+  "timestamp": "2026-05-03T17:37:25.946Z"
+}

@@ -1,0 +1,64 @@
+{
+  "description": "RestoreEngine halts at workflow phase failure; board/sprint/issue_body/post_issue phases are NOT run",
+  "scenario": "2a",
+  "jobId": "wf-fail-inprocess-1777829845863",
+  "engineOutcome": "failed",
+  "failedPhase": "workflow",
+  "diagnosticCode": "RESTORE_PHASE_WORKFLOW_FAILED: 403 Forbidden — insufficient scope",
+  "phasesRan": [
+    "project",
+    "workflow"
+  ],
+  "phasesNotRan": [
+    "board",
+    "sprint",
+    "issue_body",
+    "post_issue"
+  ],
+  "phaseFailureEvents": 1,
+  "storeState": {
+    "status": "failed",
+    "failureDiagnostic": "RESTORE_PHASE_WORKFLOW_FAILED: 403 Forbidden — insufficient scope",
+    "phaseStatuses": [
+      {
+        "phase": "project",
+        "status": "completed"
+      },
+      {
+        "phase": "workflow",
+        "status": "failed"
+      },
+      {
+        "phase": "custom_field",
+        "status": "pending"
+      },
+      {
+        "phase": "board",
+        "status": "pending"
+      },
+      {
+        "phase": "sprint",
+        "status": "pending"
+      },
+      {
+        "phase": "issue_body",
+        "status": "pending"
+      },
+      {
+        "phase": "post_issue",
+        "status": "pending"
+      }
+    ]
+  },
+  "assertions": [
+    "result.outcome=failed",
+    "result.phase=workflow",
+    "result.diagnostic contains RESTORE_PHASE_WORKFLOW_FAILED",
+    "phaseTransitions contains project and workflow only",
+    "board, sprint, issue_body, post_issue NOT in phaseTransitions",
+    "phaseFailure event emitted with diagnostic code",
+    "store phaseProgress: project=completed, workflow=failed, board/sprint/issue_body/post_issue=pending",
+    "store failureDiagnostic=RESTORE_PHASE_WORKFLOW_FAILED: ..."
+  ],
+  "timestamp": "2026-05-03T17:37:25.869Z"
+}

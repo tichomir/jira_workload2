@@ -1,0 +1,44 @@
+{
+  "description": "Multiple heartbeat ticks (fake timer): consecutive timestamps ≤10s apart; fields consistent",
+  "scenario": "3b",
+  "jobId": "hb-cadence-test-02",
+  "heartbeatCount": 3,
+  "configuredIntervalMs": 9000,
+  "maxAllowedIntervalMs": 10000,
+  "tickTimesMs": [
+    0,
+    9000,
+    18000
+  ],
+  "gaps": [
+    9000,
+    9000
+  ],
+  "heartbeatFields": [
+    {
+      "phase": "board",
+      "processed": 2,
+      "total": 5,
+      "timestamp": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "phase": "board",
+      "processed": 2,
+      "total": 5,
+      "timestamp": "1970-01-01T00:00:09.000Z"
+    },
+    {
+      "phase": "board",
+      "processed": 2,
+      "total": 5,
+      "timestamp": "1970-01-01T00:00:18.000Z"
+    }
+  ],
+  "assertions": [
+    "3 heartbeat events emitted at T=0, T=9000, T=18000ms",
+    "All consecutive gaps ≤ 10 000ms",
+    "All heartbeats carry phase=board, processed=2, total=5",
+    "heartbeatIntervalMs=9000 satisfies the ≤10s cadence contract"
+  ],
+  "timestamp": "2026-05-03T17:37:25.931Z"
+}

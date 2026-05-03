@@ -1,27 +1,28 @@
 /**
- * RestoreWorker — skeleton restore job worker (Sprint 11).
+ * RestoreWorker — orchestrates a restore job run.
  *
- * This sprint delivers the heartbeat / stall-detection infrastructure.
- * Actual Jira API writes land in Sprint 12–13.
- *
- * Behaviour:
- *   1. Marks the job as 'running' in RestoreJobStore.
- *   2. Starts a heartbeat timer (≤10s cadence).
- *   3. Logs each restore phase transition ([jira-restore] job.heartbeat).
- *   4. Stall detection: a parallel monitor checks every 5s; if the last heartbeat
- *      is >20s ago it marks the job stalled and emits a 'stalled' event.
- *   5. Full phase writes are no-ops for now — placeholders only.
+ * Responsibilities:
+ *   1. Transitions job pending → running.
+ *   2. Starts a heartbeat timer (≤10s cadence) emitting current phase,
+ *      items processed/total, and error count.
+ *   3. Starts a stall detector that marks the job stalled if no heartbeat
+ *      for >20s.
+ *   4. Delegates phase execution to RestoreEngine (which enforces write order,
+ *      phase-failure halt, and ADF media warning).
+ *   5. Marks the job completed / failed on engine exit.
  *
  * Structured logs:
- *   [jira-restore] job.created  jobId=...
- *   [jira-restore] job.heartbeat jobId=... phase=...
+ *   [jira-restore] job.created  jobId=... status=running
+ *   [jira-restore] job.heartbeat jobId=... phase=... processed=N/M
  *   [jira-restore] job.stalled  jobId=... lastHeartbeatAgeMs=...
  *   [jira-restore] job.complete jobId=... status=...
  */
 
 import { RestoreJobStore } from './RestoreJobStore';
 import { RestoreEventBus, RestoreProgressEvent, restoreEventBus } from './RestoreEventBus';
-import { RestorePhase, RestoreJobStatus } from './types';
+import { RestoreEngine, JiraWriteClient, NullJiraWriteClient } from './RestoreEngine';
+import { buildDefaultHandlers } from './RestorePhaseHandlers';
+import { RestoreJobStatus } from './types';
 
 export const DEFAULT_RESTORE_HEARTBEAT_INTERVAL_MS = 9_000;  // ≤10s
 export const DEFAULT_RESTORE_CHECK_INTERVAL_MS     = 5_000;  // stall checker cadence
@@ -34,6 +35,8 @@ export interface RestoreWorkerConfig {
   staleThresholdMs?: number;
   /** Injectable time source for testing */
   nowMs?: () => number;
+  /** Polling interval for ask-mode conflict decisions. Default: 100ms. */
+  decisionPollIntervalMs?: number;
 }
 
 export class RestoreWorker {
@@ -50,6 +53,7 @@ export class RestoreWorker {
     private readonly config: RestoreWorkerConfig,
     private readonly store: RestoreJobStore,
     private readonly bus: RestoreEventBus = restoreEventBus,
+    private readonly client: JiraWriteClient = new NullJiraWriteClient(),
   ) {
     this.heartbeatIntervalMs =
       config.heartbeatIntervalMs ?? DEFAULT_RESTORE_HEARTBEAT_INTERVAL_MS;
@@ -61,9 +65,9 @@ export class RestoreWorker {
 
   /**
    * Starts the worker: marks the job running, begins heartbeat and stall timers,
-   * then runs through the restore phase stubs.
+   * then runs all restore phases via RestoreEngine.
    *
-   * The returned Promise resolves when all (skeleton) phases have been logged.
+   * The returned Promise resolves when all phases have completed (or failed).
    * Callers should fire-and-forget in production; await in tests for
    * deterministic assertions.
    */
@@ -87,50 +91,55 @@ export class RestoreWorker {
       this.checkStall();
     }, this.checkIntervalMs);
 
-    // Run skeleton phases (no writes; log transitions only)
-    const phases: RestorePhase[] = [
-      'project',
-      'workflow',
-      'custom_field',
-      'board',
-      'sprint',
-      'issue_body',
-      'post_issue',
-    ];
+    try {
+      const engine = new RestoreEngine(
+        buildDefaultHandlers(),
+        this.store,
+        this.bus,
+        {
+          nowMs: this.config.nowMs,
+          decisionPollIntervalMs: this.config.decisionPollIntervalMs,
+        },
+      );
 
-    for (const phase of phases) {
-      this.store.setCurrentPhase(jobId, phase);
-      this.bus.publish({
-        type: 'phaseTransition',
+      const result = await engine.execute(jobId, this.client);
+
+      this.stop();
+
+      if (result.outcome === 'failed') {
+        // Engine already called store.setFailed(); just emit the terminal event.
+        const event: RestoreProgressEvent = {
+          type: 'complete',
+          jobId,
+          status: 'failed',
+          timestamp: new Date(this.now()).toISOString(),
+        };
+        this.bus.publish(event);
+        console.log(`[jira-restore] job.complete jobId=${jobId} status=failed`);
+        return;
+      }
+
+      const finalStatus: 'completed' | 'completed_with_errors' =
+        result.outcome === 'completed' ? 'completed' : 'completed_with_errors';
+
+      this.store.complete(jobId, finalStatus, this.now());
+      this.store.setCurrentPhase(jobId, null);
+
+      const event: RestoreProgressEvent = {
+        type: 'complete',
         jobId,
-        phase,
+        status: finalStatus,
         timestamp: new Date(this.now()).toISOString(),
-      });
-      console.log(`[jira-restore] phase.start jobId=${jobId} phase=${phase}`);
-      // Skeleton: no actual work; full implementation in Sprint 12
+      };
+      this.bus.publish(event);
+
+      console.log(
+        `[jira-restore] job.complete jobId=${jobId} status=${finalStatus}`,
+      );
+    } catch (err) {
+      this.stop();
+      throw err;
     }
-
-    this.stop();
-
-    // Mark complete
-    const job = this.store.getJob(jobId);
-    const finalStatus: 'completed' | 'completed_with_errors' =
-      (job?.errorCount ?? 0) > 0 ? 'completed_with_errors' : 'completed';
-
-    this.store.complete(jobId, finalStatus, this.now());
-    this.store.setCurrentPhase(jobId, null);
-
-    const event: RestoreProgressEvent = {
-      type: 'complete',
-      jobId,
-      status: finalStatus,
-      timestamp: new Date(this.now()).toISOString(),
-    };
-    this.bus.publish(event);
-
-    console.log(
-      `[jira-restore] job.complete jobId=${jobId} status=${finalStatus}`,
-    );
   }
 
   /** Stops both timers without emitting a terminal event. */
@@ -162,17 +171,25 @@ export class RestoreWorker {
     }
 
     const job = this.store.getJob(jobId);
+    const currentPhaseProgress = job?.phaseProgress.find(
+      (p) => p.phase === job?.currentPhase,
+    );
+
     const event: RestoreProgressEvent = {
       type: 'heartbeat',
       jobId,
       phase: job?.currentPhase ?? undefined,
+      processed: currentPhaseProgress?.processed,
+      total: currentPhaseProgress?.total,
       errorCount: job?.errorCount ?? 0,
       timestamp: new Date(now).toISOString(),
     };
     this.bus.publish(event);
 
     console.log(
-      `[jira-restore] job.heartbeat jobId=${jobId} phase=${job?.currentPhase ?? 'none'}`,
+      `[jira-restore] job.heartbeat jobId=${jobId} ` +
+        `phase=${job?.currentPhase ?? 'none'} ` +
+        `processed=${currentPhaseProgress?.processed ?? 0}/${currentPhaseProgress?.total ?? 0}`,
     );
   }
 

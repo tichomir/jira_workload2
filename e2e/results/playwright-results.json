@@ -59,20 +59,20 @@
   },
   "suites": [
     {
-      "title": "sprint1-oauth.spec.ts",
-      "file": "sprint1-oauth.spec.ts",
+      "title": "sprint2-manual-auth.spec.ts",
+      "file": "sprint2-manual-auth.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "E2E Happy Path — OAuth flow and credential assertion",
-          "file": "sprint1-oauth.spec.ts",
-          "line": 147,
+          "title": "Manual Auth — happy path (Playwright)",
+          "file": "sprint2-manual-auth.spec.ts",
+          "line": 158,
           "column": 6,
           "specs": [
             {
-              "title": "GET /start redirects to Atlassian authorize URL",
+              "title": "POST /api/connections/manual with valid credentials returns 200 connected",
               "ok": true,
               "tags": [],
               "tests": [
@@ -87,50 +87,22 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 39,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-03T13:19:45.984Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "9d4504e4bf2962017687-fa4c42102fe6449668df",
-              "file": "sprint1-oauth.spec.ts",
-              "line": 167,
-              "column": 7
-            },
-            {
-              "title": "GET /callback: single-site auto-select, oauth_result payload, credential persisted",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "api",
-                  "projectName": "api",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 48,
+                      "duration": 49,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[jira-oauth] account verified accountId=account-pw-e2e-999 cloudId=cloud-pw-e2e-001\n"
+                          "text": "[jira-http] request method=GET path=/rest/api/3/myself\n"
+                        },
+                        {
+                          "text": "[jira-http] response method=GET path=/rest/api/3/myself status=200\n"
+                        },
+                        {
+                          "text": "[jira-manual-auth] account_verified accountId=account-e2e-pw-001 cloudId=11111111-2222-3333-4444-555555555555\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T13:19:46.050Z",
+                      "startTime": "2026-05-03T13:43:58.951Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -138,13 +110,13 @@
                   "status": "expected"
                 }
               ],
-              "id": "9d4504e4bf2962017687-1c6c594765ff9e95a396",
-              "file": "sprint1-oauth.spec.ts",
-              "line": 181,
+              "id": "7fe587b557219c54574e-e8bb94d1856887022e99",
+              "file": "sprint2-manual-auth.spec.ts",
+              "line": 168,
               "column": 7
             },
             {
-              "title": "POST /connections/select returns site info for stored cloudId",
+              "title": "credential row is persisted with correct cloudId and connector_type=api_token",
               "ok": true,
               "tags": [],
               "tests": [
@@ -159,12 +131,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 24,
+                      "duration": 16,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T13:19:46.104Z",
+                      "startTime": "2026-05-03T13:43:59.030Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -172,21 +144,55 @@
                   "status": "expected"
                 }
               ],
-              "id": "9d4504e4bf2962017687-1877db9268f5f8d1be26",
-              "file": "sprint1-oauth.spec.ts",
-              "line": 214,
+              "id": "7fe587b557219c54574e-88201f34dc24150e5334",
+              "file": "sprint2-manual-auth.spec.ts",
+              "line": 195,
+              "column": 7
+            },
+            {
+              "title": "log audit: [jira-manual-auth] account_verified appears in server logs",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T13:43:59.051Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fe587b557219c54574e-31e27162d3a3ca88615a",
+              "file": "sprint2-manual-auth.spec.ts",
+              "line": 221,
               "column": 7
             }
           ]
         },
         {
-          "title": "HTTPS-Only Enforcement",
-          "file": "sprint1-oauth.spec.ts",
-          "line": 241,
+          "title": "Manual Auth — INVALID_URL error path",
+          "file": "sprint2-manual-auth.spec.ts",
+          "line": 250,
           "column": 6,
           "specs": [
             {
-              "title": "GET /start returns 400 with redirect_uri_must_be_https",
+              "title": "non-https siteUrl → 400 INVALID_URL",
               "ok": true,
               "tags": [],
               "tests": [
@@ -201,96 +207,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 21,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [
-                        {
-                          "text": "[jira-oauth] OAUTH_REDIRECT_URI must use HTTPS, rejecting: http://insecure.example.com/api/jira/oauth/callback\n"
-                        }
-                      ],
-                      "retry": 0,
-                      "startTime": "2026-05-03T13:19:46.137Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "9d4504e4bf2962017687-88f8b0317ef1e9e744c9",
-              "file": "sprint1-oauth.spec.ts",
-              "line": 259,
-              "column": 7
-            },
-            {
-              "title": "fetchFn is never called when http:// guard rejects",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "api",
-                  "projectName": "api",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 13,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [
-                        {
-                          "text": "[jira-oauth] OAUTH_REDIRECT_URI must use HTTPS, rejecting: http://insecure.example.com/api/jira/oauth/callback\n"
-                        }
-                      ],
-                      "retry": 0,
-                      "startTime": "2026-05-03T13:19:46.168Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "9d4504e4bf2962017687-be0b9292f2f011433915",
-              "file": "sprint1-oauth.spec.ts",
-              "line": 266,
-              "column": 7
-            }
-          ]
-        },
-        {
-          "title": "Atomicity — no mixed-token state after rotation",
-          "file": "sprint1-oauth.spec.ts",
-          "line": 280,
-          "column": 6,
-          "specs": [
-            {
-              "title": "after successful upsert→re-seed, credential is consistent (both tokens updated)",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "api",
-                  "projectName": "api",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 48,
+                      "duration": 33,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T13:19:46.189Z",
+                      "startTime": "2026-05-03T13:43:59.073Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -298,21 +220,89 @@
                   "status": "expected"
                 }
               ],
-              "id": "9d4504e4bf2962017687-eec311c2e51c0a8b7372",
-              "file": "sprint1-oauth.spec.ts",
-              "line": 298,
+              "id": "7fe587b557219c54574e-d19e785f1fe2a344db43",
+              "file": "sprint2-manual-auth.spec.ts",
+              "line": 260,
+              "column": 7
+            },
+            {
+              "title": "non-atlassian.net domain → 400 INVALID_URL",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T13:43:59.116Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fe587b557219c54574e-3540592fa5aec5b17c27",
+              "file": "sprint2-manual-auth.spec.ts",
+              "line": 280,
+              "column": 7
+            },
+            {
+              "title": "missing siteUrl field → 400 INVALID_URL",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T13:43:59.129Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fe587b557219c54574e-79abf5d6b37c59a5e8ee",
+              "file": "sprint2-manual-auth.spec.ts",
+              "line": 299,
               "column": 7
             }
           ]
         },
         {
-          "title": "401 Error — Backend error codes for Reconnect banner",
-          "file": "sprint1-oauth.spec.ts",
-          "line": 340,
+          "title": "Manual Auth — AUTH_FAILED error path",
+          "file": "sprint2-manual-auth.spec.ts",
+          "line": 315,
           "column": 6,
           "specs": [
             {
-              "title": "accessible-resources 401 → 500 accessible_resources_failed; no credential stored",
+              "title": "wrong credentials → 401 AUTH_FAILED; no credential persisted",
               "ok": true,
               "tags": [],
               "tests": [
@@ -327,16 +317,19 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 26,
+                      "duration": 37,
                       "errors": [],
-                      "stdout": [],
-                      "stderr": [
+                      "stdout": [
                         {
-                          "text": "[jira-oauth] accessible-resources failed: 401 {\"error\":\"Unauthorized\"}\n"
+                          "text": "[jira-http] request method=GET path=/rest/api/3/myself\n"
+                        },
+                        {
+                          "text": "[jira-http] response method=GET path=/rest/api/3/myself status=401\n"
                         }
                       ],
+                      "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T13:19:46.251Z",
+                      "startTime": "2026-05-03T13:43:59.144Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -344,13 +337,13 @@
                   "status": "expected"
                 }
               ],
-              "id": "9d4504e4bf2962017687-bb4c4ed1803212e12370",
-              "file": "sprint1-oauth.spec.ts",
-              "line": 370,
+              "id": "7fe587b557219c54574e-2223b274e0e5b27653ca",
+              "file": "sprint2-manual-auth.spec.ts",
+              "line": 325,
               "column": 7
             },
             {
-              "title": "/me 401 → 500 me_verification_failed; no credential stored",
+              "title": "[jira-manual-auth] account_verified NOT emitted on AUTH_FAILED",
               "ok": true,
               "tags": [],
               "tests": [
@@ -365,16 +358,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 24,
+                      "duration": 8,
                       "errors": [],
                       "stdout": [],
-                      "stderr": [
-                        {
-                          "text": "[jira-oauth] /me verification failed: 401 {\"error\":\"Unauthorized\"}\n"
-                        }
-                      ],
+                      "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T13:19:46.287Z",
+                      "startTime": "2026-05-03T13:43:59.190Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -382,13 +371,62 @@
                   "status": "expected"
                 }
               ],
-              "id": "9d4504e4bf2962017687-cb08f24316e4e905cd85",
-              "file": "sprint1-oauth.spec.ts",
-              "line": 393,
+              "id": "7fe587b557219c54574e-9df73add9d96cc4f1b64",
+              "file": "sprint2-manual-auth.spec.ts",
+              "line": 351,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "WorkloadCard error-state contract — backend HTTP codes",
+          "file": "sprint2-manual-auth.spec.ts",
+          "line": 366,
+          "column": 6,
+          "specs": [
+            {
+              "title": "401 from Atlassian → backend returns { error: AUTH_FAILED } (drives 401 banner)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[jira-http] request method=GET path=/rest/api/3/myself\n"
+                        },
+                        {
+                          "text": "[jira-http] response method=GET path=/rest/api/3/myself status=401\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T13:43:59.205Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fe587b557219c54574e-2953a27974c08fe6c029",
+              "file": "sprint2-manual-auth.spec.ts",
+              "line": 386,
               "column": 7
             },
             {
-              "title": "oauth_error=access_denied param → frontend renders error banner (HTTP contract)",
+              "title": "403 from Atlassian → GET /rest/api/3/myself returns AUTH_FAILED on 403 (drives 403 banner)",
               "ok": true,
               "tags": [],
               "tests": [
@@ -403,16 +441,23 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 19,
+                      "duration": 15,
                       "errors": [],
-                      "stdout": [],
+                      "stdout": [
+                        {
+                          "text": "[jira-http] request method=GET path=/rest/api/3/myself\n"
+                        },
+                        {
+                          "text": "[jira-http] response method=GET path=/rest/api/3/myself status=403\n"
+                        }
+                      ],
                       "stderr": [
                         {
-                          "text": "[jira-oauth] authorization error from Atlassian: access_denied\n"
+                          "text": "[jira-manual-auth] network error during verification: Error: [jira-http] GET /rest/api/3/myself → 403\n    at JiraHttpClient.get \u001b[90m(/home/runner/coding/jira_workload_2/\u001b[39msrc/http/JiraHttpClient.ts:73:13\u001b[90m)\u001b[39m\n\u001b[90m    at processTicksAndRejections (node:internal/process/task_queues:95:5)\u001b[39m\n    at \u001b[90m/home/runner/coding/jira_workload_2/\u001b[39msrc/connections/ManualAuthRouter.ts:104:23\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-05-03T13:19:46.315Z",
+                      "startTime": "2026-05-03T13:43:59.223Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -420,9 +465,51 @@
                   "status": "expected"
                 }
               ],
-              "id": "9d4504e4bf2962017687-12761380dad53cbb2566",
-              "file": "sprint1-oauth.spec.ts",
-              "line": 413,
+              "id": "7fe587b557219c54574e-e8d0f1378ac6172a6a97",
+              "file": "sprint2-manual-auth.spec.ts",
+              "line": 410,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Evidence summary",
+          "file": "sprint2-manual-auth.spec.ts",
+          "line": 483,
+          "column": 6,
+          "specs": [
+            {
+              "title": "all evidence files are written to test-results/sprint2-evidence/",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 27,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T13:43:59.247Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fe587b557219c54574e-99f19946964b5c0a78d5",
+              "file": "sprint2-manual-auth.spec.ts",
+              "line": 484,
               "column": 7
             }
           ]
@@ -432,9 +519,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-05-03T13:19:45.229Z",
-    "duration": 1133.488,
-    "expected": 9,
+    "startTime": "2026-05-03T13:43:57.960Z",
+    "duration": 1339.8950000000004,
+    "expected": 11,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

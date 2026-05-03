@@ -1,0 +1,19 @@
+{
+  "description": "Manual Auth error path — AUTH_FAILED (bad credentials)",
+  "request": {
+    "siteUrl": "https://myorg.atlassian.net",
+    "cloudId": "11111111-2222-3333-4444-555555555555",
+    "email": "admin@example.com",
+    "apiToken": "<redacted>"
+  },
+  "response": {
+    "status": 401,
+    "body": {
+      "error": "AUTH_FAILED",
+      "message": "Credentials rejected by Atlassian (/rest/api/3/myself returned 401)"
+    }
+  },
+  "credentialStored": false,
+  "assertion": "error=AUTH_FAILED, no credential row in DB",
+  "timestamp": "2026-05-03T13:43:59.156Z"
+}

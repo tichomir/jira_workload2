@@ -1,17 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
-import type { ConnectionFlowState, JiraSite } from '../types';
+import type { AuthMode, ConnectionFlowState, JiraSite } from '../types';
 import { clearOAuthParams, parseOAuthCallbackParam } from '../api/jira';
 import { ConnectButton } from './ConnectButton';
 import { SitePicker } from './SitePicker';
 import { ErrorBanner } from './ErrorBanner';
+import { WorkloadCard } from './WorkloadCard';
+import { ManualConnectForm } from './ManualConnectForm';
 
 /**
  * JiraConnectFlow — top-level orchestrator for the Jira OAuth connection UI.
  *
  * State machine:
  *   idle  →  (click Connect)  →  pending (navigate to /api/jira/oauth/start)
+ *   idle  →  (API Token link)  →  manual-form
  *   pending  →  (OAuth callback return)  →  site-selection | connected | error
- *   site-selection  →  (user confirms)  →  connected | error
+ *   site-selection  →  (user confirms)  →  connected (oauth) | error
+ *   manual-form  →  (submit success)  →  connected (api_token)
+ *   manual-form  →  (cancel)  →  idle
+ *   connected  →  (auth error 401/403 for api_token)  →  manual-form
+ *   connected  →  (auth error 401/403 for oauth)  →  OAuth redirect
  *   error  →  (Reconnect)  →  pending
  *
  * The backend callback handler redirects to:
@@ -44,7 +51,7 @@ export function JiraConnectFlow() {
 
     if (data.site) {
       // Single site — auto-select, skip picker
-      setState({ phase: 'connected', site: data.site });
+      setState({ phase: 'connected', site: data.site, authMode: 'oauth' });
       showAutoConnectedBanner(data.site.name);
     } else if (data.sites && data.sites.length > 0) {
       setState({ phase: 'site-selection', sites: data.sites });
@@ -59,8 +66,8 @@ export function JiraConnectFlow() {
     bannerTimerRef.current = setTimeout(() => setAutoConnectedBanner(null), 4000);
   }
 
-  function handleConnected(site: JiraSite) {
-    setState({ phase: 'connected', site });
+  function handleConnected(site: JiraSite, authMode: AuthMode = 'oauth') {
+    setState({ phase: 'connected', site, authMode });
     showAutoConnectedBanner(site.name);
   }
 
@@ -109,13 +116,20 @@ export function JiraConnectFlow() {
         </div>
       )}
 
-      {/* Idle: show Connect button */}
+      {/* Idle: show Connect button + manual auth link */}
       {state.phase === 'idle' && (
         <div className="flex flex-col items-center gap-3 text-center">
           <p className="text-sm text-gray-500">
             Authorise with your Atlassian account to connect Jira Cloud.
           </p>
           <ConnectButton />
+          <button
+            type="button"
+            onClick={() => setState({ phase: 'manual-form' })}
+            className="text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >
+            Connect with API Token
+          </button>
         </div>
       )}
 
@@ -140,54 +154,28 @@ export function JiraConnectFlow() {
       {state.phase === 'site-selection' && (
         <SitePicker
           sites={state.sites}
-          onConnected={handleConnected}
+          onConnected={(site) => handleConnected(site, 'oauth')}
           onError={handleError}
         />
       )}
 
-      {/* Connected state */}
-      {state.phase === 'connected' && (
-        <ConnectedCard site={state.site} onReconnect={() => setState({ phase: 'idle' })} />
+      {/* Manual API Token form */}
+      {state.phase === 'manual-form' && (
+        <ManualConnectForm
+          onConnected={(site) => handleConnected(site, 'api_token')}
+          onCancel={() => setState({ phase: 'idle' })}
+        />
       )}
-    </div>
-  );
-}
 
-// ---------------------------------------------------------------------------
-// ConnectedCard — shows after a successful connection
-// ---------------------------------------------------------------------------
-function ConnectedCard({ site, onReconnect }: { site: JiraSite; onReconnect: () => void }) {
-  return (
-    <div className="w-full max-w-md rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-      <div className="flex items-center gap-3">
-        {site.avatarUrl ? (
-          <img src={site.avatarUrl} alt="" className="h-10 w-10 rounded-full object-cover" />
-        ) : (
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
-            {site.name.charAt(0).toUpperCase()}
-          </div>
-        )}
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-gray-900">{site.name}</p>
-          <p className="truncate text-xs text-gray-400">{site.url}</p>
-        </div>
-        <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700">
-          <span className="h-1.5 w-1.5 rounded-full bg-green-500" aria-hidden="true" />
-          Connected
-        </span>
-      </div>
-
-      <div className="mt-4 border-t border-gray-100 pt-3">
-        <p className="font-mono text-xs text-gray-300">{site.id}</p>
-      </div>
-
-      <button
-        type="button"
-        onClick={onReconnect}
-        className="mt-3 text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600 transition-colors"
-      >
-        Switch account or site
-      </button>
+      {/* Connected: WorkloadCard with all protection details and error banner */}
+      {state.phase === 'connected' && (
+        <WorkloadCard
+          site={state.site}
+          authMode={state.authMode}
+          onManualReconnect={() => setState({ phase: 'manual-form' })}
+          onDisconnect={() => setState({ phase: 'idle' })}
+        />
+      )}
     </div>
   );
 }

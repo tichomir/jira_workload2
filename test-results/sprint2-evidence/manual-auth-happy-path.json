@@ -1,0 +1,22 @@
+{
+  "description": "Manual Auth happy path — POST /api/connections/manual",
+  "request": {
+    "method": "POST",
+    "url": "/api/connections/manual",
+    "body": {
+      "siteUrl": "https://myorg.atlassian.net",
+      "cloudId": "11111111-2222-3333-4444-555555555555",
+      "email": "admin@example.com",
+      "apiToken": "ATATT3x_testToken123"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "status": "connected",
+      "accountId": "account-e2e-pw-001"
+    }
+  },
+  "assertion": "status=connected, accountId present",
+  "timestamp": "2026-05-03T13:43:59.012Z"
+}

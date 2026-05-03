@@ -1,4 +1,5 @@
 import type { JiraSite } from '../types';
+import { emitAuthError } from './authErrorChannel';
 
 /**
  * Navigates the browser to the backend OAuth start endpoint.
@@ -30,6 +31,9 @@ export async function selectSite(cloudId: string): Promise<{ status: 'connected'
   });
 
   if (!res.ok) {
+    if (res.status === 401 || res.status === 403) {
+      emitAuthError(res.status);
+    }
     throw new ApiError(res.status, `selectSite failed: ${res.status}`);
   }
 
@@ -70,6 +74,58 @@ export function parseOAuthCallbackParam():
   } catch {
     return { ok: false, reason: 'malformed_oauth_result' };
   }
+}
+
+// ── Manual API Token connection ───────────────────────────────────────────────
+
+export interface ManualConnectionPayload {
+  siteUrl: string;
+  cloudId: string;
+  email: string;
+  apiToken: string;
+}
+
+export interface ManualConnectionSuccess {
+  status: 'connected';
+  accountId: string;
+}
+
+export class ManualAuthError extends Error {
+  constructor(
+    public readonly code: string,
+    message: string,
+  ) {
+    super(message);
+    this.name = 'ManualAuthError';
+  }
+}
+
+/**
+ * POSTs manual API Token credentials to the backend for verification and
+ * persistence. Throws ManualAuthError for typed backend error codes or ApiError
+ * for unexpected HTTP failures.
+ */
+export async function submitManualConnection(
+  payload: ManualConnectionPayload,
+): Promise<ManualConnectionSuccess> {
+  const res = await fetch('/api/connections/manual', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    if (res.status === 401 || res.status === 403) {
+      emitAuthError(res.status);
+    }
+    const body = await res.json().catch(() => ({})) as { error?: string; message?: string };
+    if (body.error) {
+      throw new ManualAuthError(body.error, body.message ?? body.error);
+    }
+    throw new ApiError(res.status, `Manual connection failed: ${res.status}`);
+  }
+
+  return res.json() as Promise<ManualConnectionSuccess>;
 }
 
 /** Strips oauth_* query params from the URL without triggering a page reload. */

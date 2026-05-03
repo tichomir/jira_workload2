@@ -114,3 +114,51 @@ This is sprint 1 of 2 for the phase. Plan a slice of the deliverables appropriat
 - ✅ QA: end-to-end OAuth happy-path + atomic-refresh fault-injection tests — Qa Engineer (◈ Standard, 3 SP)
 
 ---
+### Sprint 2 - HTTP Client, Manual Auth Fallback & Workload Card | 2026-05-03 | ⏳ in progress | 22 SP est.
+**Goal:** [Phase: OAuth Authentication & Connector Foundation — Sprint 2 of 2]
+Establish the OAuth 2.0 (3LO) connection flow to Jira Cloud, the canonical authenticated HTTP client with atomic rotating-refresh-token handling, and the manual API Token fallback path. This phase reuses Confluence pilot auth architecture and lays the groundwork all later phases depend on.
+
+Deliverables (across all sprints in this phase):
+- OAuth 2.0 (3LO) redirect flow with full scope set from T2 §4.2.2 and HTTPS-only callback enforcement
+- Site picker UI driven by GET /oauth/token/accessible-resources with single-site auto-select
+- Credential store schema persisting cloudId, accessToken, refreshToken, oauthClientId atomically
+- Canonical authenticated HTTP client with mutex-guarded rotating refresh-token handler queuing concurrent refreshes
+- Manual connection path with API Token (HTTP Basic) and form validation (Site URL, Cloud ID, email, token)
+- Workload Card rendering protected object types and explicit JSM exclusion notice
+- Error banner mappings for HTTP 401/403 with reconnect affordance
+
+This is sprint 2 of 2 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+_Sprint started. Role checkpoints below will update as work completes._
+
+---
+### Sprint 2 - HTTP Client, Manual Auth Fallback & Workload Card | 2026-05-03 | ✅ Backend Developer checkpoint (2/2 done)
+
+- ✅ Implement canonical authenticated HTTP client with mutex-guarded rotating refresh (◉ Deep, 8 SP)
+- ✅ Implement manual API Token connection path (HTTP Basic) with backend validation (◉ Deep, 5 SP)
+
+---
+### Sprint 2 - HTTP Client, Manual Auth Fallback & Workload Card | 2026-05-03 | ✅ done | 25 SP
+**Goal:** [Phase: OAuth Authentication & Connector Foundation — Sprint 2 of 2]
+Establish the OAuth 2.0 (3LO) connection flow to Jira Cloud, the canonical authenticated HTTP client with atomic rotating-refresh-token handling, and the manual API Token fallback path. This phase reuses Confluence pilot auth architecture and lays the groundwork all later phases depend on.
+
+Deliverables (across all sprints in this phase):
+- OAuth 2.0 (3LO) redirect flow with full scope set from T2 §4.2.2 and HTTPS-only callback enforcement
+- Site picker UI driven by GET /oauth/token/accessible-resources with single-site auto-select
+- Credential store schema persisting cloudId, accessToken, refreshToken, oauthClientId atomically
+- Canonical authenticated HTTP client with mutex-guarded rotating refresh-token handler queuing concurrent refreshes
+- Manual connection path with API Token (HTTP Basic) and form validation (Site URL, Cloud ID, email, token)
+- Workload Card rendering protected object types and explicit JSM exclusion notice
+- Error banner mappings for HTTP 401/403 with reconnect affordance
+
+This is sprint 2 of 2 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+**Delivered:**
+- ✅ Implement canonical authenticated HTTP client with mutex-guarded rotating refresh — Backend Developer (◉ Deep, 8 SP)
+- ✅ Implement manual API Token connection path (HTTP Basic) with backend validation — Backend Developer (◉ Deep, 5 SP)
+- ✅ Build Manual Connection form UI with field validation — Frontend Developer (◈ Standard, 3 SP)
+- ✅ Build Workload Card with protected object types, JSM exclusion notice, and 401/403 error banner — Frontend Developer (◈ Standard, 3 SP)
+- ✅ QA: integration tests for HTTP client refresh, manual auth flow, and Workload Card error states — Qa Engineer (◈ Standard, 3 SP)
+- ✅ Fix: Implement manual API Token connection path with HTTP Basic auth and backend validation — Backend Developer (◈ Standard, 3 SP)
+
+---

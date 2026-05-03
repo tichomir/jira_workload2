@@ -1,0 +1,55 @@
+{
+  "sprint": "Sprint 2 — HTTP Client, Manual Auth Fallback & Workload Card",
+  "generatedAt": "2026-05-03T13:43:59.275Z",
+  "totalArtefacts": 8,
+  "artefacts": [
+    {
+      "file": "manual-auth-happy-path.json",
+      "description": "Manual Auth happy path — POST /api/connections/manual",
+      "assertion": "status=connected, accountId present",
+      "capturedAt": "2026-05-03T13:43:59.012Z"
+    },
+    {
+      "file": "manual-auth-credential-stored.json",
+      "description": "Manual Auth — credential row persisted after happy path",
+      "assertion": "cloudId, email, connectorType=api_token all match",
+      "capturedAt": "2026-05-03T13:43:59.039Z"
+    },
+    {
+      "file": "manual-auth-log-audit.json",
+      "description": "Manual Auth — log line audit",
+      "assertion": "[jira-manual-auth] account_verified present with accountId",
+      "capturedAt": "2026-05-03T13:43:59.056Z"
+    },
+    {
+      "file": "manual-auth-error-invalid-url-http.json",
+      "description": "Manual Auth error path — non-https URL",
+      "assertion": "error=INVALID_URL, message contains https",
+      "capturedAt": "2026-05-03T13:43:59.085Z"
+    },
+    {
+      "file": "manual-auth-error-invalid-url-domain.json",
+      "description": "Manual Auth error path — non-atlassian.net domain",
+      "assertion": "error=INVALID_URL",
+      "capturedAt": "2026-05-03T13:43:59.121Z"
+    },
+    {
+      "file": "manual-auth-error-auth-failed.json",
+      "description": "Manual Auth error path — AUTH_FAILED (bad credentials)",
+      "assertion": "error=AUTH_FAILED, no credential row in DB",
+      "capturedAt": "2026-05-03T13:43:59.156Z"
+    },
+    {
+      "file": "workload-card-401-contract.json",
+      "description": "WorkloadCard 401 banner contract — AUTH_FAILED backend code",
+      "assertion": "AUTH_FAILED backend code maps to 401 banner",
+      "capturedAt": "2026-05-03T13:43:59.216Z"
+    },
+    {
+      "file": "workload-card-403-contract.json",
+      "description": "WorkloadCard 403 banner contract — backend 403 mapping",
+      "assertion": "403 from Atlassian flows through error pipeline to frontend banner",
+      "capturedAt": "2026-05-03T13:43:59.231Z"
+    }
+  ]
+}

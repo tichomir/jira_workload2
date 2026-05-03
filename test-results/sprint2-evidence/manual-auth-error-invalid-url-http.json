@@ -1,0 +1,15 @@
+{
+  "description": "Manual Auth error path — non-https URL",
+  "request": {
+    "siteUrl": "http://myorg.atlassian.net"
+  },
+  "response": {
+    "status": 400,
+    "body": {
+      "error": "INVALID_URL",
+      "message": "siteUrl must be https://<subdomain>.atlassian.net"
+    }
+  },
+  "assertion": "error=INVALID_URL, message contains https",
+  "timestamp": "2026-05-03T13:43:59.085Z"
+}

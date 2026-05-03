@@ -1,0 +1,9 @@
+{
+  "description": "Non-matching search returns empty results — GlobalSearchBar closes dropdown without navigating",
+  "scenario": "4d",
+  "uiComponent": "GlobalSearchBar: empty results → dropdown shows \"No results for...\" → no onNavigate() call",
+  "searchTerm": "ZZZNOMATCH_SPRINT9",
+  "results": [],
+  "assertion": "results.length === 0",
+  "timestamp": "2026-05-03T16:43:50.923Z"
+}

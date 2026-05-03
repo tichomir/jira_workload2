@@ -1,0 +1,14 @@
+{
+  "description": "Navigation: JiraSprint card id maps to /inventory/sprints/<id>",
+  "scenario": "4c",
+  "card": {
+    "type": "JiraSprint",
+    "id": "ctx-sprint-alpha-1",
+    "displayName": "Alpha Sprint 1",
+    "lastBackupAt": "2026-05-03T16:43:50.856Z"
+  },
+  "computedRoute": "/inventory/sprints/ctx-sprint-alpha-1",
+  "routePattern": "/inventory/sprints/<id>",
+  "assertion": "route === \"/inventory/sprints/ctx-sprint-alpha-1\"",
+  "timestamp": "2026-05-03T16:43:50.910Z"
+}

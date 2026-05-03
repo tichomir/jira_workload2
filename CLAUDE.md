@@ -648,3 +648,49 @@ Deliverables:
 - ✅ QA: end-to-end SDI scan validation against live-tenant backup + carry-forward live-tenant capture validation — Qa Engineer (◈ Standard, 3 SP)
 
 ---
+### Sprint 9 - Inventory Sidebar, Issues Table & Global Search (Phase 5 Sprint 1 of 2) | 2026-05-03 | ⏳ in progress | 18 SP est.
+**Goal:** [Phase: Protected Object Inventory & Browse UI — Sprint 1 of 2]
+Build the Inventory sidebar (Issues, Projects, Boards, Sprints), the Issues table with the dual Status/Issue Status columns, Global Search across project/board/sprint names, and Project Inventory in-app search with filters.
+
+Deliverables (across all sprints in this phase):
+- Inventory sidebar with four object types and per-row counts from the latest backup manifest
+- Issues table with columns Issue Key, Summary, Issue Status, Issue Type, Assignee plus platform Status/Policy/Last Backup
+- Distinct 'Issue Status' vs 'Status' column header labelling
+- Global Search across projectKey, projectName, boardName, sprintName returning typed Protected Object cards
+- Project Inventory Search with issueKey exact match and tokenised summary search
+- Filters: status, issueType, priority, assigneeAccountId, labels, updated date range
+- Open contract logged for Design: Jira-specific Figma spec for restore-unit and Board/Sprint sidebar filters
+
+This is sprint 1 of 2 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+_Sprint started. Role checkpoints below will update as work completes._
+
+---
+### Sprint 9 - Inventory Sidebar, Issues Table & Global Search (Phase 5 Sprint 1 of 2) | 2026-05-03 | ✅ Software Architect checkpoint (1/1 done)
+
+- ✅ Design Inventory UI architecture and manifest data contract (⚡ Quick, 2 SP)
+
+---
+### Sprint 9 - Inventory Sidebar, Issues Table & Global Search (Phase 5 Sprint 1 of 2) | 2026-05-03 | ✅ done | 18 SP
+**Goal:** [Phase: Protected Object Inventory & Browse UI — Sprint 1 of 2]
+Build the Inventory sidebar (Issues, Projects, Boards, Sprints), the Issues table with the dual Status/Issue Status columns, Global Search across project/board/sprint names, and Project Inventory in-app search with filters.
+
+Deliverables (across all sprints in this phase):
+- Inventory sidebar with four object types and per-row counts from the latest backup manifest
+- Issues table with columns Issue Key, Summary, Issue Status, Issue Type, Assignee plus platform Status/Policy/Last Backup
+- Distinct 'Issue Status' vs 'Status' column header labelling
+- Global Search across projectKey, projectName, boardName, sprintName returning typed Protected Object cards
+- Project Inventory Search with issueKey exact match and tokenised summary search
+- Filters: status, issueType, priority, assigneeAccountId, labels, updated date range
+- Open contract logged for Design: Jira-specific Figma spec for restore-unit and Board/Sprint sidebar filters
+
+This is sprint 1 of 2 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+**Delivered:**
+- ✅ Design Inventory UI architecture and manifest data contract — Software Architect (⚡ Quick, 2 SP)
+- ✅ Backend: Inventory manifest API + Global Search endpoint — Backend Developer (◉ Deep, 5 SP)
+- ✅ Frontend: Inventory sidebar with per-type counts — Frontend Developer (◈ Standard, 3 SP)
+- ✅ Frontend: Issues table + Global Search bar with typed cards — Frontend Developer (◉ Deep, 5 SP)
+- ✅ QA: Playwright signal assertions for Inventory UI — Qa Engineer (◈ Standard, 3 SP)
+
+---

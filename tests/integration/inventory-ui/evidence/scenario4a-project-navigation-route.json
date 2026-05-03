@@ -1,0 +1,16 @@
+{
+  "description": "Navigation: JiraProject card id maps to /inventory/projects/<id>",
+  "scenario": "4a",
+  "uiComponent": "GlobalSearchBar.detailRoute() → window.location.href or onNavigate(route)",
+  "card": {
+    "type": "JiraProject",
+    "id": "ctx-project-alpha",
+    "displayName": "Alpha Project",
+    "projectKey": "ALPHA",
+    "lastBackupAt": "2026-05-03T16:43:50.856Z"
+  },
+  "computedRoute": "/inventory/projects/ctx-project-alpha",
+  "routePattern": "/inventory/projects/<id>",
+  "assertion": "route === \"/inventory/projects/ctx-project-alpha\"",
+  "timestamp": "2026-05-03T16:43:50.867Z"
+}

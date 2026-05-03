@@ -1,0 +1,21 @@
+{
+  "description": "Global Search: \"alpha\" query returns JiraBoard typed card",
+  "scenario": "3b",
+  "uiComponent": "GlobalSearchBar → ResultCard with TypeBadge \"Board\" (sky badge)",
+  "endpoint": "GET /api/search?q=alpha",
+  "searchTerm": "alpha",
+  "boardCards": [
+    {
+      "type": "JiraBoard",
+      "id": "ctx-board-alpha",
+      "displayName": "Sprint Board Alpha",
+      "projectKey": "ALPHA",
+      "lastBackupAt": "2026-05-03T16:43:50.736Z"
+    }
+  ],
+  "assertions": [
+    "results contains at least 1 JiraBoard card",
+    "\"Sprint Board Alpha\" card has projectKey=ALPHA"
+  ],
+  "timestamp": "2026-05-03T16:43:50.789Z"
+}

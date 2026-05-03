@@ -1,0 +1,22 @@
+{
+  "description": "Global Search: \"alpha\" query returns JiraProject typed card",
+  "scenario": "3a",
+  "uiComponent": "GlobalSearchBar → ResultCard with TypeBadge \"Project\" (violet badge)",
+  "endpoint": "GET /api/search?q=alpha",
+  "searchTerm": "alpha",
+  "projectCards": [
+    {
+      "type": "JiraProject",
+      "id": "ctx-project-alpha",
+      "displayName": "Alpha Project",
+      "projectKey": "ALPHA",
+      "lastBackupAt": "2026-05-03T16:43:50.736Z"
+    }
+  ],
+  "assertions": [
+    "results contains at least 1 JiraProject card",
+    "Alpha Project card has projectKey=ALPHA",
+    "card shape: { type, id, displayName, projectKey, lastBackupAt }"
+  ],
+  "timestamp": "2026-05-03T16:43:50.745Z"
+}

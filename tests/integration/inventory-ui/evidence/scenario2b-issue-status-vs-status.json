@@ -1,0 +1,38 @@
+{
+  "description": "\"Issue Status\" (issueStatus — Jira workflow state) and \"Status\" (platformStatus — DCC protection status) are distinct API fields",
+  "scenario": "2b",
+  "columnSemanticDistinction": {
+    "issueStatus": {
+      "fieldName": "issueStatus",
+      "uiColumnHeader": "Issue Status",
+      "ariaLabel": "Issue Status (Jira workflow state)",
+      "description": "Jira workflow status at backup time — e.g. \"In Progress\", \"Done\"",
+      "source": "issue JSON payload fields.status.name"
+    },
+    "platformStatus": {
+      "fieldName": "platformStatus",
+      "uiColumnHeader": "Status",
+      "ariaLabel": "Status (DCC platform protection status)",
+      "description": "DCC platform protection status — \"protected\" or \"error\"",
+      "source": "manifest_entries.status (ok → protected, error → error)"
+    }
+  },
+  "sampleRow": {
+    "issueKey": "ALPHA-1",
+    "summary": null,
+    "issueStatus": null,
+    "issueType": null,
+    "assignee": null,
+    "platformStatus": "protected",
+    "policy": "daily",
+    "lastBackupAt": "2026-05-03T16:43:50.000Z",
+    "backupPointId": "bp-sprint9-001"
+  },
+  "assertions": [
+    "issueStatus field exists independently of platformStatus",
+    "platformStatus is one of [\"protected\", \"error\"]",
+    "Neither field aliases the other"
+  ],
+  "componentTestRef": "frontend/src/components/IssuesTable.test.tsx — \"Issue Status and Status column headers are visually distinct with different aria-labels\"",
+  "timestamp": "2026-05-03T16:43:50.699Z"
+}

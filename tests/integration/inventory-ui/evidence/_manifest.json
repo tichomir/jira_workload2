@@ -1,0 +1,163 @@
+{
+  "sprint": "Sprint 9 — Inventory UI: Sidebar, Issues Table & Global Search",
+  "generatedAt": "2026-05-03T16:43:50.955Z",
+  "totalArtefacts": 14,
+  "dodCoverage": [
+    "Sidebar: 4 object type rows with counts from seeded backup manifest",
+    "Sidebar: default selection = JiraIssue (issues endpoint returns data on load)",
+    "Issues table: all 8 columns present in API response shape",
+    "Issues table: issueStatus (Issue Status) and platformStatus (Status) are distinct fields",
+    "Issues table: platformStatus maps ok→protected, error→error",
+    "Global Search: \"alpha\" query returns typed JiraProject, JiraBoard, JiraSprint cards",
+    "Global Search: all cards carry required shape { type, id, displayName, lastBackupAt }",
+    "Navigation: Project card → /inventory/projects/<id>",
+    "Navigation: Board card → /inventory/boards/<id>",
+    "Navigation: Sprint card → /inventory/sprints/<id>",
+    "Navigation: no-match query → empty results → no navigation"
+  ],
+  "componentTestCrossRef": {
+    "file": "frontend/src/components/IssuesTable.test.tsx",
+    "coverage": [
+      "IssuesTable renders all 8 column headers with correct aria-labels",
+      "\"Issue Status\" and \"Status\" headers are visually distinct elements",
+      "Tooltips present on both Issue Status and Status headers",
+      "GlobalSearchBar routes: /inventory/projects/, /inventory/boards/, /inventory/sprints/"
+    ]
+  },
+  "gaps": [],
+  "artefacts": [
+    {
+      "file": "scenario1a-sidebar-counts.json",
+      "scenario": "1a",
+      "description": "Sidebar summary API: counts match seeded backup manifest",
+      "assertions": [
+        "backupPointId === \"bp-sprint9-001\"",
+        "counts.JiraIssue === 5",
+        "counts.JiraProject === 2",
+        "counts.JiraBoard === 3",
+        "counts.JiraSprint === 4"
+      ],
+      "capturedAt": "2026-05-03T16:43:50.586Z"
+    },
+    {
+      "file": "scenario1b-sidebar-four-rows.json",
+      "scenario": "1b",
+      "description": "Sidebar renders 4 rows — all 4 object types present in summary",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T16:43:50.610Z"
+    },
+    {
+      "file": "scenario1c-default-selection-issues.json",
+      "scenario": "1c",
+      "description": "Default sidebar selection is Issues (DEFAULT_SELECTED_TYPE = \"JiraIssue\") — issues endpoint returns data",
+      "assertions": [
+        "total > 0 — issues exist to populate the default view",
+        "issues.length > 0 — first page returns results"
+      ],
+      "capturedAt": "2026-05-03T16:43:50.628Z"
+    },
+    {
+      "file": "scenario2a-issues-table-columns.json",
+      "scenario": "2a",
+      "description": "Issues table: all 8 required column fields present in API response",
+      "assertions": [
+        "sampleRow.issueKey exists",
+        "sampleRow.summary exists",
+        "sampleRow.issueStatus exists",
+        "sampleRow.issueType exists",
+        "sampleRow.assignee exists",
+        "sampleRow.platformStatus exists",
+        "sampleRow.policy exists",
+        "sampleRow.lastBackupAt exists"
+      ],
+      "capturedAt": "2026-05-03T16:43:50.679Z"
+    },
+    {
+      "file": "scenario2b-issue-status-vs-status.json",
+      "scenario": "2b",
+      "description": "\"Issue Status\" (issueStatus — Jira workflow state) and \"Status\" (platformStatus — DCC protection status) are distinct API fields",
+      "assertions": [
+        "issueStatus field exists independently of platformStatus",
+        "platformStatus is one of [\"protected\", \"error\"]",
+        "Neither field aliases the other"
+      ],
+      "capturedAt": "2026-05-03T16:43:50.699Z"
+    },
+    {
+      "file": "scenario2c-platform-status-mapping.json",
+      "scenario": "2c",
+      "description": "platformStatus maps: manifest status=ok → \"protected\", status=error → \"error\"",
+      "assertions": [
+        "ALPHA-1..ALPHA-4: platformStatus === \"protected\"",
+        "ALPHA-5: platformStatus === \"error\""
+      ],
+      "capturedAt": "2026-05-03T16:43:50.717Z"
+    },
+    {
+      "file": "scenario3a-search-project-card.json",
+      "scenario": "3a",
+      "description": "Global Search: \"alpha\" query returns JiraProject typed card",
+      "assertions": [
+        "results contains at least 1 JiraProject card",
+        "Alpha Project card has projectKey=ALPHA",
+        "card shape: { type, id, displayName, projectKey, lastBackupAt }"
+      ],
+      "capturedAt": "2026-05-03T16:43:50.745Z"
+    },
+    {
+      "file": "scenario3b-search-board-card.json",
+      "scenario": "3b",
+      "description": "Global Search: \"alpha\" query returns JiraBoard typed card",
+      "assertions": [
+        "results contains at least 1 JiraBoard card",
+        "\"Sprint Board Alpha\" card has projectKey=ALPHA"
+      ],
+      "capturedAt": "2026-05-03T16:43:50.789Z"
+    },
+    {
+      "file": "scenario3c-search-sprint-card.json",
+      "scenario": "3c",
+      "description": "Global Search: \"alpha\" query returns JiraSprint typed card",
+      "assertions": [
+        "results contains at least 1 JiraSprint card",
+        "\"Alpha Sprint 1\" sprint card found"
+      ],
+      "capturedAt": "2026-05-03T16:43:50.803Z"
+    },
+    {
+      "file": "scenario3d-search-card-shape.json",
+      "scenario": "3d",
+      "description": "Global Search: all result cards carry required shape { type, id, displayName, lastBackupAt }",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T16:43:50.828Z"
+    },
+    {
+      "file": "scenario4a-project-navigation-route.json",
+      "scenario": "4a",
+      "description": "Navigation: JiraProject card id maps to /inventory/projects/<id>",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T16:43:50.867Z"
+    },
+    {
+      "file": "scenario4b-board-navigation-route.json",
+      "scenario": "4b",
+      "description": "Navigation: JiraBoard card id maps to /inventory/boards/<id>",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T16:43:50.888Z"
+    },
+    {
+      "file": "scenario4c-sprint-navigation-route.json",
+      "scenario": "4c",
+      "description": "Navigation: JiraSprint card id maps to /inventory/sprints/<id>",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T16:43:50.910Z"
+    },
+    {
+      "file": "scenario4d-no-match-no-navigation.json",
+      "scenario": "4d",
+      "description": "Non-matching search returns empty results — GlobalSearchBar closes dropdown without navigating",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T16:43:50.923Z"
+    }
+  ]
+}

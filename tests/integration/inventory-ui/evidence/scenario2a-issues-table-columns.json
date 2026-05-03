@@ -1,0 +1,49 @@
+{
+  "description": "Issues table: all 8 required column fields present in API response",
+  "scenario": "2a",
+  "uiComponent": "IssuesTable — columns: Issue Key, Summary, Issue Status, Issue Type, Assignee, Status, Policy, Last Backup",
+  "endpoint": "GET /api/inventory/issues",
+  "requiredColumnFields": [
+    "issueKey",
+    "summary",
+    "issueStatus",
+    "issueType",
+    "assignee",
+    "platformStatus",
+    "policy",
+    "lastBackupAt"
+  ],
+  "columnToUiHeaderMapping": {
+    "issueKey": "Issue Key",
+    "summary": "Summary",
+    "issueStatus": "Issue Status (Jira workflow state)",
+    "issueType": "Issue Type",
+    "assignee": "Assignee",
+    "platformStatus": "Status (DCC platform protection status)",
+    "policy": "Policy",
+    "lastBackupAt": "Last Backup"
+  },
+  "sampleRow": {
+    "issueKey": "ALPHA-1",
+    "summary": null,
+    "issueStatus": null,
+    "issueType": null,
+    "assignee": null,
+    "platformStatus": "protected",
+    "policy": "daily",
+    "lastBackupAt": "2026-05-03T16:43:50.000Z",
+    "backupPointId": "bp-sprint9-001"
+  },
+  "totalRows": 5,
+  "assertions": [
+    "sampleRow.issueKey exists",
+    "sampleRow.summary exists",
+    "sampleRow.issueStatus exists",
+    "sampleRow.issueType exists",
+    "sampleRow.assignee exists",
+    "sampleRow.platformStatus exists",
+    "sampleRow.policy exists",
+    "sampleRow.lastBackupAt exists"
+  ],
+  "timestamp": "2026-05-03T16:43:50.679Z"
+}

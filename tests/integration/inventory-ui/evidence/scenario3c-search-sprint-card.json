@@ -1,0 +1,20 @@
+{
+  "description": "Global Search: \"alpha\" query returns JiraSprint typed card",
+  "scenario": "3c",
+  "uiComponent": "GlobalSearchBar → ResultCard with TypeBadge \"Sprint\" (amber badge)",
+  "endpoint": "GET /api/search?q=alpha",
+  "searchTerm": "alpha",
+  "sprintCards": [
+    {
+      "type": "JiraSprint",
+      "id": "ctx-sprint-alpha-1",
+      "displayName": "Alpha Sprint 1",
+      "lastBackupAt": "2026-05-03T16:43:50.736Z"
+    }
+  ],
+  "assertions": [
+    "results contains at least 1 JiraSprint card",
+    "\"Alpha Sprint 1\" sprint card found"
+  ],
+  "timestamp": "2026-05-03T16:43:50.803Z"
+}

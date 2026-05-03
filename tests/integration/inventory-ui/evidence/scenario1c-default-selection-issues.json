@@ -1,0 +1,18 @@
+{
+  "description": "Default sidebar selection is Issues (DEFAULT_SELECTED_TYPE = \"JiraIssue\") — issues endpoint returns data",
+  "scenario": "1c",
+  "defaultSelectedType": "JiraIssue",
+  "uiComponent": "InventorySidebar DEFAULT_SELECTED_TYPE + IssuesTable initial load",
+  "endpoint": "GET /api/inventory/issues",
+  "response": {
+    "status": 200,
+    "total": 5,
+    "issuesReturned": 5,
+    "backupPointId": "bp-sprint9-001"
+  },
+  "assertions": [
+    "total > 0 — issues exist to populate the default view",
+    "issues.length > 0 — first page returns results"
+  ],
+  "timestamp": "2026-05-03T16:43:50.628Z"
+}

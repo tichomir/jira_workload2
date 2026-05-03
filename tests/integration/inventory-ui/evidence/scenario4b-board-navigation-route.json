@@ -1,0 +1,15 @@
+{
+  "description": "Navigation: JiraBoard card id maps to /inventory/boards/<id>",
+  "scenario": "4b",
+  "card": {
+    "type": "JiraBoard",
+    "id": "ctx-board-alpha",
+    "displayName": "Sprint Board Alpha",
+    "projectKey": "ALPHA",
+    "lastBackupAt": "2026-05-03T16:43:50.856Z"
+  },
+  "computedRoute": "/inventory/boards/ctx-board-alpha",
+  "routePattern": "/inventory/boards/<id>",
+  "assertion": "route === \"/inventory/boards/ctx-board-alpha\"",
+  "timestamp": "2026-05-03T16:43:50.888Z"
+}

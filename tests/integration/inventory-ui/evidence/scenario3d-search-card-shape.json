@@ -1,0 +1,71 @@
+{
+  "description": "Global Search: all result cards carry required shape { type, id, displayName, lastBackupAt }",
+  "scenario": "3d",
+  "searchTerm": "alpha",
+  "totalResults": 8,
+  "cards": [
+    {
+      "type": "JiraProject",
+      "id": "ctx-project-alpha",
+      "displayName": "Alpha Project",
+      "projectKey": "ALPHA",
+      "lastBackupAt": "2026-05-03T16:43:50.736Z"
+    },
+    {
+      "type": "JiraBoard",
+      "id": "ctx-board-alpha",
+      "displayName": "Sprint Board Alpha",
+      "projectKey": "ALPHA",
+      "lastBackupAt": "2026-05-03T16:43:50.736Z"
+    },
+    {
+      "type": "JiraSprint",
+      "id": "ctx-sprint-alpha-1",
+      "displayName": "Alpha Sprint 1",
+      "lastBackupAt": "2026-05-03T16:43:50.736Z"
+    },
+    {
+      "type": "JiraIssue",
+      "id": "ALPHA-1",
+      "displayName": "ALPHA-1",
+      "lastBackupAt": "2026-05-03T16:43:50.000Z"
+    },
+    {
+      "type": "JiraIssue",
+      "id": "ALPHA-2",
+      "displayName": "ALPHA-2",
+      "lastBackupAt": "2026-05-03T16:43:50.000Z"
+    },
+    {
+      "type": "JiraIssue",
+      "id": "ALPHA-3",
+      "displayName": "ALPHA-3",
+      "lastBackupAt": "2026-05-03T16:43:50.000Z"
+    },
+    {
+      "type": "JiraIssue",
+      "id": "ALPHA-4",
+      "displayName": "ALPHA-4",
+      "lastBackupAt": "2026-05-03T16:43:50.000Z"
+    },
+    {
+      "type": "JiraIssue",
+      "id": "ALPHA-5",
+      "displayName": "ALPHA-5",
+      "lastBackupAt": "2026-05-03T16:43:50.000Z"
+    }
+  ],
+  "requiredFields": [
+    "type",
+    "id",
+    "displayName",
+    "lastBackupAt"
+  ],
+  "validTypes": [
+    "JiraProject",
+    "JiraBoard",
+    "JiraSprint",
+    "JiraIssue"
+  ],
+  "timestamp": "2026-05-03T16:43:50.828Z"
+}

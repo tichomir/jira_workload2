@@ -1,0 +1,37 @@
+{
+  "description": "Sidebar summary API: counts match seeded backup manifest",
+  "scenario": "1a",
+  "uiComponent": "InventorySidebar — sidebar rows display counts from GET /api/inventory/summary",
+  "endpoint": "GET /api/inventory/summary",
+  "seedData": {
+    "JiraIssue": 5,
+    "JiraProject": 2,
+    "JiraBoard": 3,
+    "JiraSprint": 4
+  },
+  "request": {
+    "method": "GET",
+    "path": "/api/inventory/summary",
+    "query": "cloudId=cloud-sprint9-ui"
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "backupPointId": "bp-sprint9-001",
+      "counts": {
+        "JiraIssue": 5,
+        "JiraProject": 2,
+        "JiraBoard": 3,
+        "JiraSprint": 4
+      }
+    }
+  },
+  "assertions": [
+    "backupPointId === \"bp-sprint9-001\"",
+    "counts.JiraIssue === 5",
+    "counts.JiraProject === 2",
+    "counts.JiraBoard === 3",
+    "counts.JiraSprint === 4"
+  ],
+  "timestamp": "2026-05-03T16:43:50.586Z"
+}

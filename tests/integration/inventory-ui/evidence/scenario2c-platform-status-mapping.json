@@ -1,0 +1,44 @@
+{
+  "description": "platformStatus maps: manifest status=ok → \"protected\", status=error → \"error\"",
+  "scenario": "2c",
+  "uiComponent": "IssuesTable — Status column badge (green \"Protected\" / red \"Error\")",
+  "seedMapping": [
+    {
+      "issueKey": "ALPHA-1",
+      "seedStatus": "ok",
+      "expectedPlatformStatus": "protected"
+    },
+    {
+      "issueKey": "ALPHA-5",
+      "seedStatus": "error",
+      "expectedPlatformStatus": "error"
+    }
+  ],
+  "issues": [
+    {
+      "issueKey": "ALPHA-1",
+      "platformStatus": "protected"
+    },
+    {
+      "issueKey": "ALPHA-2",
+      "platformStatus": "protected"
+    },
+    {
+      "issueKey": "ALPHA-3",
+      "platformStatus": "protected"
+    },
+    {
+      "issueKey": "ALPHA-4",
+      "platformStatus": "protected"
+    },
+    {
+      "issueKey": "ALPHA-5",
+      "platformStatus": "error"
+    }
+  ],
+  "assertions": [
+    "ALPHA-1..ALPHA-4: platformStatus === \"protected\"",
+    "ALPHA-5: platformStatus === \"error\""
+  ],
+  "timestamp": "2026-05-03T16:43:50.717Z"
+}

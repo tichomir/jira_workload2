@@ -187,6 +187,107 @@ export async function saveWorkloadConfig(payload: WorkloadConfigPayload): Promis
   }
 }
 
+// ── Inventory ─────────────────────────────────────────────────────────────────
+
+export interface InventorySummary {
+  backupPointId: string | null;
+  counts: {
+    JiraIssue: number;
+    JiraProject: number;
+    JiraBoard: number;
+    JiraSprint: number;
+  };
+}
+
+/**
+ * Fetches per-type object counts from the latest backup point manifest.
+ * Passes cloudId as x-cloud-id header.
+ */
+export async function fetchInventorySummary(
+  cloudId: string,
+): Promise<InventorySummary> {
+  const res = await fetch('/api/inventory/summary', {
+    headers: { 'x-cloud-id': cloudId },
+  });
+  if (!res.ok) {
+    throw new ApiError(res.status, `fetchInventorySummary failed: ${res.status}`);
+  }
+  return res.json() as Promise<InventorySummary>;
+}
+
+// ── Issues table ──────────────────────────────────────────────────────────────
+
+export interface IssueTableRow {
+  issueKey: string;
+  summary: string | null;
+  issueStatus: string | null;
+  issueType: string | null;
+  assignee: string | null;
+  platformStatus: 'protected' | 'error';
+  policy: string;
+  lastBackupAt: string;
+  backupPointId: string;
+}
+
+export interface IssuesResponse {
+  issues: IssueTableRow[];
+  total: number;
+  backupPointId: string | null;
+}
+
+/**
+ * Fetches a paginated list of Issues from the latest backup point.
+ * Passes cloudId as x-cloud-id header.
+ */
+export async function fetchIssues(
+  cloudId: string,
+  params: { offset?: number; limit?: number } = {},
+): Promise<IssuesResponse> {
+  const qs = new URLSearchParams();
+  if (params.offset !== undefined) qs.set('offset', String(params.offset));
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const url = `/api/inventory/issues${qs.toString() ? `?${qs}` : ''}`;
+  const res = await fetch(url, { headers: { 'x-cloud-id': cloudId } });
+  if (!res.ok) {
+    if (res.status === 401 || res.status === 403) emitAuthError(res.status);
+    throw new ApiError(res.status, `fetchIssues failed: ${res.status}`);
+  }
+  return res.json() as Promise<IssuesResponse>;
+}
+
+// ── Global search ─────────────────────────────────────────────────────────────
+
+export interface SearchCard {
+  type: 'JiraProject' | 'JiraBoard' | 'JiraSprint' | 'JiraIssue';
+  id: string;
+  displayName: string;
+  projectKey?: string;
+  lastBackupAt: string | null;
+}
+
+export interface SearchResponse {
+  results: SearchCard[];
+}
+
+/**
+ * Searches across projectKey, projectName, boardName, sprintName.
+ * Returns typed Protected Object cards.
+ */
+export async function searchInventory(
+  cloudId: string,
+  q: string,
+): Promise<SearchResponse> {
+  const url = `/api/search?q=${encodeURIComponent(q)}`;
+  const res = await fetch(url, { headers: { 'x-cloud-id': cloudId } });
+  if (!res.ok) {
+    if (res.status === 401 || res.status === 403) emitAuthError(res.status);
+    throw new ApiError(res.status, `searchInventory failed: ${res.status}`);
+  }
+  return res.json() as Promise<SearchResponse>;
+}
+
+// ── Utilities ─────────────────────────────────────────────────────────────────
+
 /** Strips oauth_* query params from the URL without triggering a page reload. */
 export function clearOAuthParams(): void {
   const url = new URL(window.location.href);

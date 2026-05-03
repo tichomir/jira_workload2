@@ -1,6 +1,6 @@
 {
   "scenario": "Scenario 1: Heartbeat Cadence",
-  "generatedAt": "2026-05-03T16:22:25.264Z",
+  "generatedAt": "2026-05-03T16:34:06.480Z",
   "configuration": {
     "jobId": "obs-s1-job",
     "backupPointId": "obs-s1-bp",
@@ -19,39 +19,39 @@
     "[scenario-1] jobId=obs-s1-job heartbeatIntervalMs=9000",
     "[scenario-1] simulatedRunMs=30000",
     "[scenario-1] busHeartbeatsReceived=3 (≥3 required)",
-    "[scenario-1] heartbeatTimestamps=1777825353834,1777825362834,1777825371834",
+    "[scenario-1] heartbeatTimestamps=1777826055042,1777826064042,1777826073042",
     "[scenario-1] maxGapMs=9000 (≤10000 required)",
     "[scenario-1] sseHeartbeatsReceived=3",
-    "[scenario-1] terminalEvent={\"type\":\"terminal\",\"jobId\":\"obs-s1-job\",\"backupPointId\":\"obs-s1-bp\",\"phase\":\"issues\",\"itemsProcessed\":0,\"itemsFailed\":0,\"timestamp\":\"2026-05-03T16:22:54.834Z\",\"displayStatus\":\"Completed successfully\"}"
+    "[scenario-1] terminalEvent={\"type\":\"terminal\",\"jobId\":\"obs-s1-job\",\"backupPointId\":\"obs-s1-bp\",\"phase\":\"issues\",\"itemsProcessed\":0,\"itemsFailed\":0,\"timestamp\":\"2026-05-03T16:34:36.042Z\",\"displayStatus\":\"Completed successfully\"}"
   ],
   "sseTranscript": [
-    "data: {\"type\":\"heartbeat\",\"jobId\":\"obs-s1-job\",\"backupPointId\":\"obs-s1-bp\",\"phase\":\"issues\",\"itemsProcessed\":0,\"itemsFailed\":0,\"timestamp\":\"2026-05-03T16:22:33.834Z\"}",
-    "data: {\"type\":\"heartbeat\",\"jobId\":\"obs-s1-job\",\"backupPointId\":\"obs-s1-bp\",\"phase\":\"issues\",\"itemsProcessed\":0,\"itemsFailed\":0,\"timestamp\":\"2026-05-03T16:22:42.834Z\"}",
-    "data: {\"type\":\"heartbeat\",\"jobId\":\"obs-s1-job\",\"backupPointId\":\"obs-s1-bp\",\"phase\":\"issues\",\"itemsProcessed\":0,\"itemsFailed\":0,\"timestamp\":\"2026-05-03T16:22:51.834Z\"}",
-    "data: {\"type\":\"terminal\",\"jobId\":\"obs-s1-job\",\"backupPointId\":\"obs-s1-bp\",\"phase\":\"issues\",\"itemsProcessed\":0,\"itemsFailed\":0,\"timestamp\":\"2026-05-03T16:22:54.834Z\"}"
+    "data: {\"type\":\"heartbeat\",\"jobId\":\"obs-s1-job\",\"backupPointId\":\"obs-s1-bp\",\"phase\":\"issues\",\"itemsProcessed\":0,\"itemsFailed\":0,\"timestamp\":\"2026-05-03T16:34:15.042Z\"}",
+    "data: {\"type\":\"heartbeat\",\"jobId\":\"obs-s1-job\",\"backupPointId\":\"obs-s1-bp\",\"phase\":\"issues\",\"itemsProcessed\":0,\"itemsFailed\":0,\"timestamp\":\"2026-05-03T16:34:24.042Z\"}",
+    "data: {\"type\":\"heartbeat\",\"jobId\":\"obs-s1-job\",\"backupPointId\":\"obs-s1-bp\",\"phase\":\"issues\",\"itemsProcessed\":0,\"itemsFailed\":0,\"timestamp\":\"2026-05-03T16:34:33.042Z\"}",
+    "data: {\"type\":\"terminal\",\"jobId\":\"obs-s1-job\",\"backupPointId\":\"obs-s1-bp\",\"phase\":\"issues\",\"itemsProcessed\":0,\"itemsFailed\":0,\"timestamp\":\"2026-05-03T16:34:36.042Z\"}"
   ],
   "busEvents": [
     {
       "type": "heartbeat",
-      "timestamp": "2026-05-03T16:22:33.834Z",
+      "timestamp": "2026-05-03T16:34:15.042Z",
       "itemsProcessed": 0,
       "itemsFailed": 0
     },
     {
       "type": "heartbeat",
-      "timestamp": "2026-05-03T16:22:42.834Z",
+      "timestamp": "2026-05-03T16:34:24.042Z",
       "itemsProcessed": 0,
       "itemsFailed": 0
     },
     {
       "type": "heartbeat",
-      "timestamp": "2026-05-03T16:22:51.834Z",
+      "timestamp": "2026-05-03T16:34:33.042Z",
       "itemsProcessed": 0,
       "itemsFailed": 0
     },
     {
       "type": "terminal",
-      "timestamp": "2026-05-03T16:22:54.834Z",
+      "timestamp": "2026-05-03T16:34:36.042Z",
       "itemsProcessed": 0,
       "itemsFailed": 0,
       "displayStatus": "Completed successfully"

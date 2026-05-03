@@ -1,0 +1,19 @@
+{
+  "description": "Sidebar renders 4 rows — all 4 object types present in summary",
+  "scenario": "1b",
+  "uiComponent": "InventorySidebar — 4 rows: Issues, Projects, Boards, Sprints",
+  "objectTypes": [
+    "JiraIssue",
+    "JiraProject",
+    "JiraBoard",
+    "JiraSprint"
+  ],
+  "receivedTypes": [
+    "JiraIssue",
+    "JiraProject",
+    "JiraBoard",
+    "JiraSprint"
+  ],
+  "allFourPresent": true,
+  "timestamp": "2026-05-03T16:43:50.610Z"
+}

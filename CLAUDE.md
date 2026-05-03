@@ -462,3 +462,50 @@ This is sprint 2 of 3 for the phase. Plan a slice of the deliverables appropriat
 - ⏭ QA: Fault-injection tests for heartbeat, stall, and partial-failure status — Qa Engineer (◈ Standard, 3 SP)
 
 ---
+### Sprint 7 - Per-Item Error Aggregation, Progress API & Live Tenant Validation | 2026-05-03 | ⏳ in progress | 17 SP est.
+**Goal:** [Phase: Issue & Attachment Backup Engine — Sprint 3 of 3]
+Deliver the primary coverage invariant: full Issue capture (system + custom fields, comments, links, subtasks, sprint membership, watchers, worklogs) via POST /rest/api/3/search/jql, plus binary-faithful attachment download. This is the core value-delivery phase.
+
+Deliverables (across all sprints in this phase):
+- Issue backup via POST /rest/api/3/search/jql (deprecated GET endpoint forbidden in codebase)
+- Full Issue payload capture: system fields, customFieldValues map, ADF comments, issue links (both directions), subtasks, sprint membership, watchers, worklogs
+- Binary-faithful attachment download via GET /rest/api/3/attachment/content/{id} preserving bytes, MIME type, and filename
+- Pagination termination on issues.length === 0 or < maxResults
+- Per-item error tracking emitting 'Completed with N errors' status on partial failure
+- Backup-point ID and timestamp traceability for every captured item
+- Heartbeat progress events ≤10s with stalled-job detection at >20s
+
+This is sprint 3 of 3 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+_Sprint started. Role checkpoints below will update as work completes._
+
+---
+### Sprint 7 - Per-Item Error Aggregation, Progress API & Live Tenant Validation | 2026-05-03 | ◐ Backend Developer checkpoint (0/3 done)
+
+- ❌ Aggregate per-item errors into 'Completed with N errors' final status (◉ Deep, 5 SP)
+- ❌ Add structured logs/metrics around manifest emission and pagination termination (⚡ Quick, 2 SP)
+- ❌ Expose job progress + status via SSE endpoint for UI consumption (◉ Deep, 5 SP)
+
+---
+### Sprint 7 - Per-Item Error Aggregation, Progress API & Live Tenant Validation | 2026-05-03 | 📋 reviewing | 17 SP
+**Goal:** [Phase: Issue & Attachment Backup Engine — Sprint 3 of 3]
+Deliver the primary coverage invariant: full Issue capture (system + custom fields, comments, links, subtasks, sprint membership, watchers, worklogs) via POST /rest/api/3/search/jql, plus binary-faithful attachment download. This is the core value-delivery phase.
+
+Deliverables (across all sprints in this phase):
+- Issue backup via POST /rest/api/3/search/jql (deprecated GET endpoint forbidden in codebase)
+- Full Issue payload capture: system fields, customFieldValues map, ADF comments, issue links (both directions), subtasks, sprint membership, watchers, worklogs
+- Binary-faithful attachment download via GET /rest/api/3/attachment/content/{id} preserving bytes, MIME type, and filename
+- Pagination termination on issues.length === 0 or < maxResults
+- Per-item error tracking emitting 'Completed with N errors' status on partial failure
+- Backup-point ID and timestamp traceability for every captured item
+- Heartbeat progress events ≤10s with stalled-job detection at >20s
+
+This is sprint 3 of 3 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+**Delivered:**
+- ❌ Aggregate per-item errors into 'Completed with N errors' final status — Backend Developer (◉ Deep, 5 SP)
+- ❌ Expose job progress + status via SSE endpoint for UI consumption — Backend Developer (◉ Deep, 5 SP)
+- ❌ Add structured logs/metrics around manifest emission and pagination termination — Backend Developer (⚡ Quick, 2 SP)
+- ⏭ End-to-end live-tenant validation of capture pipeline — Qa Engineer (◉ Deep, 5 SP)
+
+---

@@ -1,0 +1,10 @@
+{
+  "description": "Valid ISO 8601 date range returns 200 and narrows results correctly",
+  "scenario": "5c",
+  "params": {
+    "updatedFrom": "2026-03-01",
+    "updatedTo": "2026-03-31"
+  },
+  "total": 5,
+  "timestamp": "2026-05-03T17:01:31.263Z"
+}

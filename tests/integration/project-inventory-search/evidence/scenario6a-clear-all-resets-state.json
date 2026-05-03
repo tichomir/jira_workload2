@@ -1,0 +1,30 @@
+{
+  "description": "Clear-all: removing all filter params resets table to full unfiltered 5-issue result set",
+  "scenario": "6a",
+  "steps": [
+    {
+      "action": "apply status=Open filter",
+      "total": 2,
+      "expected": 2
+    },
+    {
+      "action": "clear all filters (no filter params)",
+      "total": 5,
+      "expected": 5
+    }
+  ],
+  "uiComponent": "ProjectInventorySearch — \"Clear all\" button fires clearAllFilters() → setFilters(EMPTY_FILTERS) → re-fetch without filter params",
+  "clearedIssueKeys": [
+    "SEARCH-1",
+    "SEARCH-2",
+    "SEARCH-3",
+    "SEARCH-4",
+    "SEARCH-5"
+  ],
+  "assertions": [
+    "filtered total === 2 (only Open issues)",
+    "cleared total === 5 (all issues returned)",
+    "all 5 issue keys present after clear"
+  ],
+  "timestamp": "2026-05-03T17:01:31.294Z"
+}

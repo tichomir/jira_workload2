@@ -1,0 +1,14 @@
+{
+  "description": "Combined: status=Open + issueType=Bug → SEARCH-1 and SEARCH-4 (both Open Bugs)",
+  "scenario": "4a",
+  "filters": {
+    "status": "Open",
+    "issueType": "Bug"
+  },
+  "total": 2,
+  "issueKeys": [
+    "SEARCH-1",
+    "SEARCH-4"
+  ],
+  "timestamp": "2026-05-03T17:01:31.142Z"
+}

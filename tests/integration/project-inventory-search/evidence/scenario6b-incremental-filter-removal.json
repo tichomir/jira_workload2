@@ -1,0 +1,19 @@
+{
+  "description": "Incrementally removing filters broadens results back to full set",
+  "scenario": "6b",
+  "steps": [
+    {
+      "filters": "status=Open + issueType=Bug",
+      "total": 2
+    },
+    {
+      "filters": "status=Open only",
+      "total": 2
+    },
+    {
+      "filters": "none (clear all)",
+      "total": 5
+    }
+  ],
+  "timestamp": "2026-05-03T17:01:31.323Z"
+}

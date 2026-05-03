@@ -1,0 +1,16 @@
+{
+  "description": "Invalid updatedTo date: API returns 400 invalid_date",
+  "scenario": "5b",
+  "invalidParam": {
+    "updatedTo": "bad-date-value"
+  },
+  "response": {
+    "status": 400,
+    "body": {
+      "error": "invalid_date",
+      "field": "updatedTo",
+      "message": "updatedTo must be a valid ISO 8601 date"
+    }
+  },
+  "timestamp": "2026-05-03T17:01:31.247Z"
+}

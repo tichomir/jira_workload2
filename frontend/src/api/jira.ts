@@ -286,6 +286,59 @@ export async function searchInventory(
   return res.json() as Promise<SearchResponse>;
 }
 
+// ── Project Inventory Search ──────────────────────────────────────────────────
+
+export interface ProjectIssuesParams {
+  q?: string;
+  /** Jira workflow status filter (case-insensitive exact match). */
+  status?: string;
+  issueType?: string;
+  priority?: string;
+  /** Assignee Atlassian account ID (exact match). */
+  assigneeAccountId?: string;
+  /** Labels — issue must carry at least one of the supplied values. */
+  labels?: string[];
+  /** ISO 8601 date — include only issues updated on or after this date. */
+  updatedFrom?: string;
+  /** ISO 8601 date — include only issues updated on or before this date. */
+  updatedTo?: string;
+  offset?: number;
+  limit?: number;
+}
+
+/**
+ * Fetches issues within a specific project from the latest backup point,
+ * applying optional search query and field filters.
+ * - `q` matching an issue-key pattern (e.g. PROJ-1) performs an exact lookup.
+ * - Otherwise `q` is tokenised for AND-substring summary search.
+ */
+export async function fetchProjectIssues(
+  cloudId: string,
+  projectKey: string,
+  params: ProjectIssuesParams = {},
+): Promise<IssuesResponse> {
+  const qs = new URLSearchParams();
+  if (params.q) qs.set('q', params.q);
+  if (params.status) qs.set('status', params.status);
+  if (params.issueType) qs.set('issueType', params.issueType);
+  if (params.priority) qs.set('priority', params.priority);
+  if (params.assigneeAccountId) qs.set('assigneeAccountId', params.assigneeAccountId);
+  if (params.labels && params.labels.length > 0) {
+    params.labels.forEach((l) => qs.append('labels', l));
+  }
+  if (params.updatedFrom) qs.set('updatedFrom', params.updatedFrom);
+  if (params.updatedTo) qs.set('updatedTo', params.updatedTo);
+  if (params.offset !== undefined) qs.set('offset', String(params.offset));
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const url = `/api/inventory/projects/${encodeURIComponent(projectKey)}/issues${qs.toString() ? `?${qs}` : ''}`;
+  const res = await fetch(url, { headers: { 'x-cloud-id': cloudId } });
+  if (!res.ok) {
+    if (res.status === 401 || res.status === 403) emitAuthError(res.status);
+    throw new ApiError(res.status, `fetchProjectIssues failed: ${res.status}`);
+  }
+  return res.json() as Promise<IssuesResponse>;
+}
+
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
 /** Strips oauth_* query params from the URL without triggering a page reload. */

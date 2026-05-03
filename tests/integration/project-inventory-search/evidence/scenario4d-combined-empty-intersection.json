@@ -1,0 +1,10 @@
+{
+  "description": "Combined: status=Done + issueType=Bug → empty (no Done Bugs in seed)",
+  "scenario": "4d",
+  "filters": {
+    "status": "Done",
+    "issueType": "Bug"
+  },
+  "total": 0,
+  "timestamp": "2026-05-03T17:01:31.207Z"
+}

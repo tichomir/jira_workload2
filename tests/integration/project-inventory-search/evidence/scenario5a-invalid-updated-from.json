@@ -1,0 +1,22 @@
+{
+  "description": "Invalid updatedFrom date: API returns 400 invalid_date (UI surfaces error state)",
+  "scenario": "5a",
+  "invalidParam": {
+    "updatedFrom": "not-a-date"
+  },
+  "response": {
+    "status": 400,
+    "body": {
+      "error": "invalid_date",
+      "field": "updatedFrom",
+      "message": "updatedFrom must be a valid ISO 8601 date"
+    }
+  },
+  "uiErrorState": "ProjectInventorySearch renders data-testid=\"project-search-error\" row on HTTP error",
+  "assertions": [
+    "status === 400",
+    "body.error === \"invalid_date\"",
+    "body.field === \"updatedFrom\""
+  ],
+  "timestamp": "2026-05-03T17:01:31.231Z"
+}

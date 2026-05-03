@@ -1,0 +1,13 @@
+{
+  "description": "Filter: assigneeAccountId=acc-alice returns SEARCH-1 and SEARCH-3",
+  "scenario": "3d",
+  "filter": {
+    "assigneeAccountId": "acc-alice"
+  },
+  "total": 2,
+  "issueKeys": [
+    "SEARCH-1",
+    "SEARCH-3"
+  ],
+  "timestamp": "2026-05-03T17:01:31.051Z"
+}

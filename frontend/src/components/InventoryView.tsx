@@ -5,16 +5,16 @@
  *   InventoryView
  *   ├── InventorySidebar  (object-type selector with counts)
  *   └── main panel
- *       ├── GlobalSearchBar  (cross-entity search → typed result cards)
- *       └── IssuesTable      (paginated browse when Issues is selected)
+ *       ├── GlobalSearchBar           (cross-entity search → typed result cards)
+ *       └── ProjectInventorySearch   (project-scoped issue search + filters,
+ *                                     shown when Issues is selected)
  *
- * Phase 1 renders the IssuesTable when the sidebar selection is 'JiraIssue'.
- * Other object types show a "coming soon" placeholder.
+ * Phase 1 renders ProjectInventorySearch when the sidebar selection is
+ * 'JiraIssue'. Other object types show a "coming soon" placeholder.
  *
- * TODO(sprint-2): Add Project Inventory in-app search filters panel.
- * TODO(sprint-2): Implement Projects / Boards / Sprints detail views
- *   (blocked on OC-001 restore-unit Figma spec and OC-002 Board/Sprint
- *    sidebar filter spec — see inventory-ui.md §6).
+ * NOTE (OC-001, OC-002): Projects / Boards / Sprints detail views are blocked
+ * on Figma specs for the restore-unit card and Board/Sprint sidebar filters
+ * respectively — see inventory-ui.md §6.
  */
 
 import React, { useState } from 'react';
@@ -23,7 +23,7 @@ import {
   DEFAULT_SELECTED_TYPE,
 } from './InventorySidebar';
 import type { InventoryObjectType } from './InventorySidebar';
-import { IssuesTable } from './IssuesTable';
+import { ProjectInventorySearch } from './ProjectInventorySearch';
 import { GlobalSearchBar } from './GlobalSearchBar';
 
 // ── Props ─────────────────────────────────────────────────────────────────────
@@ -84,7 +84,7 @@ export function InventoryView({ cloudId, onNavigate }: InventoryViewProps) {
 
         {/* Content area */}
         {selectedType === 'JiraIssue' ? (
-          <IssuesTable cloudId={cloudId} />
+          <ProjectInventorySearch cloudId={cloudId} />
         ) : (
           <ComingSoonPanel type={selectedType} />
         )}

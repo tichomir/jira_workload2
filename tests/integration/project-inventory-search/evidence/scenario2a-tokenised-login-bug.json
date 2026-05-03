@@ -1,0 +1,56 @@
+{
+  "description": "Tokenised search \"login bug\": AND semantics — only SEARCH-1 summary contains both tokens",
+  "scenario": "2a",
+  "mode": "tokenised",
+  "query": "login bug",
+  "tokens": [
+    "login",
+    "bug"
+  ],
+  "seedSummaries": [
+    {
+      "objectId": "SEARCH-1",
+      "summary": "Login bug on mobile"
+    },
+    {
+      "objectId": "SEARCH-2",
+      "summary": "Mobile dashboard layout fix"
+    },
+    {
+      "objectId": "SEARCH-3",
+      "summary": "Login page redesign story"
+    },
+    {
+      "objectId": "SEARCH-4",
+      "summary": "Fix payment gateway timeout"
+    },
+    {
+      "objectId": "SEARCH-5",
+      "summary": "Update API documentation"
+    }
+  ],
+  "response": {
+    "status": 200,
+    "total": 1,
+    "issues": [
+      {
+        "issueKey": "SEARCH-1",
+        "summary": "Login bug on mobile",
+        "issueStatus": "Open",
+        "issueType": "Bug",
+        "assignee": "Alice",
+        "platformStatus": "protected",
+        "policy": "daily",
+        "lastBackupAt": "2026-05-03T17:01:30.000Z",
+        "backupPointId": "bp-sprint10-001"
+      }
+    ]
+  },
+  "assertions": [
+    "total === 1",
+    "SEARCH-1 returned — \"Login bug on mobile\" contains both \"login\" and \"bug\"",
+    "SEARCH-3 excluded — \"Login page redesign story\" contains \"login\" but not \"bug\"",
+    "SEARCH-2/4/5 excluded — contain neither token"
+  ],
+  "timestamp": "2026-05-03T17:01:30.928Z"
+}

@@ -1,0 +1,17 @@
+{
+  "description": "Filter: status=Open narrows to SEARCH-1 and SEARCH-4",
+  "scenario": "3a",
+  "filter": {
+    "status": "Open"
+  },
+  "total": 2,
+  "issueKeys": [
+    "SEARCH-1",
+    "SEARCH-4"
+  ],
+  "assertions": [
+    "total === 2",
+    "SEARCH-1 and SEARCH-4 returned (both Open)"
+  ],
+  "timestamp": "2026-05-03T17:01:30.986Z"
+}

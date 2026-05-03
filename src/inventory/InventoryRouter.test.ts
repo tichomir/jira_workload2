@@ -591,3 +591,492 @@ describe('GET /api/search', () => {
     db.close();
   });
 });
+
+// ── Tests: GET /api/inventory/projects/:projectKey/issues ─────────────────────
+
+describe('GET /api/inventory/projects/:projectKey/issues', () => {
+  // ── Helper: seed issues for a project ────────────────────────────────────
+
+  function seedProjectIssues(
+    repo: BackupPointRepository,
+    issues: Array<Partial<SimpleManifestEntry> & { objectId: string }>,
+  ): BackupPointManifestWriter {
+    const writer = seedBackupPoint(repo);
+    for (const issue of issues) {
+      writer.append(
+        makeIssueEntry({ objectType: 'JiraIssue', ...issue }),
+      );
+    }
+    return writer;
+  }
+
+  // ── Error-path tests ──────────────────────────────────────────────────────
+
+  it('returns 404 for an unknown projectKey', async () => {
+    const db = makeDb();
+    const repo = makeRepo(db);
+    seedBackupPoint(repo); // backup point exists but no issues for UNKNOWN
+    const app = makeApp(repo);
+
+    const res = await request(app)
+      .get('/api/inventory/projects/UNKNOWN/issues')
+      .set('x-cloud-id', CLOUD_ID);
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('project_not_found');
+    expect(res.body.projectKey).toBe('UNKNOWN');
+
+    console.log('[test-evidence] project-search 404:', JSON.stringify(res.body));
+    db.close();
+  });
+
+  it('returns 404 when no backup points exist', async () => {
+    const db = makeDb();
+    const repo = makeRepo(db);
+    const app = makeApp(repo);
+
+    const res = await request(app)
+      .get('/api/inventory/projects/PROJ/issues')
+      .set('x-cloud-id', CLOUD_ID);
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('project_not_found');
+
+    db.close();
+  });
+
+  it('returns 400 for invalid updatedFrom date', async () => {
+    const db = makeDb();
+    const repo = makeRepo(db);
+    seedProjectIssues(repo, [{ objectId: 'PROJ-1' }]);
+    const app = makeApp(repo);
+
+    const res = await request(app)
+      .get('/api/inventory/projects/PROJ/issues?updatedFrom=not-a-date')
+      .set('x-cloud-id', CLOUD_ID);
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('invalid_date');
+    expect(res.body.field).toBe('updatedFrom');
+
+    console.log('[test-evidence] project-search 400 updatedFrom:', JSON.stringify(res.body));
+    db.close();
+  });
+
+  it('returns 400 for invalid updatedTo date', async () => {
+    const db = makeDb();
+    const repo = makeRepo(db);
+    seedProjectIssues(repo, [{ objectId: 'PROJ-1' }]);
+    const app = makeApp(repo);
+
+    const res = await request(app)
+      .get('/api/inventory/projects/PROJ/issues?updatedTo=bad-date-value')
+      .set('x-cloud-id', CLOUD_ID);
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('invalid_date');
+    expect(res.body.field).toBe('updatedTo');
+
+    console.log('[test-evidence] project-search 400 updatedTo:', JSON.stringify(res.body));
+    db.close();
+  });
+
+  // ── Happy-path tests ──────────────────────────────────────────────────────
+
+  it('returns all project issues when no q or filters supplied', async () => {
+    const db = makeDb();
+    const repo = makeRepo(db);
+    seedProjectIssues(repo, [
+      { objectId: 'PROJ-1' },
+      { objectId: 'PROJ-2' },
+      { objectId: 'PROJ-3' },
+      { objectId: 'OTHER-1' }, // different project — should be excluded
+    ]);
+    const app = makeApp(repo);
+
+    const res = await request(app)
+      .get('/api/inventory/projects/PROJ/issues')
+      .set('x-cloud-id', CLOUD_ID);
+
+    expect(res.status).toBe(200);
+    expect(res.body.total).toBe(3);
+    expect(res.body.issues).toHaveLength(3);
+    expect(res.body.issues.every((i: { issueKey: string }) => i.issueKey.startsWith('PROJ-'))).toBe(true);
+
+    console.log('[test-evidence] project-search all:', JSON.stringify(res.body));
+    db.close();
+  });
+
+  it('exact-match mode: q matching issueKey pattern returns single issue', async () => {
+    const db = makeDb();
+    const repo = makeRepo(db);
+    seedProjectIssues(repo, [
+      { objectId: 'PROJ-1' },
+      { objectId: 'PROJ-2' },
+      { objectId: 'PROJ-100' },
+    ]);
+    const app = makeApp(repo);
+
+    const res = await request(app)
+      .get('/api/inventory/projects/PROJ/issues?q=PROJ-100')
+      .set('x-cloud-id', CLOUD_ID);
+
+    expect(res.status).toBe(200);
+    expect(res.body.total).toBe(1);
+    expect(res.body.issues[0].issueKey).toBe('PROJ-100');
+
+    console.log('[test-evidence] project-search exact-match:', JSON.stringify(res.body));
+    db.close();
+  });
+
+  it('exact-match mode: case-insensitive issueKey match', async () => {
+    const db = makeDb();
+    const repo = makeRepo(db);
+    seedProjectIssues(repo, [{ objectId: 'PROJ-42' }, { objectId: 'PROJ-43' }]);
+    const app = makeApp(repo);
+
+    const res = await request(app)
+      .get('/api/inventory/projects/PROJ/issues?q=proj-42')
+      .set('x-cloud-id', CLOUD_ID);
+
+    expect(res.status).toBe(200);
+    expect(res.body.total).toBe(1);
+    expect(res.body.issues[0].issueKey).toBe('PROJ-42');
+
+    db.close();
+  });
+
+  it('tokenised mode: AND-of-tokens summary search (case-insensitive)', async () => {
+    const db = makeDb();
+    const repo = makeRepo(db);
+
+    // Use a real backupDir with issue JSON files
+    const tmpDir = require('os').tmpdir();
+    const backupDir = require('path').join(tmpDir, `inv-test-${Date.now()}`);
+    const issueDir = require('path').join(backupDir, BP_ID, 'issues');
+    require('fs').mkdirSync(issueDir, { recursive: true });
+
+    const issues = [
+      { objectId: 'PROJ-1', summary: 'Login button broken on mobile', status: 'In Progress', issueType: 'Bug' },
+      { objectId: 'PROJ-2', summary: 'Mobile dashboard layout fix', status: 'Open', issueType: 'Task' },
+      { objectId: 'PROJ-3', summary: 'Update login page design', status: 'Done', issueType: 'Story' },
+      { objectId: 'PROJ-4', summary: 'Unrelated ticket for testing', status: 'Open', issueType: 'Task' },
+    ];
+
+    for (const issue of issues) {
+      require('fs').writeFileSync(
+        require('path').join(issueDir, `${issue.objectId}.json`),
+        JSON.stringify({
+          fields: {
+            summary: issue.summary,
+            status: { name: issue.status },
+            issuetype: { name: issue.issueType },
+          },
+        }),
+      );
+    }
+
+    seedProjectIssues(repo, issues.map((i) => ({ objectId: i.objectId })));
+    const app = makeApp(repo, backupDir);
+
+    // "login mobile" should match issues containing both "login" AND "mobile" in summary
+    const res = await request(app)
+      .get('/api/inventory/projects/PROJ/issues?q=login%20mobile')
+      .set('x-cloud-id', CLOUD_ID);
+
+    expect(res.status).toBe(200);
+    // PROJ-1 has both "login" and "mobile"; PROJ-2 has "mobile" but not "login"; PROJ-3 has "login" but not "mobile"
+    expect(res.body.total).toBe(1);
+    expect(res.body.issues[0].issueKey).toBe('PROJ-1');
+    expect(res.body.issues[0].summary).toBe('Login button broken on mobile');
+
+    console.log('[test-evidence] project-search tokenised:', JSON.stringify(res.body));
+
+    require('fs').rmSync(backupDir, { recursive: true, force: true });
+    db.close();
+  });
+
+  it('happy-path: tokenised search + filter combo (status + issueType)', async () => {
+    const db = makeDb();
+    const repo = makeRepo(db);
+
+    const tmpDir = require('os').tmpdir();
+    const backupDir = require('path').join(tmpDir, `inv-test-${Date.now()}`);
+    const issueDir = require('path').join(backupDir, BP_ID, 'issues');
+    require('fs').mkdirSync(issueDir, { recursive: true });
+
+    const issues = [
+      {
+        objectId: 'PROJ-1',
+        summary: 'Fix payment gateway timeout',
+        status: 'Open',
+        issueType: 'Bug',
+        priority: 'High',
+        assignee: { displayName: 'Alice', accountId: 'acc-alice' },
+        labels: ['payment', 'urgent'],
+        updated: '2026-01-15T10:00:00.000Z',
+      },
+      {
+        objectId: 'PROJ-2',
+        summary: 'Fix login timeout error',
+        status: 'Open',
+        issueType: 'Bug',
+        priority: 'Medium',
+        assignee: null,
+        labels: [],
+        updated: '2026-01-10T10:00:00.000Z',
+      },
+      {
+        objectId: 'PROJ-3',
+        summary: 'Add payment method selector',
+        status: 'Done',
+        issueType: 'Story',
+        priority: 'Low',
+        assignee: { displayName: 'Bob', accountId: 'acc-bob' },
+        labels: ['payment'],
+        updated: '2026-01-20T10:00:00.000Z',
+      },
+      {
+        objectId: 'PROJ-4',
+        summary: 'Fix gateway connection pool',
+        status: 'Open',
+        issueType: 'Bug',
+        priority: 'High',
+        assignee: { displayName: 'Alice', accountId: 'acc-alice' },
+        labels: ['payment', 'infra'],
+        updated: '2026-01-05T10:00:00.000Z',
+      },
+    ];
+
+    for (const issue of issues) {
+      require('fs').writeFileSync(
+        require('path').join(issueDir, `${issue.objectId}.json`),
+        JSON.stringify({
+          fields: {
+            summary: issue.summary,
+            status: { name: issue.status },
+            issuetype: { name: issue.issueType },
+            priority: { name: issue.priority },
+            assignee: issue.assignee,
+            labels: issue.labels,
+            updated: issue.updated,
+          },
+        }),
+      );
+    }
+
+    seedProjectIssues(repo, issues.map((i) => ({ objectId: i.objectId })));
+    const app = makeApp(repo, backupDir);
+
+    // q="fix" (tokenised) + status=Open + issueType=Bug
+    // Expect: PROJ-1 (fix payment gateway, Open, Bug) and PROJ-2 (fix login, Open, Bug)
+    // PROJ-3 is Story not Bug; PROJ-4 has "fix" in summary but should match
+    // Actually PROJ-4: summary "Fix gateway connection pool", status=Open, issueType=Bug → matches
+    // So: PROJ-1, PROJ-2, PROJ-4 all have "fix" + Open + Bug
+    const res = await request(app)
+      .get('/api/inventory/projects/PROJ/issues?q=fix&status=Open&issueType=Bug')
+      .set('x-cloud-id', CLOUD_ID);
+
+    expect(res.status).toBe(200);
+    expect(res.body.total).toBe(3);
+    const keys = res.body.issues.map((i: { issueKey: string }) => i.issueKey).sort();
+    expect(keys).toEqual(['PROJ-1', 'PROJ-2', 'PROJ-4']);
+
+    console.log('[test-evidence] project-search tokenised+filter:', JSON.stringify(res.body));
+
+    require('fs').rmSync(backupDir, { recursive: true, force: true });
+    db.close();
+  });
+
+  it('filter: priority + assigneeAccountId', async () => {
+    const db = makeDb();
+    const repo = makeRepo(db);
+
+    const tmpDir = require('os').tmpdir();
+    const backupDir = require('path').join(tmpDir, `inv-test-${Date.now()}`);
+    const issueDir = require('path').join(backupDir, BP_ID, 'issues');
+    require('fs').mkdirSync(issueDir, { recursive: true });
+
+    const issues = [
+      { objectId: 'PROJ-1', priority: 'High', assigneeAccountId: 'acc-alice' },
+      { objectId: 'PROJ-2', priority: 'High', assigneeAccountId: 'acc-bob' },
+      { objectId: 'PROJ-3', priority: 'Low', assigneeAccountId: 'acc-alice' },
+    ];
+
+    for (const issue of issues) {
+      require('fs').writeFileSync(
+        require('path').join(issueDir, `${issue.objectId}.json`),
+        JSON.stringify({
+          fields: {
+            priority: { name: issue.priority },
+            assignee: { accountId: issue.assigneeAccountId, displayName: issue.assigneeAccountId },
+          },
+        }),
+      );
+    }
+
+    seedProjectIssues(repo, issues.map((i) => ({ objectId: i.objectId })));
+    const app = makeApp(repo, backupDir);
+
+    const res = await request(app)
+      .get('/api/inventory/projects/PROJ/issues?priority=High&assigneeAccountId=acc-alice')
+      .set('x-cloud-id', CLOUD_ID);
+
+    expect(res.status).toBe(200);
+    expect(res.body.total).toBe(1);
+    expect(res.body.issues[0].issueKey).toBe('PROJ-1');
+
+    require('fs').rmSync(backupDir, { recursive: true, force: true });
+    db.close();
+  });
+
+  it('filter: labels (repeatable, AND semantics)', async () => {
+    const db = makeDb();
+    const repo = makeRepo(db);
+
+    const tmpDir = require('os').tmpdir();
+    const backupDir = require('path').join(tmpDir, `inv-test-${Date.now()}`);
+    const issueDir = require('path').join(backupDir, BP_ID, 'issues');
+    require('fs').mkdirSync(issueDir, { recursive: true });
+
+    const issues = [
+      { objectId: 'PROJ-1', labels: ['payment', 'urgent'] },
+      { objectId: 'PROJ-2', labels: ['payment'] },
+      { objectId: 'PROJ-3', labels: ['urgent'] },
+    ];
+
+    for (const issue of issues) {
+      require('fs').writeFileSync(
+        require('path').join(issueDir, `${issue.objectId}.json`),
+        JSON.stringify({ fields: { labels: issue.labels } }),
+      );
+    }
+
+    seedProjectIssues(repo, issues.map((i) => ({ objectId: i.objectId })));
+    const app = makeApp(repo, backupDir);
+
+    // Both labels must be present
+    const res = await request(app)
+      .get('/api/inventory/projects/PROJ/issues?labels=payment&labels=urgent')
+      .set('x-cloud-id', CLOUD_ID);
+
+    expect(res.status).toBe(200);
+    expect(res.body.total).toBe(1);
+    expect(res.body.issues[0].issueKey).toBe('PROJ-1');
+
+    require('fs').rmSync(backupDir, { recursive: true, force: true });
+    db.close();
+  });
+
+  it('filter: updatedFrom + updatedTo date range', async () => {
+    const db = makeDb();
+    const repo = makeRepo(db);
+
+    const tmpDir = require('os').tmpdir();
+    const backupDir = require('path').join(tmpDir, `inv-test-${Date.now()}`);
+    const issueDir = require('path').join(backupDir, BP_ID, 'issues');
+    require('fs').mkdirSync(issueDir, { recursive: true });
+
+    const issues = [
+      { objectId: 'PROJ-1', updated: '2026-01-05T00:00:00.000Z' },
+      { objectId: 'PROJ-2', updated: '2026-01-15T00:00:00.000Z' },
+      { objectId: 'PROJ-3', updated: '2026-01-25T00:00:00.000Z' },
+    ];
+
+    for (const issue of issues) {
+      require('fs').writeFileSync(
+        require('path').join(issueDir, `${issue.objectId}.json`),
+        JSON.stringify({ fields: { updated: issue.updated } }),
+      );
+    }
+
+    seedProjectIssues(repo, issues.map((i) => ({ objectId: i.objectId })));
+    const app = makeApp(repo, backupDir);
+
+    const res = await request(app)
+      .get('/api/inventory/projects/PROJ/issues?updatedFrom=2026-01-10T00:00:00.000Z&updatedTo=2026-01-20T00:00:00.000Z')
+      .set('x-cloud-id', CLOUD_ID);
+
+    expect(res.status).toBe(200);
+    expect(res.body.total).toBe(1);
+    expect(res.body.issues[0].issueKey).toBe('PROJ-2');
+
+    require('fs').rmSync(backupDir, { recursive: true, force: true });
+    db.close();
+  });
+
+  it('emits [inventory-search] structured log with correct fields', async () => {
+    const db = makeDb();
+    const repo = makeRepo(db);
+    seedProjectIssues(repo, [{ objectId: 'PROJ-1' }, { objectId: 'PROJ-2' }]);
+    const app = makeApp(repo);
+
+    const logLines: string[] = [];
+    const origLog = console.log;
+    console.log = (...args: unknown[]) => {
+      logLines.push(args.join(' '));
+      origLog(...args);
+    };
+
+    try {
+      await request(app)
+        .get('/api/inventory/projects/PROJ/issues')
+        .set('x-cloud-id', CLOUD_ID);
+    } finally {
+      console.log = origLog;
+    }
+
+    const inventoryLog = logLines.find((l) => l.includes('[inventory-search]'));
+    expect(inventoryLog).toBeDefined();
+    expect(inventoryLog).toContain('project=PROJ');
+    expect(inventoryLog).toContain('mode=');
+    expect(inventoryLog).toContain('filters=');
+    expect(inventoryLog).toContain('hits=2');
+
+    console.log('[test-evidence] project-search log line:', inventoryLog);
+    db.close();
+  });
+
+  it('paginates results with offset + limit', async () => {
+    const db = makeDb();
+    const repo = makeRepo(db);
+    seedProjectIssues(repo, [
+      { objectId: 'PROJ-1' },
+      { objectId: 'PROJ-2' },
+      { objectId: 'PROJ-3' },
+      { objectId: 'PROJ-4' },
+      { objectId: 'PROJ-5' },
+    ]);
+    const app = makeApp(repo);
+
+    const page1 = await request(app)
+      .get('/api/inventory/projects/PROJ/issues?offset=0&limit=2')
+      .set('x-cloud-id', CLOUD_ID);
+    expect(page1.status).toBe(200);
+    expect(page1.body.total).toBe(5);
+    expect(page1.body.issues).toHaveLength(2);
+
+    const page2 = await request(app)
+      .get('/api/inventory/projects/PROJ/issues?offset=4&limit=2')
+      .set('x-cloud-id', CLOUD_ID);
+    expect(page2.status).toBe(200);
+    expect(page2.body.issues).toHaveLength(1);
+
+    db.close();
+  });
+
+  it('returns 401 when x-cloud-id header is missing', async () => {
+    const db = makeDb();
+    const repo = makeRepo(db);
+
+    const app = express();
+    app.use(express.json());
+    const router = createInventoryRouter(repo, { allowUnauthenticated: false });
+    app.use('/api', router);
+
+    const res = await request(app).get('/api/inventory/projects/PROJ/issues');
+    expect(res.status).toBe(401);
+
+    db.close();
+  });
+});

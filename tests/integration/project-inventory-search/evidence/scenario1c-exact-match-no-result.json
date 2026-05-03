@@ -1,0 +1,7 @@
+{
+  "description": "Exact-match: issueKey not in project returns empty result set",
+  "scenario": "1c",
+  "query": "SEARCH-999",
+  "total": 0,
+  "timestamp": "2026-05-03T17:01:30.892Z"
+}

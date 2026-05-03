@@ -1,0 +1,19 @@
+{
+  "description": "Filter: labels=urgent + labels=payment (AND) returns only SEARCH-4 (has both)",
+  "scenario": "3e-multi",
+  "filter": {
+    "labels": [
+      "urgent",
+      "payment"
+    ]
+  },
+  "total": 1,
+  "issueKeys": [
+    "SEARCH-4"
+  ],
+  "assertions": [
+    "SEARCH-4 returned — has both \"urgent\" and \"payment\"",
+    "SEARCH-1 excluded — has \"urgent\" but NOT \"payment\""
+  ],
+  "timestamp": "2026-05-03T17:01:31.087Z"
+}

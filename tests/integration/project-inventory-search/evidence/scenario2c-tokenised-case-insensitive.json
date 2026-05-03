@@ -1,0 +1,8 @@
+{
+  "description": "Tokenised search is case-insensitive: \"LOGIN BUG\" (uppercase) matches same issue as \"login bug\"",
+  "scenario": "2c",
+  "query": "LOGIN BUG",
+  "total": 1,
+  "issueKey": "SEARCH-1",
+  "timestamp": "2026-05-03T17:01:30.958Z"
+}

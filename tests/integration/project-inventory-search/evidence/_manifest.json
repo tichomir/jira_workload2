@@ -1,0 +1,298 @@
+{
+  "sprint": "Sprint 10 — Project Inventory Search, Filters & Phase Wrap",
+  "generatedAt": "2026-05-03T17:01:31.435Z",
+  "totalArtefacts": 23,
+  "dodCoverage": [
+    "Exact-match: valid issueKey query returns exactly that single row",
+    "Exact-match: case-insensitive (search-1 finds SEARCH-1)",
+    "Tokenised: \"login bug\" (AND) returns only SEARCH-1 — only issue with both tokens in summary",
+    "Tokenised: single token \"login\" returns all matching summaries",
+    "Tokenised: case-insensitive (uppercase tokens match same results)",
+    "Filter status: status=Open narrows to 2 issues",
+    "Filter issueType: issueType=Bug narrows to 2 issues",
+    "Filter priority: priority=High narrows to 2 issues",
+    "Filter assigneeAccountId: acc-alice returns 2 issues",
+    "Filter labels (single): urgent returns 2 issues",
+    "Filter labels (multi/AND): urgent+payment returns 1 issue only",
+    "Filter date range: updatedFrom+updatedTo returns only in-range issues",
+    "Combined: status=Open + issueType=Bug ANDs correctly",
+    "Combined: priority + assignee intersection yields single issue",
+    "Combined: tokenised q + two filters combined",
+    "Combined: incompatible filter combo returns empty set",
+    "Invalid date: updatedFrom=not-a-date returns HTTP 400 (UI surfaces error state)",
+    "Invalid date: updatedTo=bad-date-value returns HTTP 400",
+    "Valid date range returns 200 with correct results",
+    "Clear-all: no-filter request after filtered request returns full 5-issue set",
+    "Incremental filter removal broadens result set back to full",
+    "[inventory-search] log line emitted per request with project/mode/filters/hits fields"
+  ],
+  "seedFixture": {
+    "projectKey": "SEARCH",
+    "cloudId": "cloud-sprint10-search",
+    "backupPointId": "bp-sprint10-001",
+    "issues": [
+      {
+        "objectId": "SEARCH-1",
+        "summary": "Login bug on mobile",
+        "status": "Open",
+        "issueType": "Bug",
+        "priority": "High",
+        "assigneeAccountId": "acc-alice",
+        "labels": [
+          "urgent",
+          "frontend"
+        ],
+        "updated": "2026-03-01T00:00:00.000Z"
+      },
+      {
+        "objectId": "SEARCH-2",
+        "summary": "Mobile dashboard layout fix",
+        "status": "In Progress",
+        "issueType": "Task",
+        "priority": "Medium",
+        "assigneeAccountId": "acc-bob",
+        "labels": [
+          "frontend"
+        ],
+        "updated": "2026-03-10T00:00:00.000Z"
+      },
+      {
+        "objectId": "SEARCH-3",
+        "summary": "Login page redesign story",
+        "status": "Done",
+        "issueType": "Story",
+        "priority": "Low",
+        "assigneeAccountId": "acc-alice",
+        "labels": [
+          "ui"
+        ],
+        "updated": "2026-03-15T00:00:00.000Z"
+      },
+      {
+        "objectId": "SEARCH-4",
+        "summary": "Fix payment gateway timeout",
+        "status": "Open",
+        "issueType": "Bug",
+        "priority": "High",
+        "assigneeAccountId": "acc-charlie",
+        "labels": [
+          "payment",
+          "urgent"
+        ],
+        "updated": "2026-03-20T00:00:00.000Z"
+      },
+      {
+        "objectId": "SEARCH-5",
+        "summary": "Update API documentation",
+        "status": "Done",
+        "issueType": "Task",
+        "priority": "Low",
+        "assigneeAccountId": "acc-bob",
+        "labels": [
+          "docs"
+        ],
+        "updated": "2026-03-25T00:00:00.000Z"
+      }
+    ]
+  },
+  "artefacts": [
+    {
+      "file": "scenario1a-exact-match.json",
+      "scenario": "1a",
+      "description": "Exact-match search: querying issueKey SEARCH-1 returns only that row",
+      "assertions": [
+        "total === 1",
+        "issues[0].issueKey === \"SEARCH-1\"",
+        "issues[0].summary === \"Login bug on mobile\""
+      ],
+      "capturedAt": "2026-05-03T17:01:30.836Z"
+    },
+    {
+      "file": "scenario1b-exact-match-case-insensitive.json",
+      "scenario": "1b",
+      "description": "Exact-match is case-insensitive: search-1 (lowercase) finds SEARCH-1",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T17:01:30.861Z"
+    },
+    {
+      "file": "scenario1c-exact-match-no-result.json",
+      "scenario": "1c",
+      "description": "Exact-match: issueKey not in project returns empty result set",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T17:01:30.892Z"
+    },
+    {
+      "file": "scenario2a-tokenised-login-bug.json",
+      "scenario": "2a",
+      "description": "Tokenised search \"login bug\": AND semantics — only SEARCH-1 summary contains both tokens",
+      "assertions": [
+        "total === 1",
+        "SEARCH-1 returned — \"Login bug on mobile\" contains both \"login\" and \"bug\"",
+        "SEARCH-3 excluded — \"Login page redesign story\" contains \"login\" but not \"bug\"",
+        "SEARCH-2/4/5 excluded — contain neither token"
+      ],
+      "capturedAt": "2026-05-03T17:01:30.928Z"
+    },
+    {
+      "file": "scenario2b-tokenised-single-login.json",
+      "scenario": "2b",
+      "description": "Tokenised single-token \"login\" returns both summaries containing \"login\"",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T17:01:30.944Z"
+    },
+    {
+      "file": "scenario2c-tokenised-case-insensitive.json",
+      "scenario": "2c",
+      "description": "Tokenised search is case-insensitive: \"LOGIN BUG\" (uppercase) matches same issue as \"login bug\"",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T17:01:30.958Z"
+    },
+    {
+      "file": "scenario3a-filter-status.json",
+      "scenario": "3a",
+      "description": "Filter: status=Open narrows to SEARCH-1 and SEARCH-4",
+      "assertions": [
+        "total === 2",
+        "SEARCH-1 and SEARCH-4 returned (both Open)"
+      ],
+      "capturedAt": "2026-05-03T17:01:30.986Z"
+    },
+    {
+      "file": "scenario3b-filter-issue-type.json",
+      "scenario": "3b",
+      "description": "Filter: issueType=Bug narrows to SEARCH-1 and SEARCH-4",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T17:01:31.020Z"
+    },
+    {
+      "file": "scenario3c-filter-priority.json",
+      "scenario": "3c",
+      "description": "Filter: priority=High narrows to SEARCH-1 and SEARCH-4",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T17:01:31.036Z"
+    },
+    {
+      "file": "scenario3d-filter-assignee.json",
+      "scenario": "3d",
+      "description": "Filter: assigneeAccountId=acc-alice returns SEARCH-1 and SEARCH-3",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T17:01:31.051Z"
+    },
+    {
+      "file": "scenario3e-single-label.json",
+      "scenario": "3e-single",
+      "description": "Filter: labels=urgent returns SEARCH-1 and SEARCH-4",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T17:01:31.068Z"
+    },
+    {
+      "file": "scenario3e-multi-label.json",
+      "scenario": "3e-multi",
+      "description": "Filter: labels=urgent + labels=payment (AND) returns only SEARCH-4 (has both)",
+      "assertions": [
+        "SEARCH-4 returned — has both \"urgent\" and \"payment\"",
+        "SEARCH-1 excluded — has \"urgent\" but NOT \"payment\""
+      ],
+      "capturedAt": "2026-05-03T17:01:31.087Z"
+    },
+    {
+      "file": "scenario3f-filter-date-range.json",
+      "scenario": "3f",
+      "description": "Filter: updatedFrom=2026-03-12 + updatedTo=2026-03-22 returns SEARCH-3 and SEARCH-4",
+      "assertions": [
+        "SEARCH-3 (2026-03-15) in range ✓",
+        "SEARCH-4 (2026-03-20) in range ✓",
+        "SEARCH-1 (2026-03-01) before range ✗",
+        "SEARCH-5 (2026-03-25) after range ✗"
+      ],
+      "capturedAt": "2026-05-03T17:01:31.115Z"
+    },
+    {
+      "file": "scenario4a-combined-status-type.json",
+      "scenario": "4a",
+      "description": "Combined: status=Open + issueType=Bug → SEARCH-1 and SEARCH-4 (both Open Bugs)",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T17:01:31.142Z"
+    },
+    {
+      "file": "scenario4b-combined-priority-assignee.json",
+      "scenario": "4b",
+      "description": "Combined: priority=High + assigneeAccountId=acc-alice → only SEARCH-1",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T17:01:31.158Z"
+    },
+    {
+      "file": "scenario4c-combined-search-plus-filters.json",
+      "scenario": "4c",
+      "description": "Combined: q=fix + status=Open + issueType=Bug → only SEARCH-4",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T17:01:31.176Z"
+    },
+    {
+      "file": "scenario4d-combined-empty-intersection.json",
+      "scenario": "4d",
+      "description": "Combined: status=Done + issueType=Bug → empty (no Done Bugs in seed)",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T17:01:31.207Z"
+    },
+    {
+      "file": "scenario5a-invalid-updated-from.json",
+      "scenario": "5a",
+      "description": "Invalid updatedFrom date: API returns 400 invalid_date (UI surfaces error state)",
+      "assertions": [
+        "status === 400",
+        "body.error === \"invalid_date\"",
+        "body.field === \"updatedFrom\""
+      ],
+      "capturedAt": "2026-05-03T17:01:31.231Z"
+    },
+    {
+      "file": "scenario5b-invalid-updated-to.json",
+      "scenario": "5b",
+      "description": "Invalid updatedTo date: API returns 400 invalid_date",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T17:01:31.247Z"
+    },
+    {
+      "file": "scenario5c-valid-date-range.json",
+      "scenario": "5c",
+      "description": "Valid ISO 8601 date range returns 200 and narrows results correctly",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T17:01:31.263Z"
+    },
+    {
+      "file": "scenario6a-clear-all-resets-state.json",
+      "scenario": "6a",
+      "description": "Clear-all: removing all filter params resets table to full unfiltered 5-issue result set",
+      "assertions": [
+        "filtered total === 2 (only Open issues)",
+        "cleared total === 5 (all issues returned)",
+        "all 5 issue keys present after clear"
+      ],
+      "capturedAt": "2026-05-03T17:01:31.294Z"
+    },
+    {
+      "file": "scenario6b-incremental-filter-removal.json",
+      "scenario": "6b",
+      "description": "Incrementally removing filters broadens results back to full set",
+      "assertions": "(see file)",
+      "capturedAt": "2026-05-03T17:01:31.323Z"
+    },
+    {
+      "file": "scenario7a-inventory-search-log-capture.json",
+      "scenario": "7a",
+      "description": "[inventory-search] log line emitted on every project-issues request with correct fields",
+      "assertions": [
+        "[inventory-search] prefix present on every request",
+        "project=SEARCH in all lines",
+        "mode=tokenised for non-issueKey queries",
+        "mode=exact for issueKey pattern queries",
+        "filters=0 when no filter params supplied",
+        "filters=1 when one filter param supplied",
+        "hits=5 for unfiltered full set",
+        "hits=1 for exact SEARCH-1 query"
+      ],
+      "capturedAt": "2026-05-03T17:01:31.390Z"
+    }
+  ]
+}

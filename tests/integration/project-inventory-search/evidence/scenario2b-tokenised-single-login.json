@@ -1,0 +1,11 @@
+{
+  "description": "Tokenised single-token \"login\" returns both summaries containing \"login\"",
+  "scenario": "2b",
+  "query": "login",
+  "total": 2,
+  "issueKeys": [
+    "SEARCH-1",
+    "SEARCH-3"
+  ],
+  "timestamp": "2026-05-03T17:01:30.944Z"
+}

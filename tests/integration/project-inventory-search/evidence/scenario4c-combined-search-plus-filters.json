@@ -1,0 +1,14 @@
+{
+  "description": "Combined: q=fix + status=Open + issueType=Bug → only SEARCH-4",
+  "scenario": "4c",
+  "query": "fix",
+  "filters": {
+    "status": "Open",
+    "issueType": "Bug"
+  },
+  "total": 1,
+  "issueKeys": [
+    "SEARCH-4"
+  ],
+  "timestamp": "2026-05-03T17:01:31.176Z"
+}

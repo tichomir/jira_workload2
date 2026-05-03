@@ -1,0 +1,13 @@
+{
+  "description": "Combined: priority=High + assigneeAccountId=acc-alice → only SEARCH-1",
+  "scenario": "4b",
+  "filters": {
+    "priority": "High",
+    "assigneeAccountId": "acc-alice"
+  },
+  "total": 1,
+  "issueKeys": [
+    "SEARCH-1"
+  ],
+  "timestamp": "2026-05-03T17:01:31.158Z"
+}

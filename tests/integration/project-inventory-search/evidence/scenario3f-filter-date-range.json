@@ -1,0 +1,20 @@
+{
+  "description": "Filter: updatedFrom=2026-03-12 + updatedTo=2026-03-22 returns SEARCH-3 and SEARCH-4",
+  "scenario": "3f",
+  "filter": {
+    "updatedFrom": "2026-03-12T00:00:00.000Z",
+    "updatedTo": "2026-03-22T00:00:00.000Z"
+  },
+  "total": 2,
+  "issueKeys": [
+    "SEARCH-3",
+    "SEARCH-4"
+  ],
+  "assertions": [
+    "SEARCH-3 (2026-03-15) in range ✓",
+    "SEARCH-4 (2026-03-20) in range ✓",
+    "SEARCH-1 (2026-03-01) before range ✗",
+    "SEARCH-5 (2026-03-25) after range ✗"
+  ],
+  "timestamp": "2026-05-03T17:01:31.115Z"
+}

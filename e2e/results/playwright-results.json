@@ -59,20 +59,20 @@
   },
   "suites": [
     {
-      "title": "sprint9-inventory-ui.spec.ts",
-      "file": "sprint9-inventory-ui.spec.ts",
+      "title": "sprint10-project-inventory-search.spec.ts",
+      "file": "sprint10-project-inventory-search.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Sprint 9 — Scenario 1: Sidebar counts & default selection",
-          "file": "sprint9-inventory-ui.spec.ts",
-          "line": 286,
+          "title": "Sprint 10 — Scenario 1: Exact-match search by issueKey",
+          "file": "sprint10-project-inventory-search.spec.ts",
+          "line": 259,
           "column": 6,
           "specs": [
             {
-              "title": "(1a) GET /api/inventory/summary returns counts matching seed data",
+              "title": "(1a) exact issueKey SEARCH-1 returns exactly that single row",
               "ok": true,
               "tags": [],
               "tests": [
@@ -87,58 +87,31 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 41,
+                      "duration": 42,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-1 status=ok\n"
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-1 status=ok\n"
                         },
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-2 status=ok\n"
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-2 status=ok\n"
                         },
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-3 status=ok\n"
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-3 status=ok\n"
                         },
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-4 status=ok\n"
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-4 status=ok\n"
                         },
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-5 status=error\n"
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-5 status=ok\n"
                         },
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraProject objectId=project-alpha-id status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraProject objectId=project-beta-id status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraBoard objectId=board-001 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraBoard objectId=board-002 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraBoard objectId=board-003 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraSprint objectId=sprint-001 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraSprint objectId=sprint-002 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraSprint objectId=sprint-003 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraSprint objectId=sprint-004 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-inventory] summary op=get backupPointId=bp-sprint9-001 issueCount=5 projectCount=2 boardCount=3 sprintCount=4 outcome=ok\n"
+                          "text": "[inventory-search] project=SEARCH mode=exact filters=0 hits=1\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T16:43:50.524Z",
+                      "startTime": "2026-05-03T17:01:30.776Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -146,13 +119,13 @@
                   "status": "expected"
                 }
               ],
-              "id": "92518313b9c292eabedf-9c6e3df6208d92838cd0",
-              "file": "sprint9-inventory-ui.spec.ts",
-              "line": 296,
+              "id": "9175be09c9b470793fb3-d502d1876c78d1f0b5c6",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 269,
               "column": 7
             },
             {
-              "title": "(1b) All four object types are present — sidebar renders 4 rows",
+              "title": "(1b) exact issueKey match is case-insensitive (search-1 finds SEARCH-1)",
               "ok": true,
               "tags": [],
               "tests": [
@@ -167,16 +140,16 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 15,
+                      "duration": 26,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[jira-inventory] summary op=get backupPointId=bp-sprint9-001 issueCount=5 projectCount=2 boardCount=3 sprintCount=4 outcome=ok\n"
+                          "text": "[inventory-search] project=SEARCH mode=exact filters=0 hits=1\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T16:43:50.601Z",
+                      "startTime": "2026-05-03T17:01:30.853Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -184,13 +157,13 @@
                   "status": "expected"
                 }
               ],
-              "id": "92518313b9c292eabedf-3fa158ba167619835703",
-              "file": "sprint9-inventory-ui.spec.ts",
-              "line": 334,
+              "id": "9175be09c9b470793fb3-354ff84b627817fe20d4",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 297,
               "column": 7
             },
             {
-              "title": "(1c) Default selection is Issues — issues endpoint returns data on initial load",
+              "title": "(1c) exact issueKey not in project returns empty",
               "ok": true,
               "tags": [],
               "tests": [
@@ -205,16 +178,16 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 27,
+                      "duration": 18,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[jira-inventory] issues op=list backupPointId=bp-sprint9-001 total=5 returned=5 offset=0 limit=50 outcome=ok\n"
+                          "text": "[inventory-search] project=SEARCH mode=exact filters=0 hits=0\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T16:43:50.621Z",
+                      "startTime": "2026-05-03T17:01:30.885Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -222,139 +195,21 @@
                   "status": "expected"
                 }
               ],
-              "id": "92518313b9c292eabedf-d3f9beedec4711c9f9a2",
-              "file": "sprint9-inventory-ui.spec.ts",
-              "line": 354,
+              "id": "9175be09c9b470793fb3-1018b600ee4f8120e548",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 316,
               "column": 7
             }
           ]
         },
         {
-          "title": "Sprint 9 — Scenario 2: Issues table 8-column shape",
-          "file": "sprint9-inventory-ui.spec.ts",
-          "line": 392,
+          "title": "Sprint 10 — Scenario 2: Tokenised summary search",
+          "file": "sprint10-project-inventory-search.spec.ts",
+          "line": 338,
           "column": 6,
           "specs": [
             {
-              "title": "(2a) API returns all 8 column fields for each issue row",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "api",
-                  "projectName": "api",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 23,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-1 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-2 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-3 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-4 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-5 status=error\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraProject objectId=project-alpha-id status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraProject objectId=project-beta-id status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraBoard objectId=board-001 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraBoard objectId=board-002 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraBoard objectId=board-003 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraSprint objectId=sprint-001 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraSprint objectId=sprint-002 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraSprint objectId=sprint-003 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraSprint objectId=sprint-004 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-inventory] issues op=list backupPointId=bp-sprint9-001 total=5 returned=5 offset=0 limit=50 outcome=ok\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-03T16:43:50.659Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "92518313b9c292eabedf-593f5c533521ecbe7075",
-              "file": "sprint9-inventory-ui.spec.ts",
-              "line": 402,
-              "column": 7
-            },
-            {
-              "title": "(2b) issueStatus and platformStatus are distinct fields — \"Issue Status\" vs \"Status\"",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "api",
-                  "projectName": "api",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 14,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "[jira-inventory] issues op=list backupPointId=bp-sprint9-001 total=5 returned=5 offset=0 limit=50 outcome=ok\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-03T16:43:50.693Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "92518313b9c292eabedf-66893a331a4b9c4cdaa6",
-              "file": "sprint9-inventory-ui.spec.ts",
-              "line": 468,
-              "column": 7
-            },
-            {
-              "title": "(2c) platformStatus maps ok → \"protected\" and error → \"error\"",
+              "title": "(2a) \"login bug\" returns only SEARCH-1 (summary contains both tokens)",
               "ok": true,
               "tags": [],
               "tests": [
@@ -373,12 +228,27 @@
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[jira-inventory] issues op=list backupPointId=bp-sprint9-001 total=5 returned=5 offset=0 limit=50 outcome=ok\n"
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-1 status=ok\n"
+                        },
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-2 status=ok\n"
+                        },
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-3 status=ok\n"
+                        },
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-4 status=ok\n"
+                        },
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-5 status=ok\n"
+                        },
+                        {
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=0 hits=1\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T16:43:50.710Z",
+                      "startTime": "2026-05-03T17:01:30.913Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -386,21 +256,97 @@
                   "status": "expected"
                 }
               ],
-              "id": "92518313b9c292eabedf-6ccdf08de143a5a94ec9",
-              "file": "sprint9-inventory-ui.spec.ts",
-              "line": 518,
+              "id": "9175be09c9b470793fb3-4a77c21d5ca603a46c2c",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 348,
+              "column": 7
+            },
+            {
+              "title": "(2b) single-token \"login\" returns all issues with \"login\" in summary",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=0 hits=2\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T17:01:30.938Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9175be09c9b470793fb3-8f6f75a21ca0c8411da5",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 384,
+              "column": 7
+            },
+            {
+              "title": "(2c) tokenised search is case-insensitive — \"LOGIN BUG\" matches same as \"login bug\"",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=0 hits=1\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T17:01:30.952Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9175be09c9b470793fb3-54825d16e4f8564f5a5d",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 406,
               "column": 7
             }
           ]
         },
         {
-          "title": "Sprint 9 — Scenario 3: Global Search typed result cards",
-          "file": "sprint9-inventory-ui.spec.ts",
-          "line": 561,
+          "title": "Sprint 10 — Scenario 3: Filter dimensions",
+          "file": "sprint10-project-inventory-search.spec.ts",
+          "line": 429,
           "column": 6,
           "specs": [
             {
-              "title": "(3a) Search \"alpha\" returns at least one JiraProject card",
+              "title": "(3a) status=Open returns only Open issues",
               "ok": true,
               "tags": [],
               "tests": [
@@ -415,58 +361,31 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 41,
+                      "duration": 30,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-1 status=ok\n"
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-1 status=ok\n"
                         },
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-2 status=ok\n"
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-2 status=ok\n"
                         },
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-3 status=ok\n"
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-3 status=ok\n"
                         },
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-4 status=ok\n"
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-4 status=ok\n"
                         },
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-5 status=error\n"
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-5 status=ok\n"
                         },
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraProject objectId=project-alpha-id status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraProject objectId=project-beta-id status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraBoard objectId=board-001 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraBoard objectId=board-002 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraBoard objectId=board-003 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraSprint objectId=sprint-001 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraSprint objectId=sprint-002 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraSprint objectId=sprint-003 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraSprint objectId=sprint-004 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-inventory] search op=search backupPointId=bp-sprint9-001 q=\"alpha\" results=8 outcome=ok\n"
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=1 hits=2\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T16:43:50.732Z",
+                      "startTime": "2026-05-03T17:01:30.973Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -474,13 +393,13 @@
                   "status": "expected"
                 }
               ],
-              "id": "92518313b9c292eabedf-549f64f15a4049338325",
-              "file": "sprint9-inventory-ui.spec.ts",
-              "line": 571,
+              "id": "9175be09c9b470793fb3-9b4946c3fea418724886",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 439,
               "column": 7
             },
             {
-              "title": "(3b) Search \"alpha\" returns at least one JiraBoard card",
+              "title": "(3b) issueType=Bug returns only Bug issues",
               "ok": true,
               "tags": [],
               "tests": [
@@ -495,16 +414,16 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 9,
+                      "duration": 10,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[jira-inventory] search op=search backupPointId=bp-sprint9-001 q=\"alpha\" results=8 outcome=ok\n"
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=1 hits=2\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T16:43:50.783Z",
+                      "startTime": "2026-05-03T17:01:31.014Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -512,13 +431,89 @@
                   "status": "expected"
                 }
               ],
-              "id": "92518313b9c292eabedf-a4325e39dbaa1ca52401",
-              "file": "sprint9-inventory-ui.spec.ts",
-              "line": 601,
+              "id": "9175be09c9b470793fb3-5b96d8801a0364a89f7e",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 461,
               "column": 7
             },
             {
-              "title": "(3c) Search \"alpha\" returns at least one JiraSprint card",
+              "title": "(3c) priority=High returns only High priority issues",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=1 hits=2\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T17:01:31.029Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9175be09c9b470793fb3-4e31a1be532f53d1ce5f",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 482,
+              "column": 7
+            },
+            {
+              "title": "(3d) assigneeAccountId=acc-alice returns SEARCH-1 and SEARCH-3",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=1 hits=2\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T17:01:31.045Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9175be09c9b470793fb3-a6858fdc63d4d344f640",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 503,
+              "column": 7
+            },
+            {
+              "title": "(3e-single) labels=urgent returns SEARCH-1 and SEARCH-4",
               "ok": true,
               "tags": [],
               "tests": [
@@ -537,12 +532,12 @@
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[jira-inventory] search op=search backupPointId=bp-sprint9-001 q=\"alpha\" results=8 outcome=ok\n"
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=1 hits=2\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T16:43:50.797Z",
+                      "startTime": "2026-05-03T17:01:31.062Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -550,13 +545,13 @@
                   "status": "expected"
                 }
               ],
-              "id": "92518313b9c292eabedf-f6d9f81e342633cd5f05",
-              "file": "sprint9-inventory-ui.spec.ts",
-              "line": 629,
+              "id": "9175be09c9b470793fb3-195342f137283702fe24",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 524,
               "column": 7
             },
             {
-              "title": "(3d) Each search card carries the correct shape { type, id, displayName, lastBackupAt }",
+              "title": "(3e-multi) labels=urgent&labels=payment AND-filters to only SEARCH-4",
               "ok": true,
               "tags": [],
               "tests": [
@@ -571,16 +566,16 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 27,
+                      "duration": 24,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[jira-inventory] search op=search backupPointId=bp-sprint9-001 q=\"alpha\" results=8 outcome=ok\n"
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=2 hits=1\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T16:43:50.816Z",
+                      "startTime": "2026-05-03T17:01:31.081Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -588,21 +583,59 @@
                   "status": "expected"
                 }
               ],
-              "id": "92518313b9c292eabedf-b4f586213408fe33e978",
-              "file": "sprint9-inventory-ui.spec.ts",
-              "line": 656,
+              "id": "9175be09c9b470793fb3-16ae0cf9bf200cae7535",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 545,
+              "column": 7
+            },
+            {
+              "title": "(3f) updatedFrom + updatedTo date range returns only in-range issues",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=2 hits=2\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T17:01:31.108Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9175be09c9b470793fb3-207bf99f1fc9bfdb4195",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 570,
               "column": 7
             }
           ]
         },
         {
-          "title": "Sprint 9 — Scenario 4: Navigation route contract",
-          "file": "sprint9-inventory-ui.spec.ts",
-          "line": 689,
+          "title": "Sprint 10 — Scenario 4: Combined filters AND together",
+          "file": "sprint10-project-inventory-search.spec.ts",
+          "line": 612,
           "column": 6,
           "specs": [
             {
-              "title": "(4a) JiraProject card id maps to /inventory/projects/<id> route",
+              "title": "(4a) status=Open + issueType=Bug ANDs to SEARCH-1 and SEARCH-4",
               "ok": true,
               "tags": [],
               "tests": [
@@ -617,58 +650,31 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 19,
+                      "duration": 12,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-1 status=ok\n"
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-1 status=ok\n"
                         },
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-2 status=ok\n"
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-2 status=ok\n"
                         },
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-3 status=ok\n"
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-3 status=ok\n"
                         },
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-4 status=ok\n"
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-4 status=ok\n"
                         },
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraIssue objectId=ALPHA-5 status=error\n"
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-5 status=ok\n"
                         },
                         {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraProject objectId=project-alpha-id status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraProject objectId=project-beta-id status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraBoard objectId=board-001 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraBoard objectId=board-002 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraBoard objectId=board-003 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraSprint objectId=sprint-001 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraSprint objectId=sprint-002 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraSprint objectId=sprint-003 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-manifest] append backupPointId=bp-sprint9-001 objectType=JiraSprint objectId=sprint-004 status=ok\n"
-                        },
-                        {
-                          "text": "[jira-inventory] search op=search backupPointId=bp-sprint9-001 q=\"alpha\" results=8 outcome=ok\n"
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=2 hits=2\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T16:43:50.852Z",
+                      "startTime": "2026-05-03T17:01:31.129Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -676,13 +682,13 @@
                   "status": "expected"
                 }
               ],
-              "id": "92518313b9c292eabedf-c5bc0abde3b320aa8914",
-              "file": "sprint9-inventory-ui.spec.ts",
-              "line": 699,
+              "id": "9175be09c9b470793fb3-9e811787a0827932df95",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 622,
               "column": 7
             },
             {
-              "title": "(4b) JiraBoard card id maps to /inventory/boards/<id> route",
+              "title": "(4b) priority=High + assigneeAccountId=acc-alice narrows to single issue",
               "ok": true,
               "tags": [],
               "tests": [
@@ -697,16 +703,16 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 18,
+                      "duration": 14,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[jira-inventory] search op=search backupPointId=bp-sprint9-001 q=\"alpha\" results=8 outcome=ok\n"
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=2 hits=1\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T16:43:50.882Z",
+                      "startTime": "2026-05-03T17:01:31.152Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -714,13 +720,51 @@
                   "status": "expected"
                 }
               ],
-              "id": "92518313b9c292eabedf-0d49776df694bee3e084",
-              "file": "sprint9-inventory-ui.spec.ts",
-              "line": 727,
+              "id": "9175be09c9b470793fb3-1dd4b983fce6aa01d513",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 645,
               "column": 7
             },
             {
-              "title": "(4c) JiraSprint card id maps to /inventory/sprints/<id> route",
+              "title": "(4c) tokenised search + status filter + issueType filter combined",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 26,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=2 hits=1\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T17:01:31.171Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9175be09c9b470793fb3-86dc1f43cb81a19c2ce4",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 667,
+              "column": 7
+            },
+            {
+              "title": "(4d) triple-filter intersection yields empty when no issue matches all",
               "ok": true,
               "tags": [],
               "tests": [
@@ -739,12 +783,12 @@
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[jira-inventory] search op=search backupPointId=bp-sprint9-001 q=\"alpha\" results=8 outcome=ok\n"
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=2 hits=0\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T16:43:50.905Z",
+                      "startTime": "2026-05-03T17:01:31.201Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -752,59 +796,21 @@
                   "status": "expected"
                 }
               ],
-              "id": "92518313b9c292eabedf-af28bfba2e012d4170cd",
-              "file": "sprint9-inventory-ui.spec.ts",
-              "line": 752,
-              "column": 7
-            },
-            {
-              "title": "(4d) Non-matching search returns empty results — no navigation occurs",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "api",
-                  "projectName": "api",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 18,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "[jira-inventory] search op=search backupPointId=bp-sprint9-001 q=\"ZZZNOMATCH_SPRINT9\" results=0 outcome=ok\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-03T16:43:50.918Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "92518313b9c292eabedf-a46edb68dcd7a9539d5f",
-              "file": "sprint9-inventory-ui.spec.ts",
-              "line": 777,
+              "id": "9175be09c9b470793fb3-c7dd21dc47a7d08fecfb",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 694,
               "column": 7
             }
           ]
         },
         {
-          "title": "Sprint 9 evidence manifest",
-          "file": "sprint9-inventory-ui.spec.ts",
-          "line": 802,
+          "title": "Sprint 10 — Scenario 5: Invalid date range → 400 + UI error state",
+          "file": "sprint10-project-inventory-search.spec.ts",
+          "line": 720,
           "column": 6,
           "specs": [
             {
-              "title": "all evidence files were written to tests/integration/inventory-ui/evidence/",
+              "title": "(5a) updatedFrom=not-a-date returns HTTP 400 with error body",
               "ok": true,
               "tags": [],
               "tests": [
@@ -819,12 +825,28 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 10,
+                      "duration": 12,
                       "errors": [],
-                      "stdout": [],
+                      "stdout": [
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-1 status=ok\n"
+                        },
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-2 status=ok\n"
+                        },
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-3 status=ok\n"
+                        },
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-4 status=ok\n"
+                        },
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-5 status=ok\n"
+                        }
+                      ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T16:43:50.944Z",
+                      "startTime": "2026-05-03T17:01:31.218Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -832,9 +854,298 @@
                   "status": "expected"
                 }
               ],
-              "id": "92518313b9c292eabedf-9bbfeafcaac599fa927c",
-              "file": "sprint9-inventory-ui.spec.ts",
-              "line": 803,
+              "id": "9175be09c9b470793fb3-5318b5205292a4689f77",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 730,
+              "column": 7
+            },
+            {
+              "title": "(5b) updatedTo=bad-date-value returns HTTP 400 with error body",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T17:01:31.242Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9175be09c9b470793fb3-89df9b196c71119cd4fa",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 761,
+              "column": 7
+            },
+            {
+              "title": "(5c) both dates valid (ISO 8601) returns 200 OK",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=2 hits=5\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T17:01:31.257Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9175be09c9b470793fb3-5789b5ca8b5da7805db7",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 781,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Sprint 10 — Scenario 6: Clear-all resets to unfiltered state",
+          "file": "sprint10-project-inventory-search.spec.ts",
+          "line": 809,
+          "column": 6,
+          "specs": [
+            {
+              "title": "(6a) after filtered request, unfiltered request returns all 5 issues",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 26,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-1 status=ok\n"
+                        },
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-2 status=ok\n"
+                        },
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-3 status=ok\n"
+                        },
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-4 status=ok\n"
+                        },
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-5 status=ok\n"
+                        },
+                        {
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=1 hits=2\n"
+                        },
+                        {
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=0 hits=5\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T17:01:31.278Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9175be09c9b470793fb3-e661050bb0ed4b4371ae",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 819,
+              "column": 7
+            },
+            {
+              "title": "(6b) removing individual filter returns broader result set",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 51,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=2 hits=2\n"
+                        },
+                        {
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=1 hits=2\n"
+                        },
+                        {
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=0 hits=5\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T17:01:31.315Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9175be09c9b470793fb3-aea98f570991f588327d",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 860,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Sprint 10 — Scenario 7: [inventory-search] log line capture",
+          "file": "sprint10-project-inventory-search.spec.ts",
+          "line": 896,
+          "column": 6,
+          "specs": [
+            {
+              "title": "(7a) [inventory-search] log line emitted on every project-issues request",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 36,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-1 status=ok\n"
+                        },
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-2 status=ok\n"
+                        },
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-3 status=ok\n"
+                        },
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-4 status=ok\n"
+                        },
+                        {
+                          "text": "[jira-manifest] append backupPointId=bp-sprint10-001 objectType=JiraIssue objectId=SEARCH-5 status=ok\n"
+                        },
+                        {
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=0 hits=5\n"
+                        },
+                        {
+                          "text": "[inventory-search] project=SEARCH mode=exact filters=0 hits=1\n"
+                        },
+                        {
+                          "text": "[inventory-search] project=SEARCH mode=tokenised filters=1 hits=1\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T17:01:31.376Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9175be09c9b470793fb3-2c51ab2f5c4fbdc955a5",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 906,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Sprint 10 evidence manifest",
+          "file": "sprint10-project-inventory-search.spec.ts",
+          "line": 1056,
+          "column": 6,
+          "specs": [
+            {
+              "title": "all evidence files were written to tests/integration/project-inventory-search/evidence/",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 17,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T17:01:31.417Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9175be09c9b470793fb3-faa26c0e4052c01cbc74",
+              "file": "sprint10-project-inventory-search.spec.ts",
+              "line": 1057,
               "column": 7
             }
           ]
@@ -844,9 +1155,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-05-03T16:43:49.554Z",
-    "duration": 1424.8629999999998,
-    "expected": 15,
+    "startTime": "2026-05-03T17:01:29.760Z",
+    "duration": 1714.0629999999999,
+    "expected": 24,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

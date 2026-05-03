@@ -1,0 +1,30 @@
+{
+  "description": "Exact-match search: querying issueKey SEARCH-1 returns only that row",
+  "scenario": "1a",
+  "mode": "exact",
+  "query": "SEARCH-1",
+  "endpoint": "GET /api/inventory/projects/SEARCH/issues?q=SEARCH-1",
+  "response": {
+    "status": 200,
+    "total": 1,
+    "issues": [
+      {
+        "issueKey": "SEARCH-1",
+        "summary": "Login bug on mobile",
+        "issueStatus": "Open",
+        "issueType": "Bug",
+        "assignee": "Alice",
+        "platformStatus": "protected",
+        "policy": "daily",
+        "lastBackupAt": "2026-05-03T17:01:30.000Z",
+        "backupPointId": "bp-sprint10-001"
+      }
+    ]
+  },
+  "assertions": [
+    "total === 1",
+    "issues[0].issueKey === \"SEARCH-1\"",
+    "issues[0].summary === \"Login bug on mobile\""
+  ],
+  "timestamp": "2026-05-03T17:01:30.836Z"
+}

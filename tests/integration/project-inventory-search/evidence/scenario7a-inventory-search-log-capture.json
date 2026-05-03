@@ -1,0 +1,21 @@
+{
+  "description": "[inventory-search] log line emitted on every project-issues request with correct fields",
+  "scenario": "7a",
+  "logLineFormat": "[inventory-search] project=<key> mode=<exact|tokenised> filters=<n> hits=<n>",
+  "capturedLogLines": {
+    "noFilter": "[inventory-search] project=SEARCH mode=tokenised filters=0 hits=5",
+    "exactMatch": "[inventory-search] project=SEARCH mode=exact filters=0 hits=1",
+    "tokenisedWithFilter": "[inventory-search] project=SEARCH mode=tokenised filters=1 hits=1"
+  },
+  "assertions": [
+    "[inventory-search] prefix present on every request",
+    "project=SEARCH in all lines",
+    "mode=tokenised for non-issueKey queries",
+    "mode=exact for issueKey pattern queries",
+    "filters=0 when no filter params supplied",
+    "filters=1 when one filter param supplied",
+    "hits=5 for unfiltered full set",
+    "hits=1 for exact SEARCH-1 query"
+  ],
+  "timestamp": "2026-05-03T17:01:31.390Z"
+}

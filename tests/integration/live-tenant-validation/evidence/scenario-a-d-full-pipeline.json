@@ -1,0 +1,72 @@
+{
+  "scenario": "Scenario A+D: Full Capture Pipeline + Coverage Invariant",
+  "generatedAt": "2026-05-03T16:07:55.619Z",
+  "pipelineConfig": {
+    "backupPointId": "bp-full-pipeline-001",
+    "jobId": "job-bp-full-pipeline-001",
+    "cloudId": "cloud-live-validation-001",
+    "siteUrl": "https://live-validation.atlassian.net",
+    "scopeMode": "all"
+  },
+  "discoveryResult": {
+    "inScopeProjects": [
+      {
+        "key": "LIVE",
+        "name": "Live Project"
+      }
+    ],
+    "jsmProjectsDetected": 0
+  },
+  "captureResult": {
+    "totalIssuesCaptured": 2,
+    "totalErrors": 0,
+    "jobStatus": "Completed successfully",
+    "completedAt": "2026-05-03T16:07:55.617Z"
+  },
+  "coverageInvariant": {
+    "issueKey": "LIVE-1",
+    "customFieldsPresent": [
+      "customfield_10000",
+      "customfield_10001",
+      "customfield_10002",
+      "customfield_10020"
+    ],
+    "customFieldCount": 4,
+    "commentsCount": 2,
+    "inwardLinks": [
+      "LIVE-2",
+      "LIVE-3"
+    ],
+    "outwardLinks": [
+      "LIVE-4",
+      "LIVE-5"
+    ],
+    "subtasksCount": 1,
+    "sprintMembershipPresent": true,
+    "watchersCount": 2,
+    "worklogsCount": 2,
+    "attachmentRefsCount": 2,
+    "passed": true
+  },
+  "jobSummary": {
+    "status": "completed",
+    "displayStatus": "Completed successfully",
+    "itemsProcessed": 4,
+    "itemsFailed": 0
+  },
+  "logExcerpts": [
+    "[live-val] backupPointId=bp-full-pipeline-001 jobId=job-bp-full-pipeline-001",
+    "[live-val] discoveredProjects=LIVE",
+    "[live-val] totalIssuesCaptured=2",
+    "[live-val] totalErrors=0",
+    "[live-val] jobStatus=\"Completed successfully\"",
+    "[live-val] LIVE-1 customFieldCount=4",
+    "[live-val] LIVE-1 commentsCount=2",
+    "[live-val] LIVE-1 inwardLinks=LIVE-2,LIVE-3",
+    "[live-val] LIVE-1 outwardLinks=LIVE-4,LIVE-5",
+    "[live-val] LIVE-1 subtasksCount=1",
+    "[live-val] LIVE-1 watchersCount=2",
+    "[live-val] LIVE-1 worklogsCount=2",
+    "[live-val] LIVE-1 attachmentRefsCount=2"
+  ]
+}

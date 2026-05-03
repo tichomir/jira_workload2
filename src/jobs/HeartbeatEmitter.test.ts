@@ -258,18 +258,33 @@ describe('HeartbeatEmitter', () => {
       expect(terminal!.displayStatus).toContain('error');
     });
 
-    it('marks job completed_with_errors in store when itemsFailed > 0', () => {
+    it('marks job completed_with_errors in store when some succeed and some fail', () => {
       const emitter = new HeartbeatEmitter(
         { jobId: 'job-cwf', backupPointId: 'bp-cwf', phase: 'issues' },
         store,
         bus,
       );
       emitter.start();
-      emitter.tick({ failed: true });
+      emitter.tick();              // 1 success
+      emitter.tick({ failed: true }); // 1 failure
       emitter.complete();
 
       const job = store.getJob('job-cwf');
       expect(job!.status).toBe('completed_with_errors');
+    });
+
+    it('marks job failed in store when zero items succeeded and at least one failed', () => {
+      const emitter = new HeartbeatEmitter(
+        { jobId: 'job-allfail', backupPointId: 'bp-allfail', phase: 'issues' },
+        store,
+        bus,
+      );
+      emitter.start();
+      emitter.tick({ failed: true }); // 1 failure, 0 successes
+      emitter.complete();
+
+      const job = store.getJob('job-allfail');
+      expect(job!.status).toBe('failed');
     });
 
     it('marks job completed in store when 0 errors', () => {

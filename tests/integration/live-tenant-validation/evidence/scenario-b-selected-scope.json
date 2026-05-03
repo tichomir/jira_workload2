@@ -1,0 +1,21 @@
+{
+  "scenario": "Scenario B: Selected-Scope Filter",
+  "generatedAt": "2026-05-03T16:07:55.603Z",
+  "assertions": {
+    "selectedKeys": [
+      "LIVE"
+    ],
+    "projectsInManifest": [
+      "LIVE"
+    ],
+    "exclAbsent": true,
+    "keysParamSent": true,
+    "passed": true
+  },
+  "logExcerpts": [
+    "[live-val] selectedKeys=LIVE",
+    "[live-val] projectsInManifest=LIVE",
+    "[live-val] EXCL absent from manifest: true",
+    "[live-val] keys= param sent: true"
+  ]
+}

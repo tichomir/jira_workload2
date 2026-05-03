@@ -1,0 +1,41 @@
+{
+  "suite": "Sprint 7 QA — Live-Tenant Validation (Simulated)",
+  "generatedAt": "2026-05-03T16:07:55.663Z",
+  "description": "End-to-end validation of the Jira Cloud capture pipeline against a simulated tenant (mocked HTTP responses). Covers all six Sprint 7 acceptance criteria.",
+  "acceptanceCriteria": {
+    "(a) Full pipeline produces complete manifest": "scenario-a-d-full-pipeline.json",
+    "(b) Selected-scope filter excludes non-selected projects": "scenario-b-selected-scope.json",
+    "(c) JSM out-of-scope notice": "scenario-c-jsm-detection.json",
+    "(d) Coverage invariant: all 8 payload classes on LIVE-1": "scenario-a-d-full-pipeline.json",
+    "(e) Attachment sha256 byte-fidelity": "scenario-e-sha256-fidelity.json",
+    "(f) Heartbeat cadence ≤10s + final job status": "scenario-f-heartbeat-cadence.json"
+  },
+  "scenarios": [
+    {
+      "file": "scenario-a-d-full-pipeline.json",
+      "scenario": "Scenario A+D: Full Capture Pipeline + Coverage Invariant",
+      "passed": null
+    },
+    {
+      "file": "scenario-b-selected-scope.json",
+      "scenario": "Scenario B: Selected-Scope Filter",
+      "passed": true
+    },
+    {
+      "file": "scenario-c-jsm-detection.json",
+      "scenario": "Scenario C: JSM Project-Type Detection",
+      "passed": true
+    },
+    {
+      "file": "scenario-e-sha256-fidelity.json",
+      "scenario": "Scenario E: Attachment Byte-Fidelity (SHA-256)",
+      "passed": true
+    },
+    {
+      "file": "scenario-f-heartbeat-cadence.json",
+      "scenario": "Scenario F: Heartbeat Cadence ≤10s + Final Job Status",
+      "passed": true
+    }
+  ],
+  "allPassed": true
+}

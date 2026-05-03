@@ -1,0 +1,23 @@
+{
+  "scenario": "Scenario C: JSM Project-Type Detection",
+  "generatedAt": "2026-05-03T16:07:55.598Z",
+  "assertions": {
+    "jsmProjectsDetected": 1,
+    "jsmNoticePresent": true,
+    "jsmNoticeAffectedKeys": [
+      "JSM"
+    ],
+    "jsmEntryStatus": "out_of_scope",
+    "jsmEntrySkipReason": "jsm_out_of_scope",
+    "inScopeProjects": [
+      "LIVE"
+    ],
+    "passed": true
+  },
+  "logExcerpts": [
+    "[live-val] backupPointId=bp-jsm-detect-001",
+    "[live-val] jsmProjectsDetected=1",
+    "[live-val] JSM manifest entry: status=out_of_scope skipReason=jsm_out_of_scope",
+    "[live-val] in-scope projects: LIVE"
+  ]
+}

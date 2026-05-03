@@ -30,6 +30,7 @@ import {
   SimpleManifestEntry,
 } from './types';
 import { BackupPointRepository } from './BackupPointRepository';
+import { backupMetrics } from '../metrics/BackupMetrics';
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 
@@ -184,6 +185,14 @@ export class BackupPointManifestWriter {
 
     this.sections.push(section);
     this.allEntries.push(...entries);
+
+    // Structured log: manifest stage written
+    const objectType = PHASE_OBJECT_TYPE[section.stageName] ?? section.stageName;
+    console.log(
+      `[jira-backup] manifest_written backupPointId=${this.config.backupPointId} ` +
+        `objectType=${objectType} count=${section.capturedCount}`,
+    );
+    backupMetrics.incManifestWrites();
 
     // Atomic per-stage write to SQLite
     this.persistSnapshot('in_progress');

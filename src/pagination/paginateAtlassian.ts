@@ -6,8 +6,18 @@
  * endpoint? Add a fetchPage callback and call paginateAtlassian — never a new
  * while(true) loop.
  *
+ * Structured log lines emitted:
+ *   [jira-backup] page_fetched endpoint=<url> pageIndex=<i> itemsInPage=<n>
+ *   [jira-backup] pagination_terminated endpoint=<url> reason=<reason> pageCount=<n> totalItems=<n>
+ *
+ * Metrics incremented (see BackupMetrics):
+ *   jira_backup_pages_fetched_total{endpoint}
+ *   jira_backup_pagination_terminations_total{reason}
+ *
  * See: docs/architecture/context-capture-pipeline.md §3
  */
+
+import { backupMetrics, PaginationTerminationReason } from '../metrics/BackupMetrics';
 
 /**
  * Shape of a single page returned by an Atlassian list endpoint.
@@ -35,6 +45,16 @@ export type FetchPageFn<T> = (
   maxResults: number,
 ) => Promise<AtlassianPage<T>>;
 
+/** Options for paginateAtlassian. All fields are optional for backward compat. */
+export interface PaginateOptions {
+  /**
+   * Human-readable endpoint label used in structured log lines and metrics.
+   * E.g. '/rest/api/3/project/search' or 'POST /rest/api/3/search/jql'.
+   * Defaults to 'unknown' when omitted.
+   */
+  endpoint?: string;
+}
+
 export interface AtlassianPaginationResult<T> {
   /** All items collected across every page */
   items: T[];
@@ -60,6 +80,7 @@ export interface AtlassianPaginationResult<T> {
  *   1. results.length === 0         (empty page)
  *   2. isLast === true              (Agile API explicit end signal)
  *   3. results.length < maxResults  (partial page = last page)
+ *   4. items.length >= apiReportedTotal
  *
  * For non-paginated flat-array endpoints (e.g. GET /rest/api/3/issuetype,
  * GET /rest/api/3/field), wrap with a single-page adapter that sets
@@ -67,11 +88,14 @@ export interface AtlassianPaginationResult<T> {
  *
  * @param fetchPage  Callback invoked per page with (startAt, maxResults).
  * @param maxResults Page size passed to every fetchPage call. Default 50.
+ * @param options    Optional: endpoint label for structured logging and metrics.
  */
 export async function paginateAtlassian<T>(
   fetchPage: FetchPageFn<T>,
   maxResults = 50,
+  options: PaginateOptions = {},
 ): Promise<AtlassianPaginationResult<T>> {
+  const endpoint = options.endpoint ?? 'unknown';
   const items: T[] = [];
   let startAt = 0;
   let apiReportedTotal: number | null = null;
@@ -89,13 +113,31 @@ export async function paginateAtlassian<T>(
       apiReportedTotal = page.total;
     }
 
-    // Termination: ANY condition stops pagination
-    if (
-      pageItems.length === 0 ||
-      page.isLast === true ||
-      pageItems.length < maxResults ||
-      (apiReportedTotal !== null && items.length >= apiReportedTotal)
-    ) {
+    // Structured log: page fetched
+    console.log(
+      `[jira-backup] page_fetched endpoint=${endpoint} pageIndex=${pagesFetched - 1} itemsInPage=${pageItems.length}`,
+    );
+    backupMetrics.incPagesFetched(endpoint);
+
+    // Determine termination reason (checked in priority order)
+    let terminationReason: PaginationTerminationReason | null = null;
+    if (pageItems.length === 0) {
+      terminationReason = 'empty_page';
+    } else if (page.isLast === true) {
+      terminationReason = 'is_last';
+    } else if (pageItems.length < maxResults) {
+      terminationReason = 'short_page';
+    } else if (apiReportedTotal !== null && items.length >= apiReportedTotal) {
+      terminationReason = 'total_reached';
+    }
+
+    if (terminationReason !== null) {
+      // Structured log: pagination terminated
+      console.log(
+        `[jira-backup] pagination_terminated endpoint=${endpoint} reason=${terminationReason} ` +
+          `pageCount=${pagesFetched} totalItems=${items.length}`,
+      );
+      backupMetrics.incPaginationTerminations(terminationReason);
       break;
     }
 

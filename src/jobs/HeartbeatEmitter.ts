@@ -132,6 +132,9 @@ export class HeartbeatEmitter {
       `[jira-backup] terminal jobId=${this.config.jobId} phase=${this.config.phase} ` +
         `processed=${this.itemsProcessed} failed=${this.itemsFailed} status="${displayStatus}"`,
     );
+    console.log(
+      `[jira-backup] job_completed jobId=${this.config.jobId} status="${displayStatus}" errors=${this.itemsFailed}`,
+    );
   }
 
   // ── Private ─────────────────────────────────────────────────────────────────

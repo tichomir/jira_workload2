@@ -125,12 +125,19 @@ export class JobStore {
     nowMs = Date.now(),
   ): void {
     // Status precedence: failed > completed_with_errors > completed
-    // Hard failure is set explicitly via setFailed(); here we handle success paths.
-    const status: JobStatus = itemsFailed > 0 ? 'completed_with_errors' : 'completed';
+    // 'failed': zero items succeeded and at least one failed.
+    // 'completed_with_errors': partial success — some succeeded, some failed.
+    // 'completed': all items succeeded (no failures).
+    const status: JobStatus =
+      itemsFailed === 0 ? 'completed' :
+      itemsProcessed === 0 ? 'failed' :
+      'completed_with_errors';
     const displayStatus =
-      itemsFailed > 0
-        ? `Completed with ${itemsFailed} errors`
-        : 'Completed successfully';
+      itemsFailed === 0
+        ? 'Completed successfully'
+        : itemsProcessed === 0
+          ? 'Failed'
+          : `Completed with ${itemsFailed} errors`;
 
     this.db
       .prepare(

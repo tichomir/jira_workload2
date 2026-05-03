@@ -1,0 +1,33 @@
+{
+  "scenario": "Scenario E: Attachment Byte-Fidelity (SHA-256)",
+  "generatedAt": "2026-05-03T16:07:55.626Z",
+  "attachment": {
+    "attachmentId": "att-001",
+    "filename": "screenshot.png",
+    "mimeType": "image/png",
+    "sourceSizeBytes": 68,
+    "storedSizeBytes": 68,
+    "sha256Expected": "564a2c00774335c08f2293215f69a063e09a751e927913b11587ebcc2fbbf158",
+    "sha256Stored": "564a2c00774335c08f2293215f69a063e09a751e927913b11587ebcc2fbbf158"
+  },
+  "assertions": {
+    "sha256Match": true,
+    "byteCountMatch": true,
+    "filenamePreserved": true,
+    "mimeTypePreserved": true,
+    "sidecarHasBackupPointId": true,
+    "passed": true
+  },
+  "logExcerpts": [
+    "[live-val] attachmentId=att-001 filename=screenshot.png mimeType=image/png",
+    "[live-val] sourceSha256=564a2c00774335c08f2293215f69a063e09a751e927913b11587ebcc2fbbf158",
+    "[live-val] storedSha256=564a2c00774335c08f2293215f69a063e09a751e927913b11587ebcc2fbbf158",
+    "[live-val] sha256Match=true",
+    "[live-val] sidecarFilename=screenshot.png sidecarMimeType=image/png"
+  ],
+  "sha256Diff": {
+    "source": "564a2c00774335c08f2293215f69a063e09a751e927913b11587ebcc2fbbf158",
+    "stored": "564a2c00774335c08f2293215f69a063e09a751e927913b11587ebcc2fbbf158",
+    "diff": "MATCH — byte-identical"
+  }
+}

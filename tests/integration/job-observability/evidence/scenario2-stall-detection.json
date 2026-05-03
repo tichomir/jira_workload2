@@ -1,0 +1,63 @@
+{
+  "scenario": "Scenario 2: Stalled Detection and Recovery",
+  "generatedAt": "2026-05-03T15:54:43.706Z",
+  "timeline": {
+    "T+0ms": "Job created, lastHeartbeatAt set",
+    "T+25000ms": "No heartbeat for 25000ms — StalledJobDetector.check() fires stalled event",
+    "T+25000ms (resume)": "store.updateHeartbeat() — simulates heartbeat resume",
+    "T+29000ms": "StalledJobDetector.check() — age=4000ms < threshold, recovery confirmed"
+  },
+  "assertions": {
+    "stalledFlagSetAfterPause": true,
+    "stalledEventLastHeartbeatAgeMs": 25000,
+    "withinWindow_21s_to_25s": true,
+    "recoveryCheckAfterMs": 4000,
+    "withinRecoveryWindow_5s": true,
+    "stalledAfterRecovery": false,
+    "statusAfterRecovery": "running",
+    "httpApiStalled": false,
+    "passed": true
+  },
+  "logExcerpts": [
+    "[scenario-2] jobId=obs-s2-job created at T=0 (lastHeartbeatAt=fakeEpoch)",
+    "[scenario-2] No heartbeat injected for 25000ms",
+    "[scenario-2] StalledJobDetector.check() at T+25000ms",
+    "[scenario-2] stalledEvent: lastHeartbeatAgeMs=25000",
+    "[scenario-2] Heartbeat resume simulated at T+25000ms (updateHeartbeat)",
+    "[scenario-2] StalledJobDetector.check() at T+29000ms (4000ms after resume)",
+    "[scenario-2] Recovery confirmed: stalled=false status=running",
+    "[scenario-2] HTTP GET /api/jobs/obs-s2-job: stalled=false status=running"
+  ],
+  "sseTranscript": {
+    "note": "Stalled events are published to the event bus but are not persisted to job_events (only heartbeat and terminal events are persisted). Stalled events were collected via direct bus subscription (same channel the SSE endpoint uses). Job status after recovery is verified via GET /api/jobs/:jobId.",
+    "stalledBusEvent": {
+      "type": "stalled",
+      "jobId": "obs-s2-job",
+      "backupPointId": "obs-s2-bp",
+      "phase": "issues",
+      "itemsProcessed": 0,
+      "itemsFailed": 0,
+      "lastHeartbeatAgeMs": 25000,
+      "timestamp": "1970-04-26T17:47:05.000Z"
+    },
+    "jobStatusAfterRecovery": {
+      "jobId": "obs-s2-job",
+      "status": "running",
+      "displayStatus": "Running",
+      "itemsProcessed": 10,
+      "itemsFailed": 0,
+      "itemsTotal": null,
+      "lastHeartbeatAt": 10000025000,
+      "stalled": false,
+      "backupPointId": "obs-s2-bp",
+      "errors": []
+    }
+  },
+  "busEvents": [
+    {
+      "type": "stalled",
+      "lastHeartbeatAgeMs": 25000,
+      "timestamp": "1970-04-26T17:47:05.000Z"
+    }
+  ]
+}

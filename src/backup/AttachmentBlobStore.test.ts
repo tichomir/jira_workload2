@@ -394,7 +394,7 @@ describe('IssueCaptureOrchestrator — attachment integration', () => {
 
     // Issue itself captured ok; attachment failed — run did not abort
     expect(result.totalIssuesCaptured).toBe(1);
-    expect(result.totalErrors).toBe(0); // issue-level error count
+    expect(result.totalErrors).toBe(1); // attachment failure is counted in error total
 
     // Attachment error recorded in manifest
     const entries = repo.getEntriesByBackupPoint(bpId);

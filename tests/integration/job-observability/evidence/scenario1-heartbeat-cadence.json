@@ -1,0 +1,60 @@
+{
+  "scenario": "Scenario 1: Heartbeat Cadence",
+  "generatedAt": "2026-05-03T15:54:43.665Z",
+  "configuration": {
+    "jobId": "obs-s1-job",
+    "backupPointId": "obs-s1-bp",
+    "heartbeatIntervalMs": 9000,
+    "simulatedRunMs": 30000
+  },
+  "assertions": {
+    "busHeartbeatCount": 3,
+    "minRequired": 3,
+    "maxConsecutiveGapMs": 9000,
+    "sseHeartbeatCount": 3,
+    "terminalEventPresent": true,
+    "passed": true
+  },
+  "logExcerpts": [
+    "[scenario-1] jobId=obs-s1-job heartbeatIntervalMs=9000",
+    "[scenario-1] simulatedRunMs=30000",
+    "[scenario-1] busHeartbeatsReceived=3 (≥3 required)",
+    "[scenario-1] heartbeatTimestamps=1777823692222,1777823701222,1777823710222",
+    "[scenario-1] maxGapMs=9000 (≤10000 required)",
+    "[scenario-1] sseHeartbeatsReceived=3",
+    "[scenario-1] terminalEvent={\"type\":\"terminal\",\"jobId\":\"obs-s1-job\",\"backupPointId\":\"obs-s1-bp\",\"phase\":\"issues\",\"itemsProcessed\":0,\"itemsFailed\":0,\"timestamp\":\"2026-05-03T15:55:13.222Z\",\"displayStatus\":\"Completed successfully\"}"
+  ],
+  "sseTranscript": [
+    "data: {\"type\":\"heartbeat\",\"jobId\":\"obs-s1-job\",\"backupPointId\":\"obs-s1-bp\",\"phase\":\"issues\",\"itemsProcessed\":0,\"itemsFailed\":0,\"timestamp\":\"2026-05-03T15:54:52.222Z\"}",
+    "data: {\"type\":\"heartbeat\",\"jobId\":\"obs-s1-job\",\"backupPointId\":\"obs-s1-bp\",\"phase\":\"issues\",\"itemsProcessed\":0,\"itemsFailed\":0,\"timestamp\":\"2026-05-03T15:55:01.222Z\"}",
+    "data: {\"type\":\"heartbeat\",\"jobId\":\"obs-s1-job\",\"backupPointId\":\"obs-s1-bp\",\"phase\":\"issues\",\"itemsProcessed\":0,\"itemsFailed\":0,\"timestamp\":\"2026-05-03T15:55:10.222Z\"}",
+    "data: {\"type\":\"terminal\",\"jobId\":\"obs-s1-job\",\"backupPointId\":\"obs-s1-bp\",\"phase\":\"issues\",\"itemsProcessed\":0,\"itemsFailed\":0,\"timestamp\":\"2026-05-03T15:55:13.222Z\"}"
+  ],
+  "busEvents": [
+    {
+      "type": "heartbeat",
+      "timestamp": "2026-05-03T15:54:52.222Z",
+      "itemsProcessed": 0,
+      "itemsFailed": 0
+    },
+    {
+      "type": "heartbeat",
+      "timestamp": "2026-05-03T15:55:01.222Z",
+      "itemsProcessed": 0,
+      "itemsFailed": 0
+    },
+    {
+      "type": "heartbeat",
+      "timestamp": "2026-05-03T15:55:10.222Z",
+      "itemsProcessed": 0,
+      "itemsFailed": 0
+    },
+    {
+      "type": "terminal",
+      "timestamp": "2026-05-03T15:55:13.222Z",
+      "itemsProcessed": 0,
+      "itemsFailed": 0,
+      "displayStatus": "Completed successfully"
+    }
+  ]
+}

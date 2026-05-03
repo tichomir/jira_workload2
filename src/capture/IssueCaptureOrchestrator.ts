@@ -243,6 +243,13 @@ export class IssueCaptureOrchestrator {
     // Delegate completion to the emitter when present; it persists final status.
     if (emitter) {
       emitter.complete();
+    } else if (this.config.jobStore && this.config.jobId) {
+      // No emitter wired in — persist final status directly to the job store.
+      this.config.jobStore.completeJob(
+        this.config.jobId,
+        this.totalCaptured,
+        this.totalErrors,
+      );
     }
 
     return {
@@ -486,6 +493,10 @@ export class IssueCaptureOrchestrator {
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
+      const capturedAt = new Date().toISOString();
+
+      this.totalErrors++;
+
       this.writer.appendEntry({
         objectType: 'JiraIssue' as JiraObjectType,
         objectId: `${issueKey}:att:${att.id}`,
@@ -494,6 +505,23 @@ export class IssueCaptureOrchestrator {
         status: 'error',
         errorMessage,
       });
+
+      // Persist to job_errors store when wired in
+      if (this.config.jobStore && this.config.jobId) {
+        this.config.jobStore.insertJobError({
+          jobId: this.config.jobId,
+          backupPointId: this.config.backupPointId,
+          itemType: 'JiraAttachment',
+          itemId: `${issueKey}:att:${att.id}`,
+          errorCode: 'ATTACHMENT_ERROR',
+          errorMessage,
+          timestamp: capturedAt,
+        });
+      }
+
+      // Tick the external emitter for the failed attachment
+      this.config.heartbeatEmitter?.tick({ failed: true, currentItemKey: `${issueKey}:att:${att.id}` });
+
       console.error(
         `[jira-issue-capture] attachment_error attachmentId=${att.id} ` +
           `issueKey=${issueKey} error="${errorMessage}"`,

@@ -19,6 +19,7 @@ import { JiraHttpClient, JiraIssue } from '../http/JiraHttpClient';
 import { BackupPointRepository } from '../manifest/BackupPointRepository';
 import { BackupPointManifestWriter } from '../manifest/BackupPointManifestWriter';
 import { IssueCaptureOrchestrator, IssueCaptureConfig, IssueProgressEvent } from './IssueCaptureOrchestrator';
+import { JobStore } from '../jobs/JobStore';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -27,6 +28,7 @@ function openDb(): Database.Database {
   db.pragma('journal_mode = WAL');
   JiraCredentialRepository.runMigration(db);
   BackupPointRepository.migrate(db);
+  JobStore.migrate(db);
   return db;
 }
 
@@ -353,6 +355,17 @@ describe('IssueCaptureOrchestrator', () => {
         if (url.includes('/comment')) return Promise.resolve(makeJsonResponse(200, { comments: [], total: 0 }));
         if (url.includes('/watchers')) return Promise.resolve(makeJsonResponse(200, { watchCount: 0, isWatching: false, watchers: [] }));
         if (url.includes('/worklog')) return Promise.resolve(makeJsonResponse(200, { worklogs: [] }));
+        // Attachment binary downloads — return minimal binary content
+        if (url.includes('/attachment/content/')) {
+          const bytes = Buffer.from('fake-binary-content');
+          return Promise.resolve({
+            ok: true, status: 200, statusText: 'OK',
+            json: () => Promise.reject(new Error('not JSON')),
+            text: () => Promise.resolve(''),
+            arrayBuffer: () => { const ab = new ArrayBuffer(bytes.length); new Uint8Array(ab).set(bytes); return Promise.resolve(ab); },
+            headers: new Headers(),
+          } as unknown as Response);
+        }
         return Promise.resolve(makeJsonResponse(404, {}));
       });
 
@@ -394,6 +407,17 @@ describe('IssueCaptureOrchestrator', () => {
           if (url.includes('/comment')) return Promise.resolve(makeJsonResponse(200, { comments: [], total: 0 }));
           if (url.includes('/watchers')) return Promise.resolve(makeJsonResponse(200, { watchCount: 0, isWatching: false, watchers: [] }));
           if (url.includes('/worklog')) return Promise.resolve(makeJsonResponse(200, { worklogs: [] }));
+          // Attachment binary downloads — return minimal binary content for PROJ-OK's attachment
+          if (url.includes('/attachment/content/')) {
+            const bytes = Buffer.from('fake-binary-content');
+            return Promise.resolve({
+              ok: true, status: 200, statusText: 'OK',
+              json: () => Promise.reject(new Error('not JSON')),
+              text: () => Promise.resolve(''),
+              arrayBuffer: () => { const ab = new ArrayBuffer(bytes.length); new Uint8Array(ab).set(bytes); return Promise.resolve(ab); },
+              headers: new Headers(),
+            } as unknown as Response);
+          }
           return Promise.resolve(makeJsonResponse(404, {}));
         }),
       );
@@ -567,6 +591,165 @@ describe('IssueCaptureOrchestrator', () => {
       const issueEntries = entries.filter((e) => e.objectId === 'TR-1' || e.objectId === 'TR-2');
       expect(issueEntries).toHaveLength(2);
       expect(issueEntries.every((e) => e.status === 'ok')).toBe(true);
+    });
+  });
+
+  // ── JobStore integration: getJobSummary + error traceability ─────────────
+
+  describe('JobStore integration — getJobSummary and error traceability', () => {
+    it('happy path: 0 errors → status "completed" / displayStatus "Completed successfully"', async () => {
+      const issue = makeIssue('SUM-1', { attachment: [] });
+      const mockFetch = jest.fn().mockImplementation((url: string) => {
+        if (url.includes('/rest/api/3/search/jql')) return Promise.resolve(makeJsonResponse(200, { issues: [issue], total: 1 }));
+        if (url.includes('/comment')) return Promise.resolve(makeJsonResponse(200, { comments: [], total: 0 }));
+        if (url.includes('/watchers')) return Promise.resolve(makeJsonResponse(200, { watchCount: 0, isWatching: false, watchers: [] }));
+        if (url.includes('/worklog')) return Promise.resolve(makeJsonResponse(200, { worklogs: [] }));
+        return Promise.resolve(makeJsonResponse(404, {}));
+      });
+
+      const client = new JiraHttpClient(CLOUD_ID, credRepo, 'jira', undefined, mockFetch);
+      const bpId = 'bp-sum-happy';
+      const jobId = 'job-sum-happy';
+      const jobStore = new JobStore(db);
+      jobStore.createJob(jobId, bpId, 'issues');
+
+      const writer = makeWriter(db, bpId);
+      const orchestrator = new IssueCaptureOrchestrator(
+        client,
+        writer,
+        makeConfig(bpId, backupDir, ['SUM'], { jobId, jobStore }),
+      );
+
+      const result = await orchestrator.run();
+
+      expect(result.totalErrors).toBe(0);
+      expect(result.jobStatus).toBe('Completed successfully');
+
+      const summary = jobStore.getJobSummary(jobId);
+      expect(summary).not.toBeNull();
+      expect(summary!.status).toBe('completed');
+      expect(summary!.displayStatus).toBe('Completed successfully');
+      expect(summary!.errors).toHaveLength(0);
+
+      console.log('[test-evidence] getJobSummary happy path:', JSON.stringify(summary));
+    });
+
+    it('error path: N>0 errors → status "completed_with_errors" / displayStatus "Completed with N errors"', async () => {
+      const goodIssue = makeIssue('SUM-OK', { attachment: [] });
+      const badIssue = makeIssue('SUM-FAIL', { attachment: [] });
+
+      const mockFetch = jest.fn().mockImplementation((url: string) => {
+        if (url.includes('/rest/api/3/search/jql')) {
+          return Promise.resolve(makeJsonResponse(200, { issues: [goodIssue, badIssue], total: 2 }));
+        }
+        // SUM-FAIL watchers rejects → per-item error
+        if (url.includes('SUM-FAIL') && url.includes('/watchers')) {
+          return Promise.reject(new Error('HTTP 403'));
+        }
+        if (url.includes('/comment')) return Promise.resolve(makeJsonResponse(200, { comments: [], total: 0 }));
+        if (url.includes('/watchers')) return Promise.resolve(makeJsonResponse(200, { watchCount: 0, isWatching: false, watchers: [] }));
+        if (url.includes('/worklog')) return Promise.resolve(makeJsonResponse(200, { worklogs: [] }));
+        return Promise.resolve(makeJsonResponse(404, {}));
+      });
+
+      const client = new JiraHttpClient(CLOUD_ID, credRepo, 'jira', undefined, mockFetch);
+      const bpId = 'bp-sum-err';
+      const jobId = 'job-sum-err';
+      const jobStore = new JobStore(db);
+      jobStore.createJob(jobId, bpId, 'issues');
+
+      const writer = makeWriter(db, bpId);
+      const orchestrator = new IssueCaptureOrchestrator(
+        client,
+        writer,
+        makeConfig(bpId, backupDir, ['SUM'], { jobId, jobStore }),
+      );
+
+      const result = await orchestrator.run();
+
+      expect(result.totalErrors).toBe(1);
+      expect(result.jobStatus).toBe('Completed with 1 errors');
+
+      const summary = jobStore.getJobSummary(jobId);
+      expect(summary!.status).toBe('completed_with_errors');
+      expect(summary!.displayStatus).toContain('1 errors');
+      expect(summary!.errors).toHaveLength(1);
+
+      // Verify traceability fields on error record
+      const errRecord = summary!.errors[0];
+      expect(errRecord.backupPointId).toBe(bpId);
+      expect(errRecord.itemId).toBe('SUM-FAIL');
+      expect(errRecord.itemType).toBe('JiraIssue');
+      expect(errRecord.errorCode).toBe('API_ERROR');
+      expect(errRecord.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+
+      console.log('[test-evidence] getJobSummary error path:', JSON.stringify(summary!.errors));
+    });
+
+    it('failed status takes precedence over completed_with_errors', async () => {
+      const bpId = 'bp-sum-failed';
+      const jobId = 'job-sum-failed';
+      const jobStore = new JobStore(db);
+      jobStore.createJob(jobId, bpId, 'issues');
+      jobStore.setFailed(jobId, 'unrecoverable network error');
+
+      const summary = jobStore.getJobSummary(jobId);
+      expect(summary!.status).toBe('failed');
+      expect(summary!.displayStatus).toContain('Failed');
+    });
+
+    it('attachment errors are counted in totalErrors and persisted to job_errors', async () => {
+      // Issue with one attachment; attachment download fails
+      const issue = makeIssue('ATT-FAIL');
+      // Override attachment to have exactly one
+      issue.fields['attachment'] = [{
+        id: 'att-bad',
+        filename: 'bad.png',
+        mimeType: 'image/png',
+        size: 100,
+        content: 'https://test.atlassian.net/attachment/content/att-bad',
+        created: '2026-01-01T00:00:00.000Z',
+      }];
+
+      const mockFetch = jest.fn().mockImplementation((url: string) => {
+        if (url.includes('/rest/api/3/search/jql')) return Promise.resolve(makeJsonResponse(200, { issues: [issue], total: 1 }));
+        if (url.includes('/comment')) return Promise.resolve(makeJsonResponse(200, { comments: [], total: 0 }));
+        if (url.includes('/watchers')) return Promise.resolve(makeJsonResponse(200, { watchCount: 0, isWatching: false, watchers: [] }));
+        if (url.includes('/worklog')) return Promise.resolve(makeJsonResponse(200, { worklogs: [] }));
+        // Attachment download fails
+        if (url.includes('/attachment/content/')) return Promise.reject(new Error('Storage unavailable'));
+        return Promise.resolve(makeJsonResponse(404, {}));
+      });
+
+      const client = new JiraHttpClient(CLOUD_ID, credRepo, 'jira', undefined, mockFetch);
+      const bpId = 'bp-att-fail';
+      const jobId = 'job-att-fail';
+      const jobStore = new JobStore(db);
+      jobStore.createJob(jobId, bpId, 'issues');
+
+      const writer = makeWriter(db, bpId);
+      const orchestrator = new IssueCaptureOrchestrator(
+        client,
+        writer,
+        makeConfig(bpId, backupDir, ['ATT'], { jobId, jobStore }),
+      );
+
+      const result = await orchestrator.run();
+
+      // Issue itself captured OK (1), but attachment failed (1 error)
+      expect(result.totalIssuesCaptured).toBe(1);
+      expect(result.totalErrors).toBe(1);
+      expect(result.jobStatus).toBe('Completed with 1 errors');
+
+      const summary = jobStore.getJobSummary(jobId);
+      expect(summary!.status).toBe('completed_with_errors');
+      expect(summary!.errors).toHaveLength(1);
+      expect(summary!.errors[0].itemType).toBe('JiraAttachment');
+      expect(summary!.errors[0].errorCode).toBe('ATTACHMENT_ERROR');
+      expect(summary!.errors[0].backupPointId).toBe(bpId);
+      expect(summary!.errors[0].timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+
+      console.log('[test-evidence] attachment error record:', JSON.stringify(summary!.errors[0]));
     });
   });
 });

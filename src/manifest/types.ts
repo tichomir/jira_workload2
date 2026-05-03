@@ -79,6 +79,25 @@ export interface PhaseSummary {
   completed: boolean;
 }
 
+/**
+ * Per-stage section written atomically to the manifest after each capture
+ * phase completes. Used by the manifest writer to enforce the integrity
+ * invariant: capturedCount + skippedIds.length === apiTotalReported.
+ */
+export interface ManifestStageSection {
+  stageName: CapturePhase;
+  /** Number of paginated API calls made for this stage */
+  apiPageCount: number;
+  /** Total count reported by the API (null for flat-array endpoints) */
+  apiTotalReported: number | null;
+  /** Number of items successfully captured */
+  capturedCount: number;
+  /** IDs of objects that were skipped (e.g. system fields, JSM projects) */
+  skippedIds: string[];
+  /** Maps skipped ID → human-readable skip reason */
+  skippedReasons: Record<string, string>;
+}
+
 export interface ReconciliationReport {
   objectType: JiraObjectType;
   apiReportedTotal: number | null;
@@ -95,10 +114,16 @@ export interface BackupPointManifest {
   backupPointId: string;
   cloudId: string;
   siteUrl: string;
+  /** ISO 8601 timestamp when the backup job was created/started */
+  createdAt: string;
   startedAt: string;
   finalisedAt: string;
-  status: 'completed' | 'completed_with_errors' | 'halted';
+  /** Whether the discovery scope was all projects or a selected subset */
+  scopeMode: 'all' | 'selected';
+  status: 'in_progress' | 'completed' | 'completed_with_errors' | 'halted';
   phaseSummary: Record<CapturePhase, PhaseSummary>;
+  /** Per-stage sections written atomically as each stage completes */
+  stages: ManifestStageSection[];
   entries: ManifestEntry[];
   reconciliation: ReconciliationReport[];
 }

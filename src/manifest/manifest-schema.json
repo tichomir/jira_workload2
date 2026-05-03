@@ -1,0 +1,189 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "jira-backup-point-manifest",
+  "title": "BackupPointManifest",
+  "description": "Schema for the Jira Cloud backup-point manifest. Every field is required. capturedCount + skippedIds.length must equal apiTotalReported for every stage where apiTotalReported is not null.",
+  "type": "object",
+  "required": [
+    "backupPointId",
+    "cloudId",
+    "siteUrl",
+    "createdAt",
+    "startedAt",
+    "finalisedAt",
+    "scopeMode",
+    "status",
+    "stages",
+    "entries",
+    "phaseSummary",
+    "reconciliation"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "backupPointId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique identifier for this backup point"
+    },
+    "cloudId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Atlassian cloud site ID"
+    },
+    "siteUrl": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Atlassian cloud site URL"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the backup job was created"
+    },
+    "startedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the backup job started (same as createdAt)"
+    },
+    "finalisedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the manifest was written"
+    },
+    "scopeMode": {
+      "type": "string",
+      "enum": ["all", "selected"],
+      "description": "Whether all projects or a selected subset were backed up"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["in_progress", "completed", "completed_with_errors", "halted"],
+      "description": "Final job status"
+    },
+    "stages": {
+      "type": "array",
+      "description": "Per-stage sections written atomically as each stage completes",
+      "items": {
+        "$ref": "#/definitions/ManifestStageSection"
+      }
+    },
+    "entries": {
+      "type": "array",
+      "description": "All captured entries — one per API-returned object",
+      "items": {
+        "$ref": "#/definitions/ManifestEntry"
+      }
+    },
+    "phaseSummary": {
+      "type": "object",
+      "description": "Per-phase summary counts keyed by CapturePhase"
+    },
+    "reconciliation": {
+      "type": "array",
+      "description": "Reconciliation report — one entry per captured object type",
+      "items": {
+        "$ref": "#/definitions/ReconciliationReport"
+      }
+    }
+  },
+  "definitions": {
+    "ManifestStageSection": {
+      "type": "object",
+      "required": [
+        "stageName",
+        "apiPageCount",
+        "apiTotalReported",
+        "capturedCount",
+        "skippedIds",
+        "skippedReasons"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "stageName": {
+          "type": "string",
+          "enum": [
+            "issue_type",
+            "custom_field",
+            "field_configuration",
+            "workflow",
+            "workflow_scheme",
+            "project",
+            "board",
+            "sprint",
+            "issue"
+          ]
+        },
+        "apiPageCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "apiTotalReported": {
+          "oneOf": [
+            { "type": "integer", "minimum": 0 },
+            { "type": "null" }
+          ]
+        },
+        "capturedCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skippedIds": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "skippedReasons": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "ManifestEntry": {
+      "type": "object",
+      "required": [
+        "id",
+        "key",
+        "phase",
+        "objectType",
+        "capturedAt",
+        "status",
+        "backupPointId"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "key": { "type": "string" },
+        "phase": { "type": "string" },
+        "objectType": { "type": "string" },
+        "capturedAt": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["success", "error", "skipped", "out_of_scope"]
+        },
+        "backupPointId": { "type": "string" },
+        "skipReason": { "type": "string" },
+        "outOfScope": { "type": "boolean" },
+        "reason": { "type": "string" },
+        "data": {}
+      }
+    },
+    "ReconciliationReport": {
+      "type": "object",
+      "required": [
+        "objectType",
+        "apiReportedTotal",
+        "totalFetched",
+        "manifestEntryCount",
+        "reconciled"
+      ],
+      "properties": {
+        "objectType": { "type": "string" },
+        "apiReportedTotal": {
+          "oneOf": [{ "type": "integer" }, { "type": "null" }]
+        },
+        "totalFetched": { "type": "integer" },
+        "manifestEntryCount": { "type": "integer" },
+        "reconciled": { "type": "boolean" },
+        "gap": { "type": "integer" }
+      }
+    }
+  }
+}

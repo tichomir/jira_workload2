@@ -11,6 +11,7 @@
  */
 
 import { JiraHttpClient } from '../http/JiraHttpClient';
+import { paginateAtlassian } from '../pagination/paginateAtlassian';
 import {
   ManifestEntry,
   PaginationResult,
@@ -90,47 +91,27 @@ export class ProjectDiscoveryService {
    */
   async discoverProjects(config: ProjectDiscoveryConfig): Promise<ProjectDiscoveryResult> {
     const maxResults = config.maxResults ?? 50;
-    const allApiItems: JiraProjectApiItem[] = [];
-    let startAt = 0;
-    let apiReportedTotal: number | null = null;
-    let pagesFetched = 0;
 
-    // ── Paginated fetch loop ────────────────────────────────────────────────
-    while (true) {
-      const params = new URLSearchParams({
-        startAt: String(startAt),
-        maxResults: String(maxResults),
-        ...(config.scope === 'selected' && config.selectedKeys?.length
-          ? { keys: config.selectedKeys.join(',') }
-          : {}),
-      });
+    // ── Paginated fetch via shared utility ─────────────────────────────────
+    const paginationResult = await paginateAtlassian<JiraProjectApiItem>(
+      async (startAt, mr) => {
+        const params = new URLSearchParams({
+          startAt: String(startAt),
+          maxResults: String(mr),
+          ...(config.scope === 'selected' && config.selectedKeys?.length
+            ? { keys: config.selectedKeys.join(',') }
+            : {}),
+        });
+        return this.httpClient.get(
+          `/rest/api/3/project/search?${params.toString()}`,
+        ) as Promise<ProjectSearchPage>;
+      },
+      maxResults,
+    );
 
-      const page = await this.httpClient.get(
-        `/rest/api/3/project/search?${params.toString()}`,
-      ) as ProjectSearchPage;
-
-      pagesFetched++;
-
-      const pageItems: JiraProjectApiItem[] = page.values ?? [];
-      allApiItems.push(...pageItems);
-
-      // Capture total from first page
-      if (apiReportedTotal === null && page.total !== undefined) {
-        apiReportedTotal = page.total;
-      }
-
-      // Termination contract — ANY condition stops pagination
-      if (
-        pageItems.length === 0 ||
-        page.isLast === true ||
-        pageItems.length < maxResults ||
-        (apiReportedTotal !== null && allApiItems.length >= apiReportedTotal)
-      ) {
-        break;
-      }
-
-      startAt += pageItems.length;
-    }
+    const allApiItems = paginationResult.items;
+    const apiReportedTotal = paginationResult.apiReportedTotal;
+    const pagesFetched = paginationResult.pagesFetched;
 
     // ── Map API items to ProjectNodes + ManifestEntries ────────────────────
     const capturedAt = new Date().toISOString();

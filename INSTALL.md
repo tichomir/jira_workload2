@@ -137,7 +137,7 @@ The production-parity stack runs two containers:
 
 | Container | Image | Role |
 |---|---|---|
-| `jira-backup-app` | Node 20 image built from `Dockerfile` | Backend API + static frontend |
+| `backend` | Node 20 image built from `Dockerfile` | Backend API + static frontend |
 | `caddy` | `caddy:2-alpine` | HTTPS termination, reverse proxy |
 
 Persistent volumes:
@@ -175,18 +175,22 @@ pass them via your container orchestration secrets mechanism.
 
 ### 3.4 Caddy HTTPS configuration
 
-The `Caddyfile` at the project root configures HTTPS termination.
-Update the `your-domain.example.com` placeholder to your actual domain:
+`Caddyfile.example` at the project root configures HTTPS termination. `start.sh`
+copies it to `Caddyfile` automatically on first run. The shipped default is for
+localhost with Caddy's built-in local CA:
 
 ```
-your-domain.example.com {
-    reverse_proxy jira-backup-app:3000
+localhost:4443 {
+  tls internal
+
+  reverse_proxy backend:3000
 }
 ```
 
-Caddy automatically provisions a Let's Encrypt certificate for the domain.
-For self-hosted environments without public DNS, use a local CA or supply
-your own certificate via Caddy's `tls` directive.
+`tls internal` uses Caddy's local CA — suitable for localhost and LAN deployments.
+For a public domain, replace `localhost:4443` with your domain name and remove the
+`tls internal` directive; Caddy will automatically provision a Let's Encrypt certificate.
+The `backend` service name matches `podman-compose.yml services.backend`.
 
 ### 3.5 Persistent volumes
 
@@ -224,7 +228,7 @@ Key log namespaces:
 
 In the container stack, access logs with:
 ```sh
-podman-compose logs -f jira-backup-app
+podman-compose logs -f backend
 ```
 
 To audit whether all expected log patterns are being emitted:

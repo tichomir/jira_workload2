@@ -1,0 +1,18 @@
+# Caddyfile.example — copy to Caddyfile before running the stack
+#
+# HTTPS termination on localhost:4443 using Caddy's built-in local CA.
+# Reverse-proxies to the backend service on port 3000.
+#
+# Sources:
+#   - Port 3000: src/server.ts:47 — `process.env.PORT ?? '3000'`
+#   - Service name "backend": podman-compose.yml services.backend
+#
+# Usage:
+#   cp Caddyfile.example Caddyfile
+#   (Caddyfile is .gitignore'd — never commit the live config)
+
+localhost:4443 {
+  tls internal
+
+  reverse_proxy backend:3000
+}

@@ -40,8 +40,8 @@ $EDITOR .env
 ./start.sh
 ```
 
-The app starts on `https://localhost:3000`. Navigate to the Jira connector and click
-**Connect** to begin the OAuth flow.
+The app starts on `https://localhost:4443` (Caddy HTTPS termination). Navigate to the
+Jira connector and click **Connect** to begin the OAuth flow.
 
 See [INSTALL.md](INSTALL.md) for the complete walkthrough, including:
 - Exact OAuth scope list to configure in the Atlassian Developer Console

@@ -1250,3 +1250,174 @@ other parallel file. Replace, don't append.
 - ✅ Author CHANGELOG.md and run inline-docstring sweep with carry-forward list — Devops Engineer (◈ Standard, 3 SP)
 
 ---
+### Sprint 17 — Container Deployment Infrastructure | 2026-05-03 | ⏳ in progress | 11 SP est.
+**Goal:** [Phase: Container Deployment Infrastructure]
+
+Build the container infrastructure that INSTALL.md §3 currently
+describes but doesn't actually ship. After this sprint, the docs
+become true and the stack runs from `podman-compose up -d`.
+
+Reference patterns to mirror (read these before writing your own):
+- /Users/t.hadzhiev/coding/persona-forge/Dockerfile.api
+  (Node multi-stage shape)
+- /Users/t.hadzhiev/coding/persona-forge/docker-compose.yml
+  (services, volumes, healthcheck shape)
+
+DELIVERABLES:
+
+1. Pre-flight inventory (qa_engineer, 1 SP) — Walk the codebase.
+   Produce docs/sprint17-preflight.md listing: actual entry point
+   in package.json, actual server port (grep src/ for `.listen(`),
+   every process.env.* read by code with file:line, every npm
+   script. This is the source of truth for tasks 2-6.
+
+2. Backend Dockerfile + /health endpoint (devops_engineer, 3 SP) —
+   Multi-stage Node 20 Dockerfile at project root. Add a /health
+   endpoint to src/ if missing. Add .dockerignore (exclude
+   node_modules, data/, .env, .git). Verify `podman build .`
+   succeeds; capture last 20 lines of output as evidence.
+
+3. podman-compose.yml + docker-compose.yml symlink
+   (devops_engineer, 3 SP) — Services: backend + caddy. Use values
+   from the preflight (port, volumes, env_file). Verify
+   `podman-compose config --quiet` passes AND
+   `podman-compose up -d` brings both containers to (healthy).
+   Capture `podman ps` showing both containers healthy as evidence.
+
+4. Caddyfile.example (devops_engineer, 1 SP) — HTTPS termination
+   on localhost:4443 via Caddy `local_certs` directive,
+   reverse_proxy to backend service. Add Caddyfile (without
+   .example) to .gitignore.
+
+5. .env.example (devops_engineer, 2 SP) — Every env var the code
+   reads, from the preflight inventory. Group by section (OAuth /
+   Server / DB / etc). Plausible defaults; REPLACE_ME for secrets.
+   Add .env to .gitignore. Diff `.env.example` keys vs the
+   preflight env-var list — must be 1:1, no extras, none missing.
+
+6. start.sh / start.ps1 / start.bat updates (devops_engineer, 1 SP) —
+   Auto-cp Caddyfile.example → Caddyfile if missing,
+   auto-cp .env.example → .env if missing (with a warning to edit),
+   `podman-compose up -d` (fall back to `docker compose up -d`),
+   print https://localhost:4443 + a 3-line "next steps".
+
+7. Doc grounding + transition (qa_engineer, 2 SP) — Re-read all 5
+   canonical docs (README, INSTALL, DEMO, ARCHITECTURE, CHANGELOG).
+   For every reference that NOW exists (because tasks 2-6 built it):
+   describe it as shipped. For every reference that STILL doesn't
+   exist after this sprint: either remove it or mark
+   **Phase 2 — not yet shipped** with a forward-link. The
+   planner-allocated grounding verification task must report ZERO
+   unresolved aspirational refs at sprint end. Add a CHANGELOG entry
+   "## 1.x.x — Container Deployment Shipped" listing the new files.
+
+DO NOT INVENT. Every file must be backed by inspection of the actual
+codebase. If the code reads PORT=3000, expose 3000 — don't guess.
+Each task's output must quote 1-3 lines from src/ or package.json
+that justify the choices made.
+
+DEFINITION OF DONE: `podman-compose up -d` brings the stack to
+all-healthy from a fresh git clone + `cp Caddyfile.example Caddyfile`
++ `cp .env.example .env` + edit .env credentials + `./start.sh`. If
+broken, sprint fails — no Phase-1 transition until a follow-up
+sprint actually delivers.
+
+NON-GOALS: Kubernetes/Helm, production hostname automation, rewriting
+backend code beyond adding /health.
+
+_Sprint started. Role checkpoints below will update as work completes._
+
+---
+### Sprint 17 — Container Deployment Infrastructure | 2026-05-03 | ✅ Qa Engineer checkpoint (1/1 done)
+
+- ✅ Pre-flight codebase inventory for container deployment (⚡ Quick, 1 SP)
+
+---
+### Sprint 17 — Container Deployment Infrastructure | 2026-05-03 | ✅ Devops Engineer checkpoint (1/1 done)
+
+- ✅ podman-compose.yml + Caddyfile.example + .env.example + start scripts (◉ Deep, 5 SP)
+
+---
+### Sprint 17 — Container Deployment Infrastructure | 2026-05-03 | ✅ done | 14 SP
+**Goal:** [Phase: Container Deployment Infrastructure]
+
+Build the container infrastructure that INSTALL.md §3 currently
+describes but doesn't actually ship. After this sprint, the docs
+become true and the stack runs from `podman-compose up -d`.
+
+Reference patterns to mirror (read these before writing your own):
+- /Users/t.hadzhiev/coding/persona-forge/Dockerfile.api
+  (Node multi-stage shape)
+- /Users/t.hadzhiev/coding/persona-forge/docker-compose.yml
+  (services, volumes, healthcheck shape)
+
+DELIVERABLES:
+
+1. Pre-flight inventory (qa_engineer, 1 SP) — Walk the codebase.
+   Produce docs/sprint17-preflight.md listing: actual entry point
+   in package.json, actual server port (grep src/ for `.listen(`),
+   every process.env.* read by code with file:line, every npm
+   script. This is the source of truth for tasks 2-6.
+
+2. Backend Dockerfile + /health endpoint (devops_engineer, 3 SP) —
+   Multi-stage Node 20 Dockerfile at project root. Add a /health
+   endpoint to src/ if missing. Add .dockerignore (exclude
+   node_modules, data/, .env, .git). Verify `podman build .`
+   succeeds; capture last 20 lines of output as evidence.
+
+3. podman-compose.yml + docker-compose.yml symlink
+   (devops_engineer, 3 SP) — Services: backend + caddy. Use values
+   from the preflight (port, volumes, env_file). Verify
+   `podman-compose config --quiet` passes AND
+   `podman-compose up -d` brings both containers to (healthy).
+   Capture `podman ps` showing both containers healthy as evidence.
+
+4. Caddyfile.example (devops_engineer, 1 SP) — HTTPS termination
+   on localhost:4443 via Caddy `local_certs` directive,
+   reverse_proxy to backend service. Add Caddyfile (without
+   .example) to .gitignore.
+
+5. .env.example (devops_engineer, 2 SP) — Every env var the code
+   reads, from the preflight inventory. Group by section (OAuth /
+   Server / DB / etc). Plausible defaults; REPLACE_ME for secrets.
+   Add .env to .gitignore. Diff `.env.example` keys vs the
+   preflight env-var list — must be 1:1, no extras, none missing.
+
+6. start.sh / start.ps1 / start.bat updates (devops_engineer, 1 SP) —
+   Auto-cp Caddyfile.example → Caddyfile if missing,
+   auto-cp .env.example → .env if missing (with a warning to edit),
+   `podman-compose up -d` (fall back to `docker compose up -d`),
+   print https://localhost:4443 + a 3-line "next steps".
+
+7. Doc grounding + transition (qa_engineer, 2 SP) — Re-read all 5
+   canonical docs (README, INSTALL, DEMO, ARCHITECTURE, CHANGELOG).
+   For every reference that NOW exists (because tasks 2-6 built it):
+   describe it as shipped. For every reference that STILL doesn't
+   exist after this sprint: either remove it or mark
+   **Phase 2 — not yet shipped** with a forward-link. The
+   planner-allocated grounding verification task must report ZERO
+   unresolved aspirational refs at sprint end. Add a CHANGELOG entry
+   "## 1.x.x — Container Deployment Shipped" listing the new files.
+
+DO NOT INVENT. Every file must be backed by inspection of the actual
+codebase. If the code reads PORT=3000, expose 3000 — don't guess.
+Each task's output must quote 1-3 lines from src/ or package.json
+that justify the choices made.
+
+DEFINITION OF DONE: `podman-compose up -d` brings the stack to
+all-healthy from a fresh git clone + `cp Caddyfile.example Caddyfile`
++ `cp .env.example .env` + edit .env credentials + `./start.sh`. If
+broken, sprint fails — no Phase-1 transition until a follow-up
+sprint actually delivers.
+
+NON-GOALS: Kubernetes/Helm, production hostname automation, rewriting
+backend code beyond adding /health.
+
+**Delivered:**
+- ✅ Pre-flight codebase inventory for container deployment — Qa Engineer (⚡ Quick, 1 SP)
+- ✅ Backend Dockerfile + /health endpoint + .dockerignore — Devops Engineer (◈ Standard, 3 SP)
+- ✅ podman-compose.yml + Caddyfile.example + .env.example + start scripts — Devops Engineer (◉ Deep, 5 SP)
+- ✅ Doc grounding sweep + CHANGELOG entry for shipped containers — Qa Engineer (⚡ Quick, 2 SP)
+- ✅ Fix: Create missing podman-compose.yml, Caddyfile.example, .env.example, and start scripts — Devops Engineer (◈ Standard, 3 SP)
+
+---

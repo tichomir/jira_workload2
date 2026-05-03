@@ -4,6 +4,7 @@
   "private": true,
   "description": "Jira Cloud backup and restore connector",
   "scripts": {
+    "start": "node dist/server.js",
     "build": "bash scripts/check-deprecated-endpoint.sh && tsc",
     "lint:deprecated": "bash scripts/check-deprecated-endpoint.sh",
     "test": "jest",

@@ -1,3 +1,15 @@
 
 # PersonaForge sprint context (auto-generated, safe to delete)
 .persona-snapshot.md
+
+node_modules/
+dist/
+data/
+*.pem
+
+# Runtime secrets — never commit these
+.env
+.env.*
+
+# Caddyfile is generated from Caddyfile.example — do not commit the live config
+Caddyfile

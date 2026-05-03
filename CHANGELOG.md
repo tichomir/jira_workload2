@@ -6,6 +6,43 @@ Format: `Added` / `Changed` / `Fixed` / `Removed` per phase.
 
 ---
 
+## [1.x.x] — 2026-05-03 — Container Deployment Shipped (Sprint 17)
+
+### Added
+- `Dockerfile` — multi-stage Node 20 Alpine build: `builder` stage compiles TypeScript
+  via `npm run build`; `runtime` stage installs production deps only, runs as non-root
+  `jiraapp` user.
+- `.dockerignore` — excludes `node_modules/`, `data/`, `.env`, `.env.*`, `.git/`,
+  `dist/`, `e2e/results/`.
+- `podman-compose.yml` — two-service stack: `backend` (built from `Dockerfile`) and
+  `caddy` (`caddy:2-alpine`). Named volumes `jira-data:/data`, `jira-attachments:/attachments`,
+  `caddy-data`, `caddy-config`. Backend healthcheck on `GET /health`.
+- `docker-compose.yml` — identical copy of `podman-compose.yml` for Docker Compose
+  compatibility.
+- `Caddyfile.example` — HTTPS termination on `localhost:4443` via `tls internal` (local
+  CA); reverse-proxies to `backend:3000`. Copy to `Caddyfile` before starting (gitignored).
+- `.env.example` — complete inventory of every `process.env.*` read in `src/`, grouped
+  by section (OAuth / Server / Database & Storage / TLS / Heartbeat / Fault Injection).
+  1:1 with the preflight inventory in `docs/sprint17-preflight.md`.
+- `GET /health` endpoint in `src/server.ts` — returns `{ status: "ok" }` with HTTP 200.
+  Used by the compose healthcheck and Caddy health probes.
+- `start.sh` — one-command launcher: auto-copies `Caddyfile.example` → `Caddyfile` and
+  `.env.example` → `.env` if missing (with edit warning), runs `podman-compose up -d`
+  (falls back to `docker compose up -d`), prints `https://localhost:4443` and next steps.
+- `start.ps1`, `start.bat` — Windows equivalents of `start.sh`.
+- `docs/sprint17-preflight.md` — pre-flight inventory: entry point, server port,
+  all `process.env.*` reads with file:line, all npm scripts.
+
+### Changed
+- **BREAKING** — `start.sh` now launches the container stack (`podman-compose up -d`) and
+  serves the app at `https://localhost:4443` (Caddy HTTPS). Previous local-dev invocations
+  that expected `start.sh` to run `node dist/server.js` directly must switch to the local
+  dev workflow in `INSTALL.md §2.5`.
+  Migration: use `./start.sh` for container mode (https://localhost:4443) or
+  `npm run build && node dist/server.js` for direct local dev (https://localhost:3000).
+
+---
+
 ## [1.0.0-phase-7] — 2026-05-03 — Hardening, Observability & MVP Handoff
 
 ### Added

@@ -1,0 +1,52 @@
+# podman-compose.yml — Jira Cloud backup connector stack
+#
+# Sources:
+#   - Port 3000: src/server.ts:47 — `const port = parseInt(process.env.PORT ?? '3000', 10)`
+#   - Entry:     package.json scripts.start — "node dist/server.js"
+#   - Volumes:   docs/sprint17-preflight.md §6 — jira-data:/data, jira-attachments:/attachments
+#   - Health:    src/server.ts:97 — GET /health returns 200 { status: 'ok' }
+
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=/data/jira.db
+      - BACKUP_DIR=/data/backups
+    volumes:
+      - jira-data:/data
+      - jira-attachments:/attachments
+    expose:
+      - "3000"
+    healthcheck:
+      # Hits GET /health — src/server.ts:97
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "4443:4443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  jira-data:
+  jira-attachments:
+  caddy-data:
+  caddy-config:

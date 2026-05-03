@@ -1,0 +1,134 @@
+{
+  "scenario": "Section 5: Per-Item Error Traceability Invariant",
+  "generatedAt": "2026-05-03T18:15:29.305Z",
+  "configuration": {
+    "issueCount": 5,
+    "attachmentsEach": 2,
+    "totalAttachments": 10,
+    "faultFlags": {
+      "suspendHeartbeatMs": null,
+      "attachmentErrorRate": 1,
+      "haltRestorePhase": null
+    },
+    "attachmentErrorRate": 1
+  },
+  "results": {
+    "totalErrors": 10,
+    "jobStatus": "Completed with 10 errors",
+    "displayStatus": "Completed with 10 errors",
+    "status": "completed_with_errors",
+    "errorRecordCount": 10
+  },
+  "assertions": {
+    "totalErrorsMatchInjected": true,
+    "displayStatusContainsN": true,
+    "allErrorsHaveBackupPointId": true,
+    "allErrorsHaveIsoTimestamp": true,
+    "allErrorsHaveCorrectItemType": true,
+    "allErrorsHaveItemIdFormat": true,
+    "singleCallSurfacesAllErrors": true,
+    "passed": true
+  },
+  "errorRecords": [
+    {
+      "id": "jerr-trace-s5-job-1777832129281-2blaq",
+      "jobId": "trace-s5-job",
+      "backupPointId": "trace-s5-bp",
+      "itemType": "JiraAttachment",
+      "itemId": "TRACE-1:att:att-TRACE-1-1",
+      "errorCode": "ATTACHMENT_ERROR",
+      "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-TRACE-1-1 → 500",
+      "timestamp": "2026-05-03T18:15:29.279Z"
+    },
+    {
+      "id": "jerr-trace-s5-job-1777832129284-cbwog",
+      "jobId": "trace-s5-job",
+      "backupPointId": "trace-s5-bp",
+      "itemType": "JiraAttachment",
+      "itemId": "TRACE-1:att:att-TRACE-1-2",
+      "errorCode": "ATTACHMENT_ERROR",
+      "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-TRACE-1-2 → 500",
+      "timestamp": "2026-05-03T18:15:29.283Z"
+    },
+    {
+      "id": "jerr-trace-s5-job-1777832129287-ixfhf",
+      "jobId": "trace-s5-job",
+      "backupPointId": "trace-s5-bp",
+      "itemType": "JiraAttachment",
+      "itemId": "TRACE-2:att:att-TRACE-2-1",
+      "errorCode": "ATTACHMENT_ERROR",
+      "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-TRACE-2-1 → 500",
+      "timestamp": "2026-05-03T18:15:29.287Z"
+    },
+    {
+      "id": "jerr-trace-s5-job-1777832129289-cexhe",
+      "jobId": "trace-s5-job",
+      "backupPointId": "trace-s5-bp",
+      "itemType": "JiraAttachment",
+      "itemId": "TRACE-2:att:att-TRACE-2-2",
+      "errorCode": "ATTACHMENT_ERROR",
+      "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-TRACE-2-2 → 500",
+      "timestamp": "2026-05-03T18:15:29.288Z"
+    },
+    {
+      "id": "jerr-trace-s5-job-1777832129291-bu8vk",
+      "jobId": "trace-s5-job",
+      "backupPointId": "trace-s5-bp",
+      "itemType": "JiraAttachment",
+      "itemId": "TRACE-3:att:att-TRACE-3-1",
+      "errorCode": "ATTACHMENT_ERROR",
+      "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-TRACE-3-1 → 500",
+      "timestamp": "2026-05-03T18:15:29.291Z"
+    },
+    {
+      "id": "jerr-trace-s5-job-1777832129293-73tme",
+      "jobId": "trace-s5-job",
+      "backupPointId": "trace-s5-bp",
+      "itemType": "JiraAttachment",
+      "itemId": "TRACE-3:att:att-TRACE-3-2",
+      "errorCode": "ATTACHMENT_ERROR",
+      "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-TRACE-3-2 → 500",
+      "timestamp": "2026-05-03T18:15:29.293Z"
+    },
+    {
+      "id": "jerr-trace-s5-job-1777832129295-unmi5",
+      "jobId": "trace-s5-job",
+      "backupPointId": "trace-s5-bp",
+      "itemType": "JiraAttachment",
+      "itemId": "TRACE-4:att:att-TRACE-4-1",
+      "errorCode": "ATTACHMENT_ERROR",
+      "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-TRACE-4-1 → 500",
+      "timestamp": "2026-05-03T18:15:29.295Z"
+    },
+    {
+      "id": "jerr-trace-s5-job-1777832129296-21nz2",
+      "jobId": "trace-s5-job",
+      "backupPointId": "trace-s5-bp",
+      "itemType": "JiraAttachment",
+      "itemId": "TRACE-4:att:att-TRACE-4-2",
+      "errorCode": "ATTACHMENT_ERROR",
+      "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-TRACE-4-2 → 500",
+      "timestamp": "2026-05-03T18:15:29.296Z"
+    },
+    {
+      "id": "jerr-trace-s5-job-1777832129300-9acwu",
+      "jobId": "trace-s5-job",
+      "backupPointId": "trace-s5-bp",
+      "itemType": "JiraAttachment",
+      "itemId": "TRACE-5:att:att-TRACE-5-1",
+      "errorCode": "ATTACHMENT_ERROR",
+      "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-TRACE-5-1 → 500",
+      "timestamp": "2026-05-03T18:15:29.300Z"
+    },
+    {
+      "id": "jerr-trace-s5-job-1777832129302-wt3ir",
+      "jobId": "trace-s5-job",
+      "backupPointId": "trace-s5-bp",
+      "itemType": "JiraAttachment",
+      "itemId": "TRACE-5:att:att-TRACE-5-2",
+      "errorCode": "ATTACHMENT_ERROR",
+      "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-TRACE-5-2 → 500",
+      "timestamp": "2026-05-03T18:15:29.301Z"
+    }
+  ]
+}

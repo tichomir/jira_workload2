@@ -884,3 +884,61 @@ This is sprint 3 of 3 for the phase. Plan a slice of the deliverables appropriat
 - ✅ Verify and complete ADF media warnings wiring in RestoreWizard — Frontend Developer (◈ Standard, 3 SP)
 
 ---
+### Sprint 14 - Hardening, Observability & MVP Handoff | 2026-05-03 | ⏳ in progress | 22 SP est.
+**Goal:** [Phase: Hardening, Observability & MVP Handoff]
+Final integration testing, end-to-end coverage-invariant validation, observability polish, documentation, and Phase 1 release readiness. Confirms every acceptance-criterion signal is wired to logs, API shapes, or Playwright assertions.
+
+Deliverables:
+- End-to-end coverage-invariant test suite proving round-trip fidelity for system + custom fields
+- Playwright signal assertions for every PRD acceptance criterion
+- Structured log audit confirming every named log pattern (e.g. [jira-oauth] account verified) is emitted
+- Stalled-job and 'Completed with N errors' UI states verified under fault injection
+- Operator runbook covering reconnect, scope errors, and trash-window restore guidance
+- Phase 2 backlog grooming: JSM, audit log, cross-site restore, incremental backup, ADF media rewrite
+- Sprint kickoff handoff brief for Tihomir
+
+_Sprint started. Role checkpoints below will update as work completes._
+
+---
+### Sprint 14 - Hardening, Observability & MVP Handoff | 2026-05-03 | ✅ Frontend Developer checkpoint (1/1 done)
+
+- ✅ Operator runbook: reconnect, scope errors, trash-window restore (⚡ Quick, 2 SP)
+
+---
+### Sprint 14 - Hardening, Observability & MVP Handoff | 2026-05-03 | ✅ Software Architect checkpoint (1/1 done)
+
+- ✅ Phase 2 backlog grooming + Tihomir sprint kickoff handoff brief (⚡ Quick, 2 SP)
+
+---
+### Sprint 14 - Hardening, Observability & MVP Handoff | 2026-05-03 | ✅ Backend Developer checkpoint (1/1 done)
+
+- ✅ Fault-injection harness for stalled-job and 'Completed with N errors' UI states + heartbeat SLO load test (◉ Deep, 5 SP)
+
+---
+### Sprint 14 - Hardening, Observability & MVP Handoff | 2026-05-03 | ✅ Qa Engineer checkpoint (2/2 done)
+
+- ✅ End-to-end coverage-invariant test suite + restore wizard validation across conflict modes (◉ Deep, 8 SP)
+- ✅ Playwright signal assertions for every PRD acceptance criterion + structured log audit (◉ Deep, 5 SP)
+
+---
+### Sprint 14 - Hardening, Observability & MVP Handoff | 2026-05-03 | ✅ done | 22 SP
+**Goal:** [Phase: Hardening, Observability & MVP Handoff]
+Final integration testing, end-to-end coverage-invariant validation, observability polish, documentation, and Phase 1 release readiness. Confirms every acceptance-criterion signal is wired to logs, API shapes, or Playwright assertions.
+
+Deliverables:
+- End-to-end coverage-invariant test suite proving round-trip fidelity for system + custom fields
+- Playwright signal assertions for every PRD acceptance criterion
+- Structured log audit confirming every named log pattern (e.g. [jira-oauth] account verified) is emitted
+- Stalled-job and 'Completed with N errors' UI states verified under fault injection
+- Operator runbook covering reconnect, scope errors, and trash-window restore guidance
+- Phase 2 backlog grooming: JSM, audit log, cross-site restore, incremental backup, ADF media rewrite
+- Sprint kickoff handoff brief for Tihomir
+
+**Delivered:**
+- ✅ End-to-end coverage-invariant test suite + restore wizard validation across conflict modes — Qa Engineer (◉ Deep, 8 SP)
+- ✅ Playwright signal assertions for every PRD acceptance criterion + structured log audit — Qa Engineer (◉ Deep, 5 SP)
+- ✅ Fault-injection harness for stalled-job and 'Completed with N errors' UI states + heartbeat SLO load test — Backend Developer (◉ Deep, 5 SP)
+- ✅ Operator runbook: reconnect, scope errors, trash-window restore — Frontend Developer (⚡ Quick, 2 SP)
+- ✅ Phase 2 backlog grooming + Tihomir sprint kickoff handoff brief — Software Architect (⚡ Quick, 2 SP)
+
+---

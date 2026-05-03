@@ -1,0 +1,218 @@
+{
+  "scenario": "Scenario C: Restore Phase-Halt Diagnostic",
+  "generatedAt": "2026-05-03T18:15:17.483Z",
+  "faultFlags": {
+    "suspendHeartbeatMs": null,
+    "attachmentErrorRate": null,
+    "haltRestorePhase": "workflow"
+  },
+  "uiSignal": {
+    "endpoint": "GET /restore/jobs/fi-c-restore-job",
+    "response": {
+      "status": "failed",
+      "failureDiagnostic": "WORKFLOW_FAULT_INJECTED: fault-injection-mode=test phase=workflow",
+      "phaseProgressSummary": [
+        {
+          "phase": "project",
+          "status": "completed"
+        },
+        {
+          "phase": "workflow",
+          "status": "failed"
+        },
+        {
+          "phase": "custom_field",
+          "status": "pending"
+        },
+        {
+          "phase": "board",
+          "status": "pending"
+        },
+        {
+          "phase": "sprint",
+          "status": "pending"
+        },
+        {
+          "phase": "issue_body",
+          "status": "pending"
+        },
+        {
+          "phase": "post_issue",
+          "status": "pending"
+        }
+      ]
+    },
+    "uiBannerFields": [
+      "failureDiagnostic → rendered as diagnostic banner in restore wizard phase tracker",
+      "status=failed → disables \"Continue\" stepper action",
+      "pending phases → rendered as \"not started\" steps in the phase tracker"
+    ]
+  },
+  "assertions": {
+    "engineOutcome_failed": true,
+    "enginePhase_workflow": true,
+    "httpStatus_failed": true,
+    "failureDiagnosticContainsCode": true,
+    "workflowPhaseFailed": true,
+    "projectPhaseCompleted": true,
+    "allSubsequentPhasesPending": true,
+    "phaseFailureBusEventEmitted": true,
+    "passed": true
+  },
+  "phaseProgress": [
+    {
+      "phase": "project",
+      "status": "completed",
+      "total": 1,
+      "processed": 1,
+      "errorCount": 0,
+      "startedAt": "2026-05-03T18:15:17.476Z",
+      "completedAt": "2026-05-03T18:15:17.476Z"
+    },
+    {
+      "phase": "workflow",
+      "status": "failed",
+      "total": 3,
+      "processed": 0,
+      "errorCount": 1,
+      "startedAt": "2026-05-03T18:15:17.476Z",
+      "completedAt": "2026-05-03T18:15:17.476Z"
+    },
+    {
+      "phase": "custom_field",
+      "status": "pending",
+      "total": 0,
+      "processed": 0,
+      "errorCount": 0,
+      "startedAt": null,
+      "completedAt": null
+    },
+    {
+      "phase": "board",
+      "status": "pending",
+      "total": 0,
+      "processed": 0,
+      "errorCount": 0,
+      "startedAt": null,
+      "completedAt": null
+    },
+    {
+      "phase": "sprint",
+      "status": "pending",
+      "total": 0,
+      "processed": 0,
+      "errorCount": 0,
+      "startedAt": null,
+      "completedAt": null
+    },
+    {
+      "phase": "issue_body",
+      "status": "pending",
+      "total": 0,
+      "processed": 0,
+      "errorCount": 0,
+      "startedAt": null,
+      "completedAt": null
+    },
+    {
+      "phase": "post_issue",
+      "status": "pending",
+      "total": 0,
+      "processed": 0,
+      "errorCount": 0,
+      "startedAt": null,
+      "completedAt": null
+    }
+  ],
+  "phaseFailureBusEvent": {
+    "type": "phaseFailure",
+    "jobId": "fi-c-restore-job",
+    "phase": "workflow",
+    "diagnostic": "WORKFLOW_FAULT_INJECTED: fault-injection-mode=test phase=workflow",
+    "timestamp": "2026-05-03T18:15:17.476Z"
+  },
+  "jobApiResponse": {
+    "jobId": "fi-c-restore-job",
+    "sourceBackupPointId": "fi-c-bp",
+    "createdAt": "2026-05-03T18:15:17.476Z",
+    "scope": {
+      "type": "all"
+    },
+    "destination": {
+      "type": "original"
+    },
+    "conflictMode": "skip",
+    "status": "failed",
+    "currentPhase": "workflow",
+    "phaseProgress": [
+      {
+        "phase": "project",
+        "status": "completed",
+        "total": 1,
+        "processed": 1,
+        "errorCount": 0,
+        "startedAt": "2026-05-03T18:15:17.476Z",
+        "completedAt": "2026-05-03T18:15:17.476Z"
+      },
+      {
+        "phase": "workflow",
+        "status": "failed",
+        "total": 3,
+        "processed": 0,
+        "errorCount": 1,
+        "startedAt": "2026-05-03T18:15:17.476Z",
+        "completedAt": "2026-05-03T18:15:17.476Z"
+      },
+      {
+        "phase": "custom_field",
+        "status": "pending",
+        "total": 0,
+        "processed": 0,
+        "errorCount": 0,
+        "startedAt": null,
+        "completedAt": null
+      },
+      {
+        "phase": "board",
+        "status": "pending",
+        "total": 0,
+        "processed": 0,
+        "errorCount": 0,
+        "startedAt": null,
+        "completedAt": null
+      },
+      {
+        "phase": "sprint",
+        "status": "pending",
+        "total": 0,
+        "processed": 0,
+        "errorCount": 0,
+        "startedAt": null,
+        "completedAt": null
+      },
+      {
+        "phase": "issue_body",
+        "status": "pending",
+        "total": 0,
+        "processed": 0,
+        "errorCount": 0,
+        "startedAt": null,
+        "completedAt": null
+      },
+      {
+        "phase": "post_issue",
+        "status": "pending",
+        "total": 0,
+        "processed": 0,
+        "errorCount": 0,
+        "startedAt": null,
+        "completedAt": null
+      }
+    ],
+    "errorCount": 0,
+    "failureDiagnostic": "WORKFLOW_FAULT_INJECTED: fault-injection-mode=test phase=workflow",
+    "adfMediaWarningEmitted": false,
+    "adfMediaWarnings": [],
+    "trashWindowBlocked": false
+  }
+}

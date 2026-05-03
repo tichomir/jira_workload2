@@ -1,0 +1,173 @@
+{
+  "scenario": "Scenario B: Completed with N errors",
+  "generatedAt": "2026-05-03T18:15:17.463Z",
+  "faultFlags": {
+    "suspendHeartbeatMs": null,
+    "attachmentErrorRate": 1,
+    "haltRestorePhase": null
+  },
+  "uiSignal": {
+    "endpoint": "GET /api/jobs/fi-b-job",
+    "response": {
+      "status": "completed_with_errors",
+      "displayStatus": "Completed with 6 errors",
+      "stalled": false,
+      "errorCount": 6
+    },
+    "uiLabelField": "displayStatus → rendered as completion banner label in UI"
+  },
+  "assertions": {
+    "totalErrorsMatchInjected": true,
+    "statusIs_completed_with_errors": true,
+    "displayStatusContainsN": true,
+    "allErrorsHaveBackupPointId": true,
+    "allErrorsHaveIsoTimestamp": true,
+    "terminalEventItemsFailed": true,
+    "passed": true
+  },
+  "errorRecords": [
+    {
+      "id": "jerr-fi-b-job-1777832117450-40pum",
+      "jobId": "fi-b-job",
+      "backupPointId": "fi-b-bp",
+      "itemType": "JiraAttachment",
+      "itemId": "FI-1:att:att-FI-1-1",
+      "errorCode": "ATTACHMENT_ERROR",
+      "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-FI-1-1 → 500",
+      "timestamp": "2026-05-03T18:15:17.450Z"
+    },
+    {
+      "id": "jerr-fi-b-job-1777832117450-xrf55",
+      "jobId": "fi-b-job",
+      "backupPointId": "fi-b-bp",
+      "itemType": "JiraAttachment",
+      "itemId": "FI-1:att:att-FI-1-2",
+      "errorCode": "ATTACHMENT_ERROR",
+      "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-FI-1-2 → 500",
+      "timestamp": "2026-05-03T18:15:17.450Z"
+    },
+    {
+      "id": "jerr-fi-b-job-1777832117451-r7m7y",
+      "jobId": "fi-b-job",
+      "backupPointId": "fi-b-bp",
+      "itemType": "JiraAttachment",
+      "itemId": "FI-2:att:att-FI-2-1",
+      "errorCode": "ATTACHMENT_ERROR",
+      "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-FI-2-1 → 500",
+      "timestamp": "2026-05-03T18:15:17.450Z"
+    },
+    {
+      "id": "jerr-fi-b-job-1777832117451-xlqna",
+      "jobId": "fi-b-job",
+      "backupPointId": "fi-b-bp",
+      "itemType": "JiraAttachment",
+      "itemId": "FI-2:att:att-FI-2-2",
+      "errorCode": "ATTACHMENT_ERROR",
+      "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-FI-2-2 → 500",
+      "timestamp": "2026-05-03T18:15:17.451Z"
+    },
+    {
+      "id": "jerr-fi-b-job-1777832117451-8rmp6",
+      "jobId": "fi-b-job",
+      "backupPointId": "fi-b-bp",
+      "itemType": "JiraAttachment",
+      "itemId": "FI-3:att:att-FI-3-1",
+      "errorCode": "ATTACHMENT_ERROR",
+      "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-FI-3-1 → 500",
+      "timestamp": "2026-05-03T18:15:17.451Z"
+    },
+    {
+      "id": "jerr-fi-b-job-1777832117451-u66ga",
+      "jobId": "fi-b-job",
+      "backupPointId": "fi-b-bp",
+      "itemType": "JiraAttachment",
+      "itemId": "FI-3:att:att-FI-3-2",
+      "errorCode": "ATTACHMENT_ERROR",
+      "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-FI-3-2 → 500",
+      "timestamp": "2026-05-03T18:15:17.451Z"
+    }
+  ],
+  "terminalBusEvent": {
+    "type": "terminal",
+    "jobId": "fi-b-job",
+    "backupPointId": "fi-b-bp",
+    "phase": "attachments",
+    "itemsProcessed": 9,
+    "itemsFailed": 6,
+    "timestamp": "2026-05-03T18:15:17.451Z",
+    "displayStatus": "Completed with 6 errors"
+  },
+  "jobApiResponse": {
+    "jobId": "fi-b-job",
+    "status": "completed_with_errors",
+    "displayStatus": "Completed with 6 errors",
+    "itemsProcessed": 9,
+    "itemsFailed": 6,
+    "itemsTotal": null,
+    "lastHeartbeatAt": 1777832117443,
+    "stalled": false,
+    "backupPointId": "fi-b-bp",
+    "errors": [
+      {
+        "id": "jerr-fi-b-job-1777832117450-40pum",
+        "jobId": "fi-b-job",
+        "backupPointId": "fi-b-bp",
+        "itemType": "JiraAttachment",
+        "itemId": "FI-1:att:att-FI-1-1",
+        "errorCode": "ATTACHMENT_ERROR",
+        "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-FI-1-1 → 500",
+        "timestamp": "2026-05-03T18:15:17.450Z"
+      },
+      {
+        "id": "jerr-fi-b-job-1777832117450-xrf55",
+        "jobId": "fi-b-job",
+        "backupPointId": "fi-b-bp",
+        "itemType": "JiraAttachment",
+        "itemId": "FI-1:att:att-FI-1-2",
+        "errorCode": "ATTACHMENT_ERROR",
+        "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-FI-1-2 → 500",
+        "timestamp": "2026-05-03T18:15:17.450Z"
+      },
+      {
+        "id": "jerr-fi-b-job-1777832117451-r7m7y",
+        "jobId": "fi-b-job",
+        "backupPointId": "fi-b-bp",
+        "itemType": "JiraAttachment",
+        "itemId": "FI-2:att:att-FI-2-1",
+        "errorCode": "ATTACHMENT_ERROR",
+        "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-FI-2-1 → 500",
+        "timestamp": "2026-05-03T18:15:17.450Z"
+      },
+      {
+        "id": "jerr-fi-b-job-1777832117451-xlqna",
+        "jobId": "fi-b-job",
+        "backupPointId": "fi-b-bp",
+        "itemType": "JiraAttachment",
+        "itemId": "FI-2:att:att-FI-2-2",
+        "errorCode": "ATTACHMENT_ERROR",
+        "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-FI-2-2 → 500",
+        "timestamp": "2026-05-03T18:15:17.451Z"
+      },
+      {
+        "id": "jerr-fi-b-job-1777832117451-8rmp6",
+        "jobId": "fi-b-job",
+        "backupPointId": "fi-b-bp",
+        "itemType": "JiraAttachment",
+        "itemId": "FI-3:att:att-FI-3-1",
+        "errorCode": "ATTACHMENT_ERROR",
+        "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-FI-3-1 → 500",
+        "timestamp": "2026-05-03T18:15:17.451Z"
+      },
+      {
+        "id": "jerr-fi-b-job-1777832117451-u66ga",
+        "jobId": "fi-b-job",
+        "backupPointId": "fi-b-bp",
+        "itemType": "JiraAttachment",
+        "itemId": "FI-3:att:att-FI-3-2",
+        "errorCode": "ATTACHMENT_ERROR",
+        "errorMessage": "[jira-http] getBinary /rest/api/3/attachment/content/att-FI-3-2 → 500",
+        "timestamp": "2026-05-03T18:15:17.451Z"
+      }
+    ]
+  }
+}

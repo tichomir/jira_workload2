@@ -1,0 +1,40 @@
+{
+  "scenario": "Scenario A: Stalled-Job Alert",
+  "generatedAt": "2026-05-03T18:15:17.426Z",
+  "faultFlags": {
+    "suspendHeartbeatMs": 25000,
+    "attachmentErrorRate": null,
+    "haltRestorePhase": null
+  },
+  "timeline": {
+    "T+0ms": "Job created (lastHeartbeatAt = fakeMs)",
+    "T+25000ms": "No heartbeat for 25000ms — StalledJobDetector.check() fires stalled event"
+  },
+  "uiSignal": {
+    "endpoint": "GET /api/jobs/fi-a-job",
+    "response": {
+      "stalled": true,
+      "status": "stalled",
+      "jobId": "fi-a-job"
+    },
+    "uiBannerField": "stalled: true / status: stalled → renders stalled-job banner"
+  },
+  "assertions": {
+    "stalledFlagSet": true,
+    "statusIsStalledString": true,
+    "stalledEventAge_gt_20s": true,
+    "stalledEventAge_lte_25s": true,
+    "firedWithin21sOfThreshold": true,
+    "passed": true
+  },
+  "stalledBusEvent": {
+    "type": "stalled",
+    "jobId": "fi-a-job",
+    "backupPointId": "fi-a-bp",
+    "phase": "attachments",
+    "itemsProcessed": 0,
+    "itemsFailed": 0,
+    "lastHeartbeatAgeMs": 25000,
+    "timestamp": "1970-01-02T03:47:05.000Z"
+  }
+}

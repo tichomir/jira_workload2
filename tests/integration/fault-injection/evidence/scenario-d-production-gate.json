@@ -1,0 +1,16 @@
+{
+  "scenario": "Scenario D: Production Hard Gate",
+  "generatedAt": "2026-05-03T18:15:17.494Z",
+  "assertion": "All fault injection flags return null when NODE_ENV=production",
+  "envVarsSet": {
+    "FAULT_SUSPEND_HEARTBEAT_MS": "25000",
+    "FAULT_ATTACHMENT_ERROR_RATE": "1.0",
+    "FAULT_HALT_RESTORE_PHASE": "workflow"
+  },
+  "flagsReturned": {
+    "suspendHeartbeatMs": null,
+    "attachmentErrorRate": null,
+    "haltRestorePhase": null
+  },
+  "passed": true
+}

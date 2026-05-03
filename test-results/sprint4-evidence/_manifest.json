@@ -1,0 +1,44 @@
+{
+  "sprint": "Sprint 4 — Context Node Capture Pipeline & Manifest",
+  "generatedAt": "2026-05-03T15:36:22.117Z",
+  "totalArtefacts": 6,
+  "primaryDoDArtefact": "manifest-integrity-failure-api.json",
+  "artefacts": [
+    {
+      "file": "job-completed-with-3-errors.json",
+      "description": "Job status endpoint — Completed with 3 errors (manifest-integrity failure path)",
+      "assertion": "displayStatus === \"Completed with 3 errors\", status === \"completed_with_errors\"",
+      "capturedAt": "2026-05-03T15:36:21.913Z"
+    },
+    {
+      "file": "job-completed-with-1-error.json",
+      "description": "Job status endpoint — Completed with 1 errors",
+      "assertion": "displayStatus === \"Completed with 1 errors\"",
+      "capturedAt": "2026-05-03T15:36:21.936Z"
+    },
+    {
+      "file": "job-completed-with-5-errors.json",
+      "description": "Job status endpoint — Completed with 5 errors",
+      "assertion": "displayStatus === \"Completed with 5 errors\"",
+      "capturedAt": "2026-05-03T15:36:21.956Z"
+    },
+    {
+      "file": "job-completed-successfully.json",
+      "description": "Job status endpoint — Completed successfully (baseline comparison)",
+      "assertion": "displayStatus === \"Completed successfully\", status === \"completed\"",
+      "capturedAt": "2026-05-03T15:36:21.976Z"
+    },
+    {
+      "file": "manifest-integrity-failure-api.json",
+      "description": "ManifestIntegrityError (48 captured vs 50 total) → completed_with_errors via job API",
+      "assertion": "(see file)",
+      "capturedAt": "2026-05-03T15:36:22.010Z"
+    },
+    {
+      "file": "halted-job-diagnostic.json",
+      "description": "Halted job with named stage diagnostic surfaced via GET /api/jobs/:jobId",
+      "assertion": "status === \"failed\", displayStatus contains stage name and error message",
+      "capturedAt": "2026-05-03T15:36:22.046Z"
+    }
+  ]
+}

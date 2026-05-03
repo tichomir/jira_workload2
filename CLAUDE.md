@@ -369,3 +369,48 @@ This is sprint 2 of 2 for the phase. Plan a slice of the deliverables appropriat
 - ⏭ QA: integration tests for context pipeline ordering, custom-field gating, and manifest invariant — Qa Engineer (◈ Standard, 3 SP)
 
 ---
+### Sprint 4 - Context Node Capture Pipeline & Manifest | 2026-05-03 | ⏳ in progress | 18 SP est.
+**Goal:** [Phase: Discovery & Context Node Capture — Sprint 2 of 2]
+Implement Project discovery and the full context-node capture pipeline (IssueType, CustomField + FieldConfiguration, Workflow + WorkflowScheme, Board, Sprint) in the strict order required by the restore dependency contract. Custom field context discovery is gated on the custom:true flag.
+
+Deliverables (across all sprints in this phase):
+- Paginated Project discovery via GET /rest/api/3/project/search with All / Selected scope filter
+- JSM project-type detection emitting out-of-scope notice in onboarding
+- Context-node capture pipeline ordered: IssueType → CustomField + FieldConfiguration → Workflow + WorkflowScheme → Project → Board → Sprint
+- Custom field context discovery limited to custom:true fields (system fields skipped)
+- Backup point manifest schema with zero-silent-omission guarantee
+- Pagination termination logic for all list endpoints
+
+This is sprint 2 of 2 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+_Sprint started. Role checkpoints below will update as work completes._
+
+---
+### Sprint 4 - Context Node Capture Pipeline & Manifest | 2026-05-03 | ✅ Backend Developer checkpoint (2/2 done)
+
+- ✅ Implement backup point manifest writer with zero-silent-omission guarantee (◉ Deep, 5 SP)
+- ✅ Extract shared pagination termination utility (⚡ Quick, 2 SP)
+
+---
+### Sprint 4 - Context Node Capture Pipeline & Manifest | 2026-05-03 | ✅ done | 21 SP
+**Goal:** [Phase: Discovery & Context Node Capture — Sprint 2 of 2]
+Implement Project discovery and the full context-node capture pipeline (IssueType, CustomField + FieldConfiguration, Workflow + WorkflowScheme, Board, Sprint) in the strict order required by the restore dependency contract. Custom field context discovery is gated on the custom:true flag.
+
+Deliverables (across all sprints in this phase):
+- Paginated Project discovery via GET /rest/api/3/project/search with All / Selected scope filter
+- JSM project-type detection emitting out-of-scope notice in onboarding
+- Context-node capture pipeline ordered: IssueType → CustomField + FieldConfiguration → Workflow + WorkflowScheme → Project → Board → Sprint
+- Custom field context discovery limited to custom:true fields (system fields skipped)
+- Backup point manifest schema with zero-silent-omission guarantee
+- Pagination termination logic for all list endpoints
+
+This is sprint 2 of 2 for the phase. Plan a slice of the deliverables appropriate for one sprint; remaining items will be picked up in subsequent sprints via the auto-extracted Carry-Forward Backlog.
+
+**Delivered:**
+- ✅ Implement context-node capture pipeline orchestrator with strict ordering — Backend Developer (◉ Deep, 8 SP)
+- ✅ Implement backup point manifest writer with zero-silent-omission guarantee — Backend Developer (◉ Deep, 5 SP)
+- ✅ Extract shared pagination termination utility — Backend Developer (⚡ Quick, 2 SP)
+- ✅ QA: integration tests for context pipeline ordering, custom-field gating, and manifest invariant — Qa Engineer (◈ Standard, 3 SP)
+- ✅ Fix: Complete pagination termination utility extraction — Backend Developer (◈ Standard, 3 SP)
+
+---

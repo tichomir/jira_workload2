@@ -1,0 +1,21 @@
+{
+  "description": "Halted job with named stage diagnostic surfaced via GET /api/jobs/:jobId",
+  "jobId": "job-halted-diag",
+  "response": {
+    "status": 200,
+    "body": {
+      "jobId": "job-halted-diag",
+      "status": "failed",
+      "displayStatus": "Failed: stage=workflow error: Workflow API: 503 Service Unavailable",
+      "itemsProcessed": 0,
+      "itemsFailed": 0,
+      "itemsTotal": null,
+      "lastHeartbeatAt": 1777822582043,
+      "stalled": false,
+      "backupPointId": "bp-halted-diag",
+      "errors": []
+    }
+  },
+  "assertion": "status === \"failed\", displayStatus contains stage name and error message",
+  "timestamp": "2026-05-03T15:36:22.046Z"
+}

@@ -1,0 +1,36 @@
+{
+  "description": "ManifestIntegrityError (48 captured vs 50 total) → completed_with_errors via job API",
+  "triggerCondition": "appendStageSection called with capturedCount=48, skippedCount=0, apiTotalReported=50",
+  "integrityError": {
+    "name": "ManifestIntegrityError",
+    "stageName": "issue_type",
+    "capturedCount": 48,
+    "skippedCount": 0,
+    "apiTotalReported": 50,
+    "actualSum": 48,
+    "message": "ManifestIntegrityError at stage 'issue_type': capturedCount(48) + skippedCount(0) = 48 !== apiTotalReported(50)"
+  },
+  "manifestStatus": "completed_with_errors",
+  "jobApiEndpoint": "/api/jobs/job-manifest-gap",
+  "jobApiResponse": {
+    "status": 200,
+    "body": {
+      "jobId": "job-manifest-gap",
+      "status": "completed_with_errors",
+      "displayStatus": "Completed with 1 errors",
+      "itemsProcessed": 48,
+      "itemsFailed": 1,
+      "itemsTotal": null,
+      "lastHeartbeatAt": 1777822582003,
+      "stalled": false,
+      "backupPointId": "bp-manifest-gap",
+      "errors": []
+    }
+  },
+  "assertions": [
+    "ManifestIntegrityError thrown with correct counts",
+    "backup_point.status = completed_with_errors (persisted before throw)",
+    "GET /api/jobs/job-manifest-gap returns displayStatus containing \"Completed with N errors\""
+  ],
+  "timestamp": "2026-05-03T15:36:22.010Z"
+}

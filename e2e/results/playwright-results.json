@@ -59,281 +59,20 @@
   },
   "suites": [
     {
-      "title": "sprint3-discovery.spec.ts",
-      "file": "sprint3-discovery.spec.ts",
+      "title": "sprint4-context-pipeline.spec.ts",
+      "file": "sprint4-context-pipeline.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Discovery preview — all software/business (no JSM)",
-          "file": "sprint3-discovery.spec.ts",
-          "line": 201,
+          "title": "Sprint 4 — Completed with N errors (manifest-integrity failure path)",
+          "file": "sprint4-context-pipeline.spec.ts",
+          "line": 131,
           "column": 6,
           "specs": [
             {
-              "title": "GET /preview returns all in-scope projects and jsmProjectsDetected=0",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "api",
-                  "projectName": "api",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 178,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "[jira-http] request method=GET path=/rest/api/3/project/search?maxResults=100\n"
-                        },
-                        {
-                          "text": "[jira-http] response method=GET path=/rest/api/3/project/search?maxResults=100 status=200\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-03T14:00:17.974Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "81ecff4bef3d487a68b3-da050f9b8329817fe21c",
-              "file": "sprint3-discovery.spec.ts",
-              "line": 215,
-              "column": 7
-            }
-          ]
-        },
-        {
-          "title": "Discovery preview — JSM out-of-scope banner (DoD evidence)",
-          "file": "sprint3-discovery.spec.ts",
-          "line": 252,
-          "column": 6,
-          "specs": [
-            {
-              "title": "jsmProjectsDetected=2, service_desk projects excluded from projects array",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "api",
-                  "projectName": "api",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 20,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "[jira-http] request method=GET path=/rest/api/3/project/search?maxResults=100\n"
-                        },
-                        {
-                          "text": "[jira-http] response method=GET path=/rest/api/3/project/search?maxResults=100 status=200\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-03T14:00:18.219Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "81ecff4bef3d487a68b3-572669cff58fef504139",
-              "file": "sprint3-discovery.spec.ts",
-              "line": 275,
-              "column": 7
-            },
-            {
-              "title": "JSM banner DoD screenshot — captures response payload and banner copy",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "api",
-                  "projectName": "api",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 29,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "[jira-http] request method=GET path=/rest/api/3/project/search?maxResults=100\n"
-                        },
-                        {
-                          "text": "[jira-http] response method=GET path=/rest/api/3/project/search?maxResults=100 status=200\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-03T14:00:18.255Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "81ecff4bef3d487a68b3-67886e0643c95f6082cf",
-              "file": "sprint3-discovery.spec.ts",
-              "line": 303,
-              "column": 7
-            }
-          ]
-        },
-        {
-          "title": "Discovery preview — error paths",
-          "file": "sprint3-discovery.spec.ts",
-          "line": 362,
-          "column": 6,
-          "specs": [
-            {
-              "title": "missing cloudId → 400 missing_cloud_id",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "api",
-                  "projectName": "api",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 9,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-03T14:00:18.294Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "81ecff4bef3d487a68b3-82dbd72b5c35784447c3",
-              "file": "sprint3-discovery.spec.ts",
-              "line": 372,
-              "column": 7
-            },
-            {
-              "title": "unknown cloudId → 404 credential_not_found",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "api",
-                  "projectName": "api",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 8,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-03T14:00:18.314Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "81ecff4bef3d487a68b3-bf725db660c4ff6ba8d3",
-              "file": "sprint3-discovery.spec.ts",
-              "line": 387,
-              "column": 7
-            }
-          ]
-        },
-        {
-          "title": "Discovery preview — upstream error path",
-          "file": "sprint3-discovery.spec.ts",
-          "line": 405,
-          "column": 6,
-          "specs": [
-            {
-              "title": "upstream fetch error → 502 upstream_error",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "api",
-                  "projectName": "api",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 22,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "[jira-http] request method=GET path=/rest/api/3/project/search?maxResults=100\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-03T14:00:18.330Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "81ecff4bef3d487a68b3-008035f9e5e5813a3891",
-              "file": "sprint3-discovery.spec.ts",
-              "line": 419,
-              "column": 7
-            }
-          ]
-        },
-        {
-          "title": "Discovery preview — [jira-discovery] log-line audit",
-          "file": "sprint3-discovery.spec.ts",
-          "line": 444,
-          "column": 6,
-          "specs": [
-            {
-              "title": "discovery request generates [jira-discovery] log lines visible in test output",
+              "title": "job with 3 item failures surfaces \"Completed with 3 errors\" in displayStatus",
               "ok": true,
               "tags": [],
               "tests": [
@@ -350,17 +89,10 @@
                       "status": "passed",
                       "duration": 39,
                       "errors": [],
-                      "stdout": [
-                        {
-                          "text": "[jira-http] request method=GET path=/rest/api/3/project/search?maxResults=100\n"
-                        },
-                        {
-                          "text": "[jira-http] response method=GET path=/rest/api/3/project/search?maxResults=100 status=200\n"
-                        }
-                      ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T14:00:18.365Z",
+                      "startTime": "2026-05-03T15:36:21.858Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -368,21 +100,13 @@
                   "status": "expected"
                 }
               ],
-              "id": "81ecff4bef3d487a68b3-24bf951fbff04e3dd49a",
-              "file": "sprint3-discovery.spec.ts",
-              "line": 458,
+              "id": "80d45428b0e45021099f-74149b0a33afb2f5c0ee",
+              "file": "sprint4-context-pipeline.spec.ts",
+              "line": 141,
               "column": 7
-            }
-          ]
-        },
-        {
-          "title": "Sprint 3 evidence summary",
-          "file": "sprint3-discovery.spec.ts",
-          "line": 496,
-          "column": 6,
-          "specs": [
+            },
             {
-              "title": "all evidence files written to test-results/sprint3-evidence/",
+              "title": "job with 1 item failure surfaces \"Completed with 1 errors\"",
               "ok": true,
               "tags": [],
               "tests": [
@@ -397,12 +121,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 7,
+                      "duration": 15,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-05-03T14:00:18.419Z",
+                      "startTime": "2026-05-03T15:36:21.928Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -410,9 +134,207 @@
                   "status": "expected"
                 }
               ],
-              "id": "81ecff4bef3d487a68b3-86462eb508a96b2202f2",
-              "file": "sprint3-discovery.spec.ts",
-              "line": 497,
+              "id": "80d45428b0e45021099f-e6995dcacf6d22811e2b",
+              "file": "sprint4-context-pipeline.spec.ts",
+              "line": 175,
+              "column": 7
+            },
+            {
+              "title": "job with 5 item failures surfaces \"Completed with 5 errors\"",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T15:36:21.950Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "80d45428b0e45021099f-e46e54494d3b53e5c5d5",
+              "file": "sprint4-context-pipeline.spec.ts",
+              "line": 197,
+              "column": 7
+            },
+            {
+              "title": "job without failures surfaces \"Completed successfully\"",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T15:36:21.970Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "80d45428b0e45021099f-550db05eb0025856a6fb",
+              "file": "sprint4-context-pipeline.spec.ts",
+              "line": 220,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Sprint 4 — ManifestIntegrityError → completed_with_errors via API",
+          "file": "sprint4-context-pipeline.spec.ts",
+          "line": 247,
+          "column": 6,
+          "specs": [
+            {
+              "title": "manifest count mismatch (48 captured vs 50 total) → job API returns completed_with_errors",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 24,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[jira-manifest] integrity-violation ManifestIntegrityError at stage 'issue_type': capturedCount(48) + skippedCount(0) = 48 !== apiTotalReported(50)\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-05-03T15:36:21.992Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "80d45428b0e45021099f-cc3e80bbf0c21c1a31d8",
+              "file": "sprint4-context-pipeline.spec.ts",
+              "line": 257,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Sprint 4 — Stage ordering and halt diagnostic surfaced via progress",
+          "file": "sprint4-context-pipeline.spec.ts",
+          "line": 344,
+          "column": 6,
+          "specs": [
+            {
+              "title": "halted job surfaces named diagnostic in job status",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T15:36:22.033Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "80d45428b0e45021099f-8bafde7dfe50ed4cdace",
+              "file": "sprint4-context-pipeline.spec.ts",
+              "line": 354,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Sprint 4 evidence summary",
+          "file": "sprint4-context-pipeline.spec.ts",
+          "line": 389,
+          "column": 6,
+          "specs": [
+            {
+              "title": "all evidence files written to test-results/sprint4-evidence/",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "api",
+                  "projectName": "api",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 55,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-03T15:36:22.061Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "80d45428b0e45021099f-10e460923dd56edeba8f",
+              "file": "sprint4-context-pipeline.spec.ts",
+              "line": 390,
               "column": 7
             }
           ]
@@ -422,9 +344,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-05-03T14:00:15.654Z",
-    "duration": 2800.59,
-    "expected": 8,
+    "startTime": "2026-05-03T15:36:20.884Z",
+    "duration": 1254.6799999999998,
+    "expected": 7,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

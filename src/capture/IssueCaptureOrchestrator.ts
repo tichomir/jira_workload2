@@ -35,6 +35,8 @@ import { JiraHttpClient, JiraIssue } from '../http/JiraHttpClient';
 import { BackupPointManifestWriter } from '../manifest/BackupPointManifestWriter';
 import { JiraObjectType } from '../manifest/types';
 import { AttachmentBlobStore } from '../backup/AttachmentBlobStore';
+import { HeartbeatEmitter } from '../jobs/HeartbeatEmitter';
+import { JobStore } from '../jobs/JobStore';
 
 // ── Default heartbeat interval ─────────────────────────────────────────────────
 
@@ -143,6 +145,20 @@ export interface IssueCaptureConfig {
   heartbeatIntervalMs?: number;
   /** Injected time source for testing */
   nowMs?: () => number;
+  /**
+   * Optional HeartbeatEmitter — when provided the orchestrator delegates
+   * per-item ticks and job lifecycle to it (persistence + event bus).
+   */
+  heartbeatEmitter?: HeartbeatEmitter;
+  /**
+   * Optional JobStore — when provided per-item errors are persisted to
+   * job_errors and job status is updated at completion.
+   */
+  jobStore?: JobStore;
+  /**
+   * jobId for the JobStore / HeartbeatEmitter; defaults to backupPointId.
+   */
+  jobId?: string;
 }
 
 // ── Run result ─────────────────────────────────────────────────────────────────
@@ -187,14 +203,21 @@ export class IssueCaptureOrchestrator {
       recursive: true,
     });
 
-    this.startHeartbeat();
+    const emitter = this.config.heartbeatEmitter;
+    if (emitter) {
+      emitter.start();
+    } else {
+      this.startHeartbeat();
+    }
 
     try {
       for (const projectKey of this.config.projectKeys) {
         await this.captureProject(projectKey);
       }
     } finally {
-      this.stopHeartbeat();
+      if (!emitter) {
+        this.stopHeartbeat();
+      }
     }
 
     const jobStatus =
@@ -216,6 +239,11 @@ export class IssueCaptureOrchestrator {
       totalErrors: this.totalErrors,
       message: jobStatus,
     });
+
+    // Delegate completion to the emitter when present; it persists final status.
+    if (emitter) {
+      emitter.complete();
+    }
 
     return {
       backupPointId: this.config.backupPointId,
@@ -325,10 +353,14 @@ export class IssueCaptureOrchestrator {
 
       this.totalCaptured++;
 
+      // Tick the external emitter (if wired in) for the captured issue
+      this.config.heartbeatEmitter?.tick({ currentItemKey: issue.key });
+
       // Download attachments after issue is persisted (post-issue-creation pass)
       for (const att of attachmentRefs) {
         await this.downloadAttachment(att, issue.key);
         this.maybeHeartbeat();
+        this.config.heartbeatEmitter?.tick({ currentItemKey: `${issue.key}:att:${att.id}` });
       }
       this.emitProgress({
         type: 'issue_captured',
@@ -357,6 +389,22 @@ export class IssueCaptureOrchestrator {
         status: 'error',
         errorMessage,
       });
+
+      // Persist to job_errors store when wired in
+      if (this.config.jobStore && this.config.jobId) {
+        this.config.jobStore.insertJobError({
+          jobId: this.config.jobId,
+          backupPointId: this.config.backupPointId,
+          itemType: 'JiraIssue',
+          itemId: issue.key,
+          errorCode: 'API_ERROR',
+          errorMessage,
+          timestamp: capturedAt,
+        });
+      }
+
+      // Tick the external emitter for the failed item
+      this.config.heartbeatEmitter?.tick({ failed: true, currentItemKey: issue.key });
 
       this.emitProgress({
         type: 'issue_error',
